@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My RVs</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font globally and ensure smooth scrolling */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
+        }
+        /* Custom utility for hidden views, to be toggled by JavaScript */
+        .hidden-view {
+            display: none;
+        }
+        /* SECTION 0: BASE STYLES & UTILITIES */
+        /* This section provides foundational styles for the entire application. */
+
+        /* SECTION 1: HEADER STYLES */
+        /* Styles for the frozen header, including titles and navigation. */
+
+        /* SECTION 2: NAVIGATION BUTTON STYLES */
+        /* Styles for primary, secondary, and destructive action buttons. */
+
+        /* SECTION 3: SORTING & FILTERING STYLES */
+        /* Styles for the sorting radio buttons and filter options. */
+
+        /* SECTION 4: CARD VIEW STYLES */
+        /* Styles for the individual RV contact cards in cardsView. */
+
+        /* SECTION 5: FORM VIEW STYLES */
+        /* Styles for the data entry form fields and contact log in formView. */
+
+        /* SECTION 6: MAP VIEW STYLES */
+        /* Styles for the map container and pin indicators in mapView. */
+
+        /* SECTION 7: SETTINGS VIEW STYLES */
+        /* Styles for the settings input fields. */
+
+        /* SECTION 8: MODAL & POP-UP STYLES */
+        /* Styles for confirmation dialogs, pop-up explanations, and loading indicators. */
+
+        /* SECTION 9: RESPONSIVE DESIGN & UTILITIES */
+        /* Styles for adapting the layout and elements across different screen sizes. */
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Main application container -->
+    <div id="app-container" class="relative flex flex-col flex-1 w-full max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+
+        <!-- Header Section (Frozen) - SECTION 1 -->
+        <header class="sticky top-0 bg-white p-4 pb-2 shadow-md z-10 rounded-t-lg">
+            <div class="flex justify-between items-center mb-2">
+                <h1 class="text-3xl font-bold text-gray-800">MY RV’s</h1>
+                <!-- Gear Icon for Settings -->
+                <button id="settings-button" class="text-gray-600 hover:text-gray-900 transition-colors duration-200 focus:outline-none rounded-full p-2">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
+            </div>
+
+            <!-- Subtitle (Dynamic based on view) -->
+            <h2 id="view-subtitle" class="text-xl font-medium text-gray-700 mb-4">Home</h2>
+
+            <!-- Navigation Buttons - SECTION 2 -->
+            <nav class="flex justify-around items-center mb-4 space-x-2">
+                <button id="add-rv-button" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                    Add RV
+                </button>
+                <button id="map-button" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                    Map
+                </button>
+            </nav>
+
+            <!-- Sorting Options - SECTION 3 -->
+            <div id="sort-options" class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-1">Sort by:</h3>
+                <div class="flex space-x-4">
+                    <label class="inline-flex items-center">
+                        <input type="radio" class="form-radio text-blue-600 h-4 w-4" name="sort-order" value="oldest-to-newest" checked>
+                        <span class="ml-2 text-gray-700 text-sm">Oldest to Newest</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" class="form-radio text-blue-600 h-4 w-4" name="sort-order" value="newest-to-oldest">
+                        <span class="ml-2 text-gray-700 text-sm">Newest to Oldest</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filtering Options - SECTION 3 -->
+            <div id="filter-options" class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-1">Filter Options:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <!-- Permanent filters -->
+                    <button class="filter-btn bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75" data-filter="all-areas">All Areas</button>
+                    <button class="filter-btn bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75" data-filter="no-area">No Area</button>
+                    <!-- User-defined filters will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Search Bar - UI/UX Enhancement -->
+            <div id="search-bar" class="mb-4">
+                <input type="text" id="search-input" placeholder="Search RVs by name, address, or notes..." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+            </div>
+
+        </header>
+
+        <!-- Main Content Area (Scrollable) -->
+        <main id="main-content" class="flex-1 overflow-y-auto p-4">
+            <!-- View-specific content will be rendered here -->
+
+            <!-- cardsView content - SECTION 4 -->
+            <section id="cards-view" class="view">
+                <div id="rv-cards-container" class="space-y-4">
+                    <!-- RV Contact Cards will be dynamically loaded here -->
+                    <!-- Example Card (will be generated by JS) -->
+                    <!--
+                    <div class="bg-white p-4 rounded-lg shadow-md flex items-center justify-between border border-gray-200">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800">RV Name Example</h3>
+                            <p class="text-sm text-gray-600">123 Main St, Anytown, CA</p>
+                            <p class="text-sm text-gray-500 mt-1">Last Contacted: <span class="font-medium">2023-10-26</span> (<span class="text-red-500 font-bold">20 days ago</span>)</p>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <button class="delete-rv-button bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-3 rounded-full shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+                                Delete
+                            </button>
+                            <p class="text-xs text-gray-500 mt-2">Area: Downtown</p>
+                        </div>
+                    </div>
+                    -->
+                    <p id="no-rvs-message" class="text-center text-gray-500 mt-8 hidden">No RVs found. Click "Add RV" to get started!</p>
+                </div>
+            </section>
+
+            <!-- formView content - SECTION 5 -->
+            <section id="form-view" class="view hidden-view">
+                <form id="rv-form" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="first-name" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" id="first-name" name="firstName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" id="last-name" name="lastName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="address-number" class="block text-sm font-medium text-gray-700">Address Number</label>
+                        <input type="text" id="address-number" name="addressNumber" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="street-name" class="block text-sm font-medium text-gray-700">Street Name</label>
+                        <input type="text" id="street-name" name="streetName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="phone-cell" class="block text-sm font-medium text-gray-700">Phone (Cell)</label>
+                            <input type="tel" id="phone-cell" name="phoneCell" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="(XXX) XXX-XXXX">
+                        </div>
+                        <div>
+                            <label for="phone-home" class="block text-sm font-medium text-gray-700">Phone (Home)</label>
+                            <input type="tel" id="phone-home" name="phoneHome" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="(XXX) XXX-XXXX">
+                        </div>
+                        <div>
+                            <label for="phone-work" class="block text-sm font-medium text-gray-700">Phone (Work)</label>
+                            <input type="tel" id="phone-work" name="phoneWork" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="(XXX) XXX-XXXX">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="latitude" class="block text-sm font-medium text-gray-700">Latitude
+                                <button type="button" class="info-button text-blue-500 hover:text-blue-700 ml-1" data-info="lat-long-info">
+                                    <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                            </label>
+                            <input type="text" id="latitude" name="latitude" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="longitude" class="block text-sm font-medium text-gray-700">Longitude
+                                <button type="button" class="info-button text-blue-500 hover:text-blue-700 ml-1" data-info="lat-long-info">
+                                    <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                            </label>
+                            <input type="text" id="longitude" name="longitude" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="area-name" class="block text-sm font-medium text-gray-700">Area Name</label>
+                        <input type="text" id="area-name" name="areaName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <!-- Contact Log Section -->
+                    <div id="contact-log-container" class="space-y-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Contact Log</h3>
+                        <!-- Initial Contact Entry -->
+                        <div class="contact-entry border-b border-gray-200 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Contact Date</label>
+                                <input type="date" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 contact-date-input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Time</label>
+                                <input type="time" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 contact-time-input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Note</label>
+                                <textarea rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 contact-note-input"></textarea>
+                            </div>
+                        </div>
+                        <!-- "Add RV Contact" button (initially disabled) -->
+                        <button type="button" id="add-rv-contact-button" class="w-full bg-blue-100 text-blue-800 text-sm font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Add RV Contact
+                        </button>
+                    </div>
+
+                </form>
+            </section>
+
+            <!-- mapView content - SECTION 6 -->
+            <section id="map-view" class="view hidden-view">
+                <div id="map-container" class="w-full h-96 bg-gray-200 rounded-lg shadow-md flex items-center justify-center text-gray-500">
+                    <!-- Map will be rendered here by a mapping library -->
+                    Map will be displayed here.
+                </div>
+            </section>
+
+            <!-- settingsView content - SECTION 7 -->
+            <section id="settings-view" class="view hidden-view">
+                <div class="bg-blue-50 p-4 rounded-lg mb-6 text-blue-800 text-sm">
+                    <p class="font-semibold">Important:</p>
+                    <p>The default city and state or latitude longitude must be entered before adding contacts.</p>
+                </div>
+                <form id="settings-form" class="space-y-4">
+                    <div>
+                        <label for="default-city" class="block text-sm font-medium text-gray-700">Default City</label>
+                        <input type="text" id="default-city" name="defaultCity" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="default-state" class="block text-sm font-medium text-gray-700">Default State (Two capital letters, e.g., CA)</label>
+                        <input type="text" id="default-state" name="defaultState" maxlength="2" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 uppercase">
+                    </div>
+                    <div>
+                        <label for="default-area" class="block text-sm font-medium text-gray-700">Default Area Name</label>
+                        <input type="text" id="default-area" name="defaultArea" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="default-latitude" class="block text-sm font-medium text-gray-700">Default Latitude</label>
+                        <input type="text" id="default-latitude" name="defaultLatitude" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="default-longitude" class="block text-sm font-medium text-gray-700">Default Longitude</label>
+                        <input type="text" id="default-longitude" name="defaultLongitude" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                        Save Settings
+                    </button>
+                </form>
+            </section>
+
+            <!-- Modals and Pop-ups - SECTION 8 -->
+            <!-- Confirmation Modal (e.g., for Delete or Unsaved Changes) -->
+            <div id="confirmation-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                    <p id="confirmation-message" class="text-lg font-semibold text-gray-800 mb-4">Are you sure?</p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="modal-cancel-button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
+                            Cancel
+                        </button>
+                        <button id="modal-confirm-button" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lat/Long Info Pop-up -->
+            <div id="lat-long-info-popup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">How to get Latitude and Longitude:</h3>
+                    <p class="text-gray-700 mb-4">
+                        You can easily find Latitude and Longitude using Google Maps.
+                        <ol class="list-decimal list-inside space-y-1">
+                            <li>Open Google Maps.</li>
+                            <li>Right-click (or long-press on mobile) on the desired location on the map.</li>
+                            <li>The coordinates (Latitude, Longitude) will appear in a small pop-up or context menu. Click on them to copy to your clipboard.</li>
+                            <li>Paste the copied values into the respective fields here.</li>
+                        </ol>
+                    </p>
+                    <div class="flex justify-end">
+                        <button id="lat-long-info-close-button" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                            Got It!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow-xl">
+                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+                    <p class="mt-3 text-gray-700">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Save Success Message -->
+            <div id="save-success-message" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 hidden">
+                Saved!
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // SECTION 0: GLOBAL VARIABLES AND INITIALIZATION
+        // This section defines global variables and initializes the application.
+        const views = ['cards-view', 'form-view', 'map-view', 'settings-view'];
+        let currentView = 'cards-view'; // Default view
+        let isDirty = false; // Tracks if the form has unsaved changes
+        let currentRVId = null; // Stores the ID of the RV currently being edited
+        let rvData = []; // Array to hold all RV contact data
+        let previousView = 'cards-view'; // To track where formView was called from
+        let db; // Global IndexedDB instance
+
+        // SECTION 1: DOM ELEMENT REFERENCES
+        // This section stores references to frequently used DOM elements for efficiency.
+        const appContainer = document.getElementById('app-container');
+        const viewSubtitle = document.getElementById('view-subtitle');
+        const settingsButton = document.getElementById('settings-button');
+        const addRvButton = document.getElementById('add-rv-button');
+        const mapButton = document.getElementById('map-button');
+        const sortOptions = document.getElementById('sort-options');
+        const filterOptions = document.getElementById('filter-options');
+        const searchBar = document.getElementById('search-bar');
+        const mainContent = document.getElementById('main-content');
+        const cardsView = document.getElementById('cards-view');
+        const rvCardsContainer = document.getElementById('rv-cards-container');
+        const noRvsMessage = document.getElementById('no-rvs-message');
+        const formView = document.getElementById('form-view');
+        const rvForm = document.getElementById('rv-form');
+        const contactLogContainer = document.getElementById('contact-log-container');
+        const addRvContactButton = document.getElementById('add-rv-contact-button');
+        const mapView = document.getElementById('map-view');
+        const mapContainer = document.getElementById('map-container');
+        const settingsView = document.getElementById('settings-view');
+        const settingsForm = document.getElementById('settings-form');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const confirmationMessage = document.getElementById('confirmation-message');
+        const modalCancelButton = document.getElementById('modal-cancel-button');
+        const modalConfirmButton = document.getElementById('modal-confirm-button');
+        const latLongInfoPopup = document.getElementById('lat-long-info-popup');
+        const latLongInfoCloseButton = document.getElementById('lat-long-info-close-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const saveSuccessMessage = document.getElementById('save-success-message');
+        
+            // SECTION 2: NAVIGATION FUNCTIONS
+            // Functions to switch between different application views.
+            function showView(viewId) {
+                // Store the current view before changing, if not already in form-view
+                if (currentView !== 'form-view' && viewId !== 'form-view') {
+                    previousView = currentView;
+                } else if (currentView === 'form-view' && viewId !== 'form-view') {
+                    // If leaving form-view, previousView is already correctly set
+                }
+
+
+                views.forEach(id => {
+                    document.getElementById(id).classList.add('hidden-view');
+                });
+                document.getElementById(viewId).classList.remove('hidden-view');
+                currentView = viewId;
+                updateHeaderForView(viewId);
+                // Scroll to top of main content area when changing views
+                mainContent.scrollTop = 0;
+
+                // Hide/show main nav buttons based on view
+                const mainNavButtons = document.querySelector('header > nav');
+                if (viewId === 'cards-view' || viewId === 'map-view') {
+                    mainNavButtons.classList.remove('hidden');
+                } else {
+                    mainNavButtons.classList.add('hidden');
+                }
+
+                // Manage form-view specific buttons
+                const formNavButtons = document.getElementById('form-view-nav-buttons');
+                if (formNavButtons) {
+                    if (viewId === 'form-view') {
+                        formNavButtons.classList.remove('hidden');
+                    } else {
+                        formNavButtons.classList.add('hidden');
+                    }
+                }
+            }
+
+            function updateHeaderForView(viewId) {
+                // Hide/show elements based on the current view
+                sortOptions.classList.add('hidden');
+                filterOptions.classList.add('hidden');
+                searchBar.classList.add('hidden');
+
+                switch (viewId) {
+                    case 'cards-view':
+                        viewSubtitle.textContent = 'Home';
+                        sortOptions.classList.remove('hidden');
+                        filterOptions.classList.remove('hidden');
+                        searchBar.classList.remove('hidden');
+                        break;
+                    case 'form-view':
+                        viewSubtitle.textContent = 'Add/Edit RV';
+                        // Form view has its own set of nav/command buttons, handled by JS later
+                        break;
+                    case 'map-view':
+                        viewSubtitle.textContent = 'Map';
+                        filterOptions.classList.remove('hidden'); // Map view has filtering
+                        break;
+                    case 'settings-view':
+                        viewSubtitle.textContent = 'Settings';
+                        // Settings view does not have the main nav buttons, sorting, or filtering
+                        break;
+                }
+            }
+
+            // SECTION 3: EVENT LISTENERS
+            // This section sets up all event listeners for user interactions.
+            document.addEventListener('DOMContentLoaded', async () => { // ADDED async
+                // Open IndexedDB once at the start
+                try {
+                    db = await openIndexedDB(); // Assign global db here
+                    console.log('IndexedDB opened successfully.');
+                } catch (error) {
+                    console.error('Failed to open IndexedDB:', error);
+                    // Potentially show an error message to the user if DB is crucial
+                    showConfirmation('Failed to open local database. Please try refreshing the page.', () => {}, false, true);
+                    return; // Stop execution if DB cannot be opened
+                }
+
+                // Initial view setup (will be overridden by first-time use logic)
+                showView('cards-view');
+
+                // Navigation button event listeners
+                settingsButton.addEventListener('click', () => {
+                    if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                showView('settings-view');
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                showView('settings-view');
+                            }
+                            // If action is 'cancel', stay on form
+                        }, true);
+                    } else {
+                        showView('settings-view');
+                    }
+                });
+
+                addRvButton.addEventListener('click', () => {
+                    currentRVId = null; // Clear current RV ID for new entry
+                    rvForm.reset(); // Clear form fields
+                    contactLogContainer.innerHTML = ''; // Clear contact log
+                    addContactLogEntry(new Date(), ''); // Add a default first contact entry
+                    addRvContactButton.disabled = true; // Disable until saved
+                    isDirty = false; // No changes yet
+                    showView('form-view');
+                    // Update form view specific buttons
+                    setupFormViewButtons(true); // true for new RV
+                });
+
+                mapButton.addEventListener('click', () => {
+                     if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                showView('map-view');
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                showView('map-view');
+                            }
+                            // If action is 'cancel', stay on form
+                        }, true);
+                    } else {
+                        showView('map-view');
+                    }
+                });
+
+
+                // Lat/Long Info Pop-up
+                document.querySelectorAll('.info-button[data-info="lat-long-info"]').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        event.preventDefault(); // Prevent form submission
+                        latLongInfoPopup.classList.remove('hidden');
+                    });
+                });
+                latLongInfoCloseButton.addEventListener('click', () => {
+                    latLongInfoPopup.classList.add('hidden');
+                });
+
+                // Form field change listener for dirty state
+                rvForm.addEventListener('input', () => {
+                    isDirty = true;
+                });
+
+                // Phone number auto-formatting - SECTION 5 (Form View Specific)
+                document.getElementById('phone-cell').addEventListener('input', formatPhoneNumber);
+                document.getElementById('phone-home').addEventListener('input', formatPhoneNumber);
+                document.getElementById('phone-work').addEventListener('input', formatPhoneNumber);
+
+                // State field validation - SECTION 7 (Settings View Specific)
+                document.getElementById('default-state').addEventListener('input', function() {
+                    this.value = this.value.toUpperCase().replace(/[^A-Z]/g, ''); // Force uppercase and allow only letters
+                });
+
+                // Add RV Contact button listener
+                addRvContactButton.addEventListener('click', () => {
+                    addContactLogEntry(new Date(), '');
+                    isDirty = true; // Adding a new contact entry makes the form dirty
+                });
+
+                // Settings form submission
+                settingsForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    saveSettings();
+                });
+
+                // Load initial settings and RV data
+                await loadSettings(); // ADDED await
+                await loadRVs(); // ADDED await
+
+                // Implement sorting radio button listener
+                document.querySelectorAll('input[name="sort-order"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        renderRVCards(); // Re-render cards based on new sort order
+                    });
+                });
+
+                // Implement search input listener
+                document.getElementById('search-input').addEventListener('input', () => {
+                    renderRVCards(); // Re-render cards based on search query
+                });
+
+                // Implement filter button listeners (dynamic)
+                filterOptions.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('filter-btn')) {
+                        // Remove active class from all filter buttons
+                        document.querySelectorAll('.filter-btn').forEach(btn => {
+                            btn.classList.remove('bg-blue-500', 'text-white');
+                            btn.classList.add('bg-blue-100', 'text-blue-800');
+                        });
+                        // Add active class to the clicked button
+                        event.target.classList.remove('bg-blue-100', 'text-blue-800');
+                        event.target.classList.add('bg-blue-500', 'text-white');
+                        renderRVCards(); // Re-render cards based on new filter
+                    }
+                });
+            });
+
+
+            // SECTION 4: DATA MANAGEMENT (LOCAL STORAGE / INDEXEDDB)
+            // This section will handle saving and loading data. (Placeholder for IndexedDB)
+
+            // Placeholder for IndexedDB setup and operations
+            const DB_NAME = 'MyRVsDB';
+            const DB_VERSION = 1;
+            const RV_STORE_NAME = 'rvs';
+            const SETTINGS_STORE_NAME = 'settings';
+
+            function openIndexedDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                    request.onupgradeneeded = (event) => {
+                        const database = event.target.result;
+                        if (!database.objectStoreNames.contains(RV_STORE_NAME)) {
+                            database.createObjectStore(RV_STORE_NAME, { keyPath: 'id' });
+                        }
+                        if (!database.objectStoreNames.contains(SETTINGS_STORE_NAME)) {
+                            database.createObjectStore(SETTINGS_STORE_NAME, { keyPath: 'key' });
+                        }
+                    };
+
+                    request.onsuccess = (event) => {
+                        db = event.target.result; // Assign to global db here
+                        resolve(db); // Resolve the promise with the db instance
+                    };
+
+                    request.onerror = (event) => {
+                        console.error('IndexedDB error:', event.target.errorCode);
+                        reject(event.target.errorCode);
+                    };
+                });
+            }
+
+            async function saveRV(rv) {
+                showLoading();
+                return new Promise((resolve, reject) => {
+                    if (!db) { // Ensure db is available
+                        console.error('IndexedDB not initialized in saveRV.');
+                        hideLoading();
+                        reject(new Error('IndexedDB not initialized.'));
+                        return;
+                    }
+                    const transaction = db.transaction([RV_STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(RV_STORE_NAME);
+                    const request = store.put(rv);
+
+                    request.onsuccess = () => { resolve(); };
+                    request.onerror = (event) => { reject(event.target.errorCode); };
+
+                    transaction.oncomplete = () => { console.log('RV saved:', rv); showSaveSuccess(); hideLoading(); };
+                    transaction.onerror = (event) => { console.error('Transaction error saving RV:', event.target.errorCode); hideLoading(); reject(event.target.errorCode); };
+                });
+            }
+
+            async function getRVs() {
+                showLoading();
+                return new Promise((resolve, reject) => {
+                    if (!db) { // Ensure db is available
+                        console.error('IndexedDB not initialized in getRVs.');
+                        hideLoading();
+                        resolve([]); // Resolve with empty array if DB not ready
+                        return;
+                    }
+                    const transaction = db.transaction([RV_STORE_NAME], 'readonly');
+                    const store = transaction.objectStore(RV_STORE_NAME);
+                    const request = store.getAll();
+
+                    request.onsuccess = (event) => {
+                        resolve(event.target.result); // Resolve with the array result
+                    };
+                    request.onerror = (event) => {
+                        console.error('Error getting RVs from store:', event.target.errorCode);
+                        reject(event.target.errorCode);
+                    };
+
+                    transaction.oncomplete = () => { hideLoading(); };
+                    transaction.onerror = (event) => { console.error('Transaction error getting RVs:', event.target.errorCode); hideLoading(); reject(event.target.errorCode); };
+                });
+            }
+
+            async function deleteRV(id) {
+                showLoading();
+                return new Promise((resolve, reject) => {
+                    if (!db) { // Ensure db is available
+                        console.error('IndexedDB not initialized in deleteRV.');
+                        hideLoading();
+                        reject(new Error('IndexedDB not initialized.'));
+                        return;
+                    }
+                    const transaction = db.transaction([RV_STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(RV_STORE_NAME);
+                    const request = store.delete(id);
+
+                    request.onsuccess = () => { resolve(); };
+                    request.onerror = (event) => { reject(event.target.errorCode); };
+
+                    transaction.oncomplete = () => { console.log('RV deleted:', id); hideLoading(); };
+                    transaction.onerror = (event) => { console.error('Transaction error deleting RV:', event.target.errorCode); hideLoading(); reject(event.target.errorCode); };
+                });
+            }
+
+            async function saveSetting(key, value) {
+                showLoading();
+                return new Promise((resolve, reject) => {
+                    if (!db) { // Ensure db is available
+                        console.error('IndexedDB not initialized in saveSetting.');
+                        hideLoading();
+                        reject(new Error('IndexedDB not initialized.'));
+                        return;
+                    }
+                    const transaction = db.transaction([SETTINGS_STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(SETTINGS_STORE_NAME);
+                    const request = store.put({ key: key, value: value });
+
+                    request.onsuccess = () => { resolve(); };
+                    request.onerror = (event) => { reject(event.target.errorCode); };
+
+                    transaction.oncomplete = () => { console.log('Setting saved:', key, value); showSaveSuccess(); hideLoading(); };
+                    transaction.onerror = (event) => { console.error('Transaction error saving setting:', event.target.errorCode); hideLoading(); reject(event.target.errorCode); };
+                });
+            }
+
+            async function getSetting(key) {
+                return new Promise((resolve, reject) => {
+                    if (!db) { // Ensure db is available
+                        console.error('IndexedDB not initialized in getSetting.');
+                        resolve(null); // Resolve with null if DB not ready
+                        return;
+                    }
+                    const transaction = db.transaction([SETTINGS_STORE_NAME], 'readonly');
+                    const store = transaction.objectStore(SETTINGS_STORE_NAME);
+                    const request = store.get(key);
+
+                    request.onsuccess = (event) => { resolve(event.target.result ? event.target.result.value : null); };
+                    request.onerror = (event) => { reject(event.target.errorCode); };
+
+                    transaction.oncomplete = () => {}; // No specific action needed on complete for read
+                    transaction.onerror = (event) => { console.error('Transaction error getting setting:', event.target.errorCode); reject(event.target.errorCode); };
+                });
+            }
+
+            // SECTION 5: RV DATA HANDLING & RENDERING (CARDS VIEW)
+            // Functions to manage RV data, including loading, sorting, filtering, and rendering cards.
+
+            async function loadRVs() {
+                rvData = (await getRVs()) || []; // Ensure rvData is always an array
+                renderRVCards();
+                populateFilterOptions(); // Populate filters after loading RVs
+                checkFirstTimeUse(); // Check after loading RVs and settings
+            }
+
+            function renderRVCards() {
+                // Defensive check: Ensure rvData is an array before spreading
+                if (!Array.isArray(rvData)) {
+                    console.error('rvData is not an array when renderRVCards is called:', rvData);
+                    rvData = []; // Reset to an empty array to prevent further errors
+                }
+                let filteredRVs = [...rvData]; // Create a shallow copy to avoid modifying original
+                
+                // Apply Search Filter
+                const searchTerm = document.getElementById('search-input').value.toLowerCase();
+                if (searchTerm) {
+                    filteredRVs = filteredRVs.filter(rv =>
+                        (rv.firstName && rv.firstName.toLowerCase().includes(searchTerm)) ||
+                        (rv.lastName && rv.lastName.toLowerCase().includes(searchTerm)) ||
+                        (rv.addressNumber && rv.addressNumber.toLowerCase().includes(searchTerm)) ||
+                        (rv.streetName && rv.streetName.toLowerCase().includes(searchTerm)) ||
+                        (rv.phoneCell && rv.phoneCell.toLowerCase().includes(searchTerm)) ||
+                        (rv.phoneHome && rv.phoneHome.toLowerCase().includes(searchTerm)) ||
+                        (rv.phoneWork && rv.phoneWork.toLowerCase().includes(searchTerm)) ||
+                        (rv.areaName && rv.areaName.toLowerCase().includes(searchTerm)) ||
+                        (rv.contactLog && rv.contactLog.some(log => log.note && log.note.toLowerCase().includes(searchTerm)))
+                    );
+                }
+
+                // Apply Area Filter
+                const activeFilterBtn = document.querySelector('.filter-btn.bg-blue-500');
+                let activeFilter = 'all-areas'; // Default
+                if (activeFilterBtn) {
+                    activeFilter = activeFilterBtn.dataset.filter;
+                }
+
+                if (activeFilter && activeFilter !== 'all-areas') {
+                    filteredRVs = filteredRVs.filter(rv => {
+                        const rvArea = (rv.areaName || 'No Area').toLowerCase();
+                        const filterArea = activeFilter.toLowerCase();
+                        return rvArea === filterArea;
+                    });
+                }
+
+
+                // Apply Sorting
+                const sortOrder = document.querySelector('input[name="sort-order"]:checked').value;
+                filteredRVs.sort((a, b) => {
+                    const dateA = a.contactLog && a.contactLog.length > 0 ? Math.max(...a.contactLog.map(log => log.timestamp)) : 0;
+                    const dateB = b.contactLog && b.contactLog.length > 0 ? Math.max(...b.contactLog.map(log => log.timestamp)) : 0;
+
+                    if (sortOrder === 'oldest-to-newest') {
+                        return dateA - dateB;
+                    } else {
+                        return dateB - dateA;
+                    }
+                });
+
+                rvCardsContainer.innerHTML = ''; // Clear existing cards
+
+                if (filteredRVs.length === 0) {
+                    noRvsMessage.classList.remove('hidden');
+                } else {
+                    noRvsMessage.classList.add('hidden');
+                    filteredRVs.forEach(rv => {
+                        const card = createRVCard(rv);
+                        rvCardsContainer.appendChild(card);
+                    });
+                }
+            }
+
+            function createRVCard(rv) {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'bg-white p-4 rounded-lg shadow-md flex items-center justify-between border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow duration-200';
+                cardDiv.dataset.rvId = rv.id; // Store RV ID on the card
+
+                // Calculate days since last contacted
+                let daysAgoText = 'Never contacted';
+                let daysAgoClass = 'text-gray-500';
+                if (rv.contactLog && rv.contactLog.length > 0) {
+                    // Find the latest contact timestamp
+                    const latestContactTimestamp = Math.max(...rv.contactLog.map(log => log.timestamp));
+                    const latestContactDate = new Date(latestContactTimestamp);
+                    const today = new Date();
+                    // Set both dates to start of day to avoid time differences affecting day count
+                    latestContactDate.setHours(0, 0, 0, 0);
+                    today.setHours(0, 0, 0, 0);
+
+                    const diffTime = Math.abs(today.getTime() - latestContactDate.getTime());
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    daysAgoText = `${diffDays} days ago`;
+                    if (diffDays > 14) {
+                        daysAgoClass = 'text-red-500 font-bold';
+                    }
+                }
+
+                cardDiv.innerHTML = `
+                    <div class="flex-1 pr-4">
+                        <h3 class="text-lg font-semibold text-gray-800">${rv.firstName || ''} ${rv.lastName || ''}</h3>
+                        <p class="text-sm text-gray-600">${rv.addressNumber || ''} ${rv.streetName || ''}</p>
+                        <p class="text-sm ${daysAgoClass} mt-1">Last Contacted: <span class="font-medium">${daysAgoText}</span></p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <button class="delete-rv-button bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-3 rounded-full shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
+                            Delete
+                        </button>
+                        <p class="text-xs text-gray-500 mt-2">Area: ${rv.areaName || 'No Area'}</p>
+                    </div>
+                `;
+
+                // Add event listener for clicking the card to edit
+                cardDiv.addEventListener('click', (event) => {
+                    // Check if the click target is the delete button
+                    if (event.target.classList.contains('delete-rv-button')) {
+                        return; // Let the delete button handler take over
+                    }
+                    editRV(rv.id);
+                });
+
+                // Add event listener for the delete button on the card
+                cardDiv.querySelector('.delete-rv-button').addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent card click event from firing
+                    showConfirmation('Are you sure you want to delete this RV?', async (action) => {
+                        if (action === 'confirm') {
+                            await deleteRV(rv.id);
+                            loadRVs(); // Reload cards after deletion
+                        }
+                    });
+                });
+
+                return cardDiv;
+            }
+
+            // Populates filter options based on unique area names from RV data
+            function populateFilterOptions() {
+                const userDefinedFiltersDiv = filterOptions.querySelector('.flex.flex-wrap.gap-2');
+                // Clear existing user-defined filters, keeping only the first two permanent ones
+                while (userDefinedFiltersDiv.children.length > 2) {
+                    userDefinedFiltersDiv.removeChild(userDefinedFiltersDiv.lastChild);
+                }
+
+                const uniqueAreas = new Set();
+                rvData.forEach(rv => {
+                    if (rv.areaName && rv.areaName !== 'No Area') {
+                        uniqueAreas.add(rv.areaName);
+                    }
+                });
+
+                const sortedAreas = Array.from(uniqueAreas).sort((a, b) => a.localeCompare(b));
+
+                sortedAreas.forEach(area => {
+                    const button = document.createElement('button');
+                    button.className = 'filter-btn bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75';
+                    button.dataset.filter = area;
+                    button.textContent = area;
+                    userDefinedFiltersDiv.appendChild(button);
+                });
+
+                // Ensure "All Areas" is active by default if no other filter is selected
+                const allAreasBtn = userDefinedFiltersDiv.querySelector('[data-filter="all-areas"]');
+                if (allAreasBtn && !document.querySelector('.filter-btn.bg-blue-500')) {
+                    allAreasBtn.classList.remove('bg-blue-100', 'text-blue-800');
+                    allAreasBtn.classList.add('bg-blue-500', 'text-white');
+                }
+            }
+
+
+            async function editRV(id) {
+                if (isDirty) {
+                    showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                        if (action === 'save') {
+                            await saveCurrentRVForm();
+                            populateRVForm(id);
+                            showView('form-view');
+                            setupFormViewButtons(false); // false for editing existing RV
+                        } else if (action === 'discard') {
+                            isDirty = false; // Discard changes
+                            populateRVForm(id);
+                            showView('form-view');
+                            isDirty = false; // Form is clean after populating
+                            setupFormViewButtons(false); // false for editing existing RV
+                        } else {
+                            // Cancel - stay on current form
+                        }
+                    }, true); // Pass true to indicate it's an unsaved changes prompt
+                } else {
+                    populateRVForm(id);
+                    showView('form-view');
+                    setupFormViewButtons(false); // false for editing existing RV
+                }
+            }
+
+            function populateRVForm(id) {
+                const rv = rvData.find(r => r.id === id);
+                if (!rv) {
+                    console.error('RV not found for ID:', id);
+                    return;
+                }
+
+                currentRVId = id;
+                rvForm.reset(); // Clear form first
+                isDirty = false; // Form is clean after populating
+
+                document.getElementById('first-name').value = rv.firstName || '';
+                document.getElementById('last-name').value = rv.lastName || '';
+                document.getElementById('address-number').value = rv.addressNumber || '';
+                document.getElementById('street-name').value = rv.streetName || '';
+                document.getElementById('phone-cell').value = rv.phoneCell || '';
+                document.getElementById('phone-home').value = rv.phoneHome || '';
+                document.getElementById('phone-work').value = rv.phoneWork || '';
+                document.getElementById('latitude').value = rv.latitude || '';
+                document.getElementById('longitude').value = rv.longitude || '';
+                document.getElementById('area-name').value = rv.areaName || 'No Area';
+
+                // Populate contact log
+                contactLogContainer.innerHTML = ''; // Clear existing log entries
+                if (rv.contactLog && rv.contactLog.length > 0) {
+                    // Sort contact log by timestamp (oldest first for display)
+                    rv.contactLog.sort((a, b) => a.timestamp - b.timestamp);
+                    rv.contactLog.forEach(log => {
+                        const date = new Date(log.timestamp);
+                        addContactLogEntry(date, log.note, log.id); // Pass existing log ID
+                    });
+                    addRvContactButton.disabled = false; // Enable add button if there's existing data
+                } else {
+                    addContactLogEntry(new Date(), ''); // Add a default first contact entry if none exist
+                    addRvContactButton.disabled = true; // Keep disabled until first save
+                }
+            }
+
+            // SECTION 6: FORM VIEW FUNCTIONS
+            // Functions related to the Add/Edit RV form, including saving, clearing, and contact log management.
+
+            function generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            function formatPhoneNumber(event) {
+                let input = event.target.value.replace(/\D/g, ''); // Remove non-digits
+                let formattedInput = '';
+
+                if (input.length > 0) {
+                    formattedInput = '(' + input.substring(0, 3);
+                    if (input.length >= 4) {
+                        formattedInput += ') ' + input.substring(3, 6);
+                    }
+                    if (input.length >= 7) {
+                        formattedInput += '-' + input.substring(6, 10);
+                    }
+                }
+                event.target.value = formattedInput;
+            }
+
+            function addContactLogEntry(date, note, logId = generateUUID()) {
+                const dateString = date.toISOString().split('T')[0];
+                const timeString = date.toTimeString().split(' ')[0].substring(0, 5);
+
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'contact-entry border-b border-gray-200 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0';
+                entryDiv.dataset.logId = logId; // Store log ID
+
+                entryDiv.innerHTML = `
+                    <div class="flex justify-end mb-2">
+                        <button type="button" class="remove-contact-entry bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-1 px-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-75">
+                            Remove
+                        </button>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Contact Date</label>
+                        <input type="date" value="${dateString}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 contact-date-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Time</label>
+                        <input type="time" value="${timeString}" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 contact-time-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Note</label>
+                        <textarea rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 contact-note-input"></textarea>
+                    </div>
+                `;
+                contactLogContainer.insertBefore(entryDiv, addRvContactButton);
+
+                // Add event listener for removing a contact entry
+                entryDiv.querySelector('.remove-contact-entry').addEventListener('click', () => {
+                    entryDiv.remove();
+                    isDirty = true;
+                });
+
+                // Add event listeners for input changes within the new log entry
+                entryDiv.querySelectorAll('input, textarea').forEach(input => {
+                    input.addEventListener('input', () => {
+                        isDirty = true;
+                    });
+                });
+            }
+
+            async function saveCurrentRVForm() {
+                const formData = new FormData(rvForm);
+                const rv = {};
+
+                // Get form field values
+                rv.id = currentRVId || generateUUID(); // Use existing ID or generate new
+                rv.firstName = formData.get('firstName') || '';
+                rv.lastName = formData.get('lastName') || '';
+                rv.addressNumber = formData.get('addressNumber') || '';
+                rv.streetName = formData.get('streetName') || '';
+                rv.phoneCell = formData.get('phoneCell') || '';
+                rv.phoneHome = formData.get('phoneHome') || '';
+                rv.phoneWork = formData.get('phoneWork') || '';
+                rv.latitude = formData.get('latitude') || '';
+                rv.longitude = formData.get('longitude') || '';
+                rv.areaName = formData.get('areaName') || 'No Area';
+
+                // Get contact log entries
+                rv.contactLog = [];
+                document.querySelectorAll('.contact-entry').forEach(entryDiv => {
+                    const logId = entryDiv.dataset.logId || generateUUID(); // Use existing log ID or generate new
+                    const dateInput = entryDiv.querySelector('.contact-date-input').value;
+                    const timeInput = entryDiv.querySelector('.contact-time-input').value;
+                    const noteInput = entryDiv.querySelector('.contact-note-input').value;
+
+                    if (dateInput && timeInput) {
+                        // Concatenate date and time to form a valid ISO 8601 string part
+                        const dateTimeString = `${dateInput}T${timeInput}`;
+                        const timestamp = new Date(dateTimeString).getTime();
+                        // Only push if timestamp is a valid number (i.e., date parsing was successful)
+                        if (!isNaN(timestamp)) {
+                            rv.contactLog.push({ id: logId, timestamp: timestamp, note: noteInput });
+                        } else {
+                            console.warn('Invalid date/time input for contact log entry:', dateInput, timeInput);
+                        }
+                    }
+                });
+
+                // Sort contact log by timestamp before saving (oldest first)
+                rv.contactLog.sort((a, b) => a.timestamp - b.timestamp);
+
+                await saveRV(rv);
+                isDirty = false;
+                currentRVId = rv.id; // Update currentRVId in case it was a new entry
+                addRvContactButton.disabled = false; // Enable add contact button after initial save
+                loadRVs(); // Reload cards to reflect changes
+                return rv.id; // Return the ID of the saved RV
+            }
+
+            function setupFormViewButtons(isNewEntry) {
+                // Remove any existing form nav buttons to prevent duplicates
+                const existingFormNav = document.getElementById('form-view-nav-buttons');
+                if (existingFormNav) {
+                    existingFormNav.remove();
+                }
+
+                const formNavDiv = document.createElement('nav');
+                formNavDiv.id = 'form-view-nav-buttons';
+                formNavDiv.className = 'flex justify-around items-center mb-4 space-x-2 flex-wrap'; // Added flex-wrap for responsiveness
+                
+                // Add buttons to the formNavDiv
+                formNavDiv.innerHTML = `
+                    <button id="form-nav-prev" class="flex-1 min-w-[70px] bg-blue-100 text-blue-800 text-sm font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        &lt;
+                    </button>
+                    <button id="form-save" class="flex-1 min-w-[70px] bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        Save
+                    </button>
+                    <button id="form-save-new" class="flex-1 min-w-[70px] bg-blue-100 text-blue-800 text-sm font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        Save & New
+                    </button>
+                    <button id="form-save-close" class="flex-1 min-w-[70px] bg-blue-100 text-blue-800 text-sm font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        Save & Close
+                    </button>
+                    <button id="form-home" class="flex-1 min-w-[70px] bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        Home
+                    </button>
+                    <button id="form-map" class="flex-1 min-w-[70px] bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        Map
+                    </button>
+                    <button id="form-cancel" class="flex-1 min-w-[70px] bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        Cancel
+                    </button>
+                    <button id="form-nav-next" class="flex-1 min-w-[70px] bg-blue-100 text-blue-800 text-sm font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 mb-2 sm:mb-0">
+                        &gt;
+                    </button>
+                `;
+
+                // Insert these buttons right after the subtitle in the header
+                viewSubtitle.parentNode.insertBefore(formNavDiv, viewSubtitle.nextSibling);
+
+                // Hide the main nav buttons when form view is active
+                addRvButton.classList.add('hidden');
+                mapButton.classList.add('hidden');
+                sortOptions.classList.add('hidden');
+                filterOptions.classList.add('hidden');
+                searchBar.classList.add('hidden');
+
+                // Disable prev/next for new entries
+                if (isNewEntry) {
+                    document.getElementById('form-nav-prev').disabled = true;
+                    document.getElementById('form-nav-next').disabled = true;
+                } else {
+                    document.getElementById('form-nav-prev').disabled = false;
+                    document.getElementById('form-nav-next').disabled = false;
+                }
+
+                // Attach event listeners to the new buttons
+                document.getElementById('form-save').addEventListener('click', async () => {
+                    await saveCurrentRVForm();
+                });
+
+                document.getElementById('form-save-new').addEventListener('click', async () => {
+                    await saveCurrentRVForm();
+                    currentRVId = null;
+                    rvForm.reset();
+                    contactLogContainer.innerHTML = '';
+                    addContactLogEntry(new Date(), '');
+                    addRvContactButton.disabled = true;
+                    isDirty = false;
+                    setupFormViewButtons(true); // Reset for new entry
+                });
+
+                document.getElementById('form-save-close').addEventListener('click', async () => {
+                    if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                showView(previousView); // Go back to the view it came from
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                showView(previousView); // Go back to the view it came from
+                            }
+                            // If action is 'cancel', stay on form
+                        }, true);
+                    } else {
+                        showView(previousView); // Go back to the view it came from
+                    }
+                });
+
+                document.getElementById('form-home').addEventListener('click', async () => {
+                    if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                showView('cards-view');
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                showView('cards-view');
+                            }
+                        }, true);
+                    } else {
+                        showView('cards-view');
+                    }
+                });
+
+                document.getElementById('form-map').addEventListener('click', async () => {
+                    if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                showView('map-view');
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                showView('map-view');
+                            }
+                        }, true);
+                    } else {
+                        showView('map-view');
+                    }
+                });
+
+                document.getElementById('form-cancel').addEventListener('click', () => {
+                    showConfirmation('Are you sure you want to discard unsaved changes?', async (action) => {
+                        if (action === 'confirm') {
+                            isDirty = false; // Discard changes
+                            showView(previousView); // Go back to the view it came from
+                        }
+                    });
+                });
+
+                document.getElementById('form-nav-prev').addEventListener('click', async () => {
+                    if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                navigateRV('prev');
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                navigateRV('prev');
+                            }
+                        }, true);
+                    } else {
+                        navigateRV('prev');
+                    }
+                });
+
+                document.getElementById('form-nav-next').addEventListener('click', async () => {
+                    if (isDirty) {
+                        showConfirmation('You have unsaved changes. Do you want to Save, Discard changes, or Cancel and stay on the form?', async (action) => {
+                            if (action === 'save') {
+                                await saveCurrentRVForm();
+                                navigateRV('next');
+                            } else if (action === 'discard') {
+                                isDirty = false;
+                                navigateRV('next');
+                            }
+                        }, true);
+                    } else {
+                        navigateRV('next');
+                    }
+                });
+            }
+
+            function navigateRV(direction) {
+                const currentIndex = rvData.findIndex(rv => rv.id === currentRVId);
+                let nextIndex;
+
+                if (direction === 'prev') {
+                    nextIndex = currentIndex - 1;
+                    if (nextIndex < 0) {
+                        showConfirmation('No previous RV found.', () => {}, false, true); // Info only, no confirm/cancel
+                        return;
+                    }
+                } else { // 'next'
+                    nextIndex = currentIndex + 1;
+                    if (nextIndex >= rvData.length) {
+                        showConfirmation('No next RV found.', () => {}, false, true); // Info only, no confirm/cancel
+                        return;
+                    }
+                }
+                editRV(rvData[nextIndex].id);
+            }
+
+
+            // SECTION 7: SETTINGS VIEW FUNCTIONS
+            // Functions to manage application settings.
+            async function loadSettings() {
+                const defaultCity = await getSetting('defaultCity');
+                const defaultState = await getSetting('defaultState');
+                const defaultArea = await getSetting('defaultArea');
+                const defaultLatitude = await getSetting('defaultLatitude');
+                const defaultLongitude = await getSetting('defaultLongitude');
+
+                document.getElementById('default-city').value = defaultCity || '';
+                document.getElementById('default-state').value = defaultState || '';
+                document.getElementById('default-area').value = defaultArea || 'No Area';
+                document.getElementById('default-latitude').value = defaultLatitude || '';
+                document.getElementById('default-longitude').value = defaultLongitude || '';
+
+                // Check for first-time use after settings are loaded
+                checkFirstTimeUse();
+            }
+
+            async function saveSettings() {
+                const city = document.getElementById('default-city').value;
+                const state = document.getElementById('default-state').value.toUpperCase(); // Ensure uppercase
+                const area = document.getElementById('default-area').value || 'No Area';
+                const latitude = document.getElementById('default-latitude').value;
+                const longitude = document.getElementById('default-longitude').value;
+
+                // Basic validation for settings
+                if ((!city || !state) && (!latitude || !longitude)) {
+                    showConfirmation('Please enter a Default City and State OR Default Latitude and Longitude.', () => {}, false, true); // Info only
+                    return;
+                }
+                if (state && state.length !== 2) {
+                    showConfirmation('State must be exactly two capital letters.', () => {}, false, true); // Info only
+                    return;
+                }
+
+                await saveSetting('defaultCity', city);
+                await saveSetting('defaultState', state);
+                await saveSetting('defaultArea', area);
+                await saveSetting('defaultLatitude', latitude);
+                await saveSetting('defaultLongitude', longitude);
+
+                // After saving settings, if it was first-time use, navigate to cards view
+                // This is handled by checkFirstTimeUse() which runs after loadSettings and loadRVs
+                showSaveSuccess();
+            }
+
+            async function checkFirstTimeUse() {
+                const city = await getSetting('defaultCity');
+                const state = await getSetting('defaultState');
+                const latitude = await getSetting('defaultLatitude');
+                const longitude = await getSetting('defaultLongitude');
+
+                const hasRequiredSettings = (city && state) || (latitude && longitude);
+                const hasRVs = rvData.length > 0;
+
+                if (!hasRequiredSettings && !hasRVs) {
+                    // First time use: no settings and no RVs
+                    showView('settings-view');
+                    // Hide the main nav buttons in settings view
+                    document.querySelector('header > nav').classList.add('hidden');
+                    // Ensure the form-view specific buttons are also hidden if they somehow appear
+                    const formNavButtons = document.getElementById('form-view-nav-buttons');
+                    if (formNavButtons) {
+                        formNavButtons.classList.add('hidden');
+                    }
+                } else if (currentView === 'settings-view' && hasRequiredSettings) {
+                    // If we were in settings view for first time setup and now settings are saved
+                    showView('cards-view');
+                }
+            }
+
+
+            // SECTION 8: MODAL & POP-UP FUNCTIONS
+            // Functions to display confirmation modals, info pop-ups, and loading indicators.
+
+            /**
+             * Displays a confirmation modal.
+             * @param {string} message The message to display in the modal.
+             * @param {function} callback Function to call with the action ('confirm', 'cancel', 'save', 'discard').
+             * @param {boolean} isUnsavedChangesPrompt If true, shows Save/Discard/Cancel options. Otherwise, shows Confirm/Cancel.
+             * @param {boolean} isInfoOnly If true, shows only an info message with an OK button.
+             */
+            function showConfirmation(message, callback, isUnsavedChangesPrompt = false, isInfoOnly = false) {
+                confirmationMessage.textContent = message;
+                modalConfirmButton.classList.remove('hidden', 'bg-red-500', 'bg-blue-500');
+                modalCancelButton.classList.remove('hidden', 'bg-gray-200');
+                modalConfirmButton.textContent = 'Confirm';
+                modalCancelButton.textContent = 'Cancel';
+                modalConfirmButton.className = 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75';
+                modalCancelButton.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75';
+
+                // Clear previous listeners
+                modalConfirmButton.onclick = null;
+                modalCancelButton.onclick = null;
+
+                if (isInfoOnly) {
+                    confirmationMessage.textContent = message;
+                    modalConfirmButton.textContent = 'OK';
+                    modalConfirmButton.classList.remove('bg-red-500');
+                    modalConfirmButton.classList.add('bg-blue-500'); // Use blue for info OK
+                    modalCancelButton.classList.add('hidden'); // Hide cancel button for info only
+                    modalConfirmButton.onclick = () => {
+                        confirmationModal.classList.add('hidden');
+                        callback('ok');
+                    };
+                } else if (isUnsavedChangesPrompt) {
+                    confirmationMessage.innerHTML = `You have unsaved changes. Do you want to <span class="font-bold">Save</span>, <span class="font-bold">Discard</span> changes, or <span class="font-bold">Cancel</span> and stay on the form?`;
+
+                    // Create new buttons for the unsaved changes prompt
+                    const saveBtn = document.createElement('button');
+                    saveBtn.textContent = 'Save';
+                    saveBtn.className = 'bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75';
+                    saveBtn.onclick = () => {
+                        confirmationModal.classList.add('hidden');
+                        callback('save');
+                    };
+
+                    const discardBtn = document.createElement('button');
+                    discardBtn.textContent = 'Discard';
+                    discardBtn.className = 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75';
+                    discardBtn.onclick = () => {
+                        confirmationModal.classList.add('hidden');
+                        callback('discard');
+                    };
+
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.textContent = 'Cancel';
+                    cancelBtn.className = 'bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75';
+                    cancelBtn.onclick = () => {
+                        confirmationModal.classList.add('hidden');
+                        callback('cancel');
+                    };
+
+                    // Clear existing buttons and add new ones
+                    const buttonContainer = confirmationModal.querySelector('.flex.justify-end');
+                    buttonContainer.innerHTML = '';
+                    buttonContainer.appendChild(saveBtn);
+                    buttonContainer.appendChild(discardBtn);
+                    buttonContainer.appendChild(cancelBtn);
+
+                } else {
+                    // Standard confirm/cancel
+                    modalConfirmButton.textContent = 'Confirm';
+                    modalConfirmButton.onclick = () => {
+                        confirmationModal.classList.add('hidden');
+                        callback('confirm');
+                    };
+                    modalCancelButton.textContent = 'Cancel';
+                    modalCancelButton.onclick = () => {
+                        confirmationModal.classList.add('hidden');
+                        callback('cancel');
+                    };
+                }
+
+                confirmationModal.classList.remove('hidden');
+            }
+
+
+            function showLoading() {
+                loadingIndicator.classList.remove('hidden');
+            }
+
+            function hideLoading() {
+                loadingIndicator.classList.add('hidden');
+            }
+
+            function showSaveSuccess() {
+                saveSuccessMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    saveSuccessMessage.classList.add('hidden');
+                }, 2000); // Hide after 2 seconds
+            }
+
+            // SECTION 9: MAP INTEGRATION (Placeholder)
+            // This section will contain functions for map initialization and pin management.
+            // Map integration will require a mapping library (e.g., Leaflet, Google Maps API).
+            // For now, this is a placeholder.
+            
+            function initializeMap() {
+                // Placeholder for map initialization
+                console.log('Map initialization would go here.');
+                // Example:
+                // if (typeof L !== 'undefined') { // Check if Leaflet is loaded
+                //     const map = L.map('map-container').setView([51.505, -0.09], 13);
+                //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                //     }).addTo(map);
+                // }
+            }
+
+            // Call map initialization when map view is shown (or once globally if preferred)
+            // For now, we'll just log a message.
+            // You might want to call initializeMap() inside showView('map-view') later.
+
+        </script>
+    </body>
+    </html>
