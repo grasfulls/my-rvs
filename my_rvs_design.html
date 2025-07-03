@@ -180,6 +180,47 @@
         margin: 0 5px;
         color: #343a40; /* Gear icon color */
       }
+      .search-bar-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding: 0 10px; /* Add some padding for visual spacing */
+      }
+      .search-bar-container input[type="text"] {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .card-container-examples {
+        padding: 10px;
+        border: 1px dashed #ccc; /* Visual indicator for example cards */
+        margin-top: 15px;
+        margin-bottom: 20px;
+        background-color: #f0f0f0;
+      }
+      .tooltip-icon {
+        display: inline-block;
+        margin-left: 5px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        font-size: 0.9em;
+        line-height: 18px;
+        cursor: help;
+      }
+      .first-time-use-message {
+        background-color: #fff3cd; /* Light yellow for alert */
+        border: 1px solid #ffeeba;
+        color: #856404;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -390,6 +431,7 @@
     </ul>
 
     ---
+
     <h3>cardsView (Home Page)</h3>
     <ul>
       <li>This view displays RVs as contact cards.</li>
@@ -446,6 +488,15 @@
               </div>
             </div>
           </li>
+          <div class="search-bar-container">
+            <input
+              type="text"
+              id="rvSearch"
+              name="rvSearch"
+              placeholder="Search RVs by name, address, or notes..."
+            />
+            <button class="button secondary">Search</button>
+          </div>
           <li>
             <div class="header-line">
               <span>
@@ -464,6 +515,46 @@
             initial entry to “Oldest to Newest” and “All Areas”, after this, the
             view will sort to last user-defined
           </li>
+          <div class="card-container-examples">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title"
+                  >RV Name 1 - 123 Main St, Anytown, CA</span
+                >
+                <button class="card-delete-button">Delete</button>
+              </div>
+              <div class="card-details">
+                Last contacted: 2025-06-25 (8 days ago)
+              </div>
+              <div class="card-area">Area: Coastal Areas</div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title"
+                  >RV Name 2 - 456 Oak Ave, Othercity, CA</span
+                >
+                <button class="card-delete-button">Delete</button>
+              </div>
+              <div class="card-details">
+                Last contacted: 2025-06-10 (<span class="red-text"
+                  >23 days ago</span
+                >)
+              </div>
+              <div class="card-area">Area: Mountain View</div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title"
+                  >RV Name 3 - 789 Pine Ln, Anyville, WA</span
+                >
+                <button class="card-delete-button">Delete</button>
+              </div>
+              <div class="card-details">
+                Last contacted: 2025-07-01 (2 days ago)
+              </div>
+              <div class="card-area">Area: No Area</div>
+            </div>
+          </div>
           <li>Clicking a contact card will bring up the form for that card.</li>
           <li>
             <strong>Main Content:</strong> RV Contact Cards
@@ -649,46 +740,6 @@
               </li>
             </ul>
           </li>
-          <li>
-            <strong>Contact Log</strong> (at the bottom of the form):
-            <ul>
-              <li>
-                "First Contacted": Date/Time stamp field and a corresponding
-                Note field.
-                <ul>
-                  <li>
-                    Default: Date/Time defaults to the current date/time until
-                    the user changes it.
-                  </li>
-                </ul>
-              </li>
-              <li>
-                Date Picker: A date picker UI element (calendar icon) will be
-                provided for easy date selection.
-                <ul>
-                  <li>Note Field</li>
-                </ul>
-              </li>
-              <li>
-                Adding More Contacts: Once the initial contact is saved, a "+
-                Visit" button will become active at the bottom of the form.
-                Clicking it will add another Date/Time field (defaulting to
-                current) and a Note field, and a “Remove” button, below the
-                previous entry.
-                <ul>
-                  <li>
-                    Latest Contact: The date of the latest contact entry will be
-                    used to calculate "days since last contacted" for the
-                    cardsView.
-                  </li>
-                  <li>
-                    Visual Alert: If "days since last contacted" exceeds 14
-                    days, the display will turn red.
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
           <div class="form-fields-container">
             <div class="form-group">
               <label for="firstName">First Name:</label>
@@ -800,6 +851,46 @@
             </div>
           </div>
           <button class="button primary" id="addVisitButton">+ Visit</button>
+          <li>
+            <strong>Contact Log</strong> (at the bottom of the form):
+            <ul>
+              <li>
+                "First Contacted": Date/Time stamp field and a corresponding
+                Note field.
+                <ul>
+                  <li>
+                    Default: Date/Time defaults to the current date/time until
+                    the user changes it.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Date Picker: A date picker UI element (calendar icon) will be
+                provided for easy date selection.
+                <ul>
+                  <li>Note Field</li>
+                </ul>
+              </li>
+              <li>
+                Adding More Contacts: Once the initial contact is saved, a "+
+                Visit" button will become active at the bottom of the form.
+                Clicking it will add another Date/Time field (defaulting to
+                current) and a Note field, and a “Remove” button, below the
+                previous entry.
+                <ul>
+                  <li>
+                    Latest Contact: The date of the latest contact entry will be
+                    used to calculate "days since last contacted" for the
+                    cardsView.
+                  </li>
+                  <li>
+                    Visual Alert: If "days since last contacted" exceeds 14
+                    days, the display will turn red.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
           <li>
             <strong>Default Population:</strong> All default fields (including
             Date/Time) will populate before any "dirty" (changed) state
