@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My RVs Application Design Document</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        line-height: 1.6;
+        color: #333;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #0056b3;
+      }
+      h1 {
+        text-align: center;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      h2 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+        margin-top: 30px;
+      }
+      ul {
+        list-style-type: disc;
+        margin-left: 20px;
+      }
+      ul ul {
+        list-style-type: circle;
+        margin-left: 20px;
+      }
+      ul ul ul {
+        list-style-type: square;
+        margin-left: 20px;
+      }
+      .container {
+        margin-bottom: 15px;
+      }
+      .header-line {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .header-line.right-justified {
+        justify-content: space-between;
+      }
+      .header-line .title {
+        font-weight: bold;
+      }
+      .header-line .subtitle {
+        margin-left: 10px;
+      }
+      .header-line .icon {
+        margin-left: auto; /* Pushes the icon to the right */
+      }
+      .button {
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 5px;
+        font-size: 0.9em;
+        text-align: center;
+      }
+      .button.primary {
+        background-color: #007bff;
+        color: #ffffff;
+      }
+      .button.destructive {
+        background-color: #dc3545;
+        color: #ffffff;
+      }
+      .button.secondary {
+        background-color: #e0f2f7;
+        color: #343a40;
+      }
+      .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      .card-title {
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+      .card-delete-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      .card-details {
+        margin-bottom: 10px;
+      }
+      .card-area {
+        text-align: right;
+        font-size: 0.9em;
+        color: #555;
+      }
+      .red-text {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="tel"],
+      .form-group input[type="number"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .contact-log-entry {
+        border: 1px solid #eee;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+      }
+      .map-container {
+        border: 1px solid #ddd;
+        height: 400px; /* Placeholder for map */
+        background-color: #e6e6e6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #555;
+        font-size: 1.2em;
+        margin-top: 10px;
+      }
+      .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .radio-group {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      .icon-button {
+        background: none;
+        border: none;
+        font-size: 1.5em; /* Adjust as needed */
+        cursor: pointer;
+        padding: 0;
+        margin: 0 5px;
+        color: #343a40; /* Gear icon color */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>My RVs Application Design Document</h1>
+
+    <p>
+      This document outlines the comprehensive design, layout, user interface
+      (UI), user experience (UX) enhancements, and technical considerations for
+      the "My RVs" contact tracking application. This serves as our
+      collaborative blueprint for development of a smartphone app.
+    </p>
+
+    <h2>1) Core Application Principles</h2>
+    <ul>
+      <li class="container"><strong>Application Name:</strong> My RVs</li>
+      <li class="container">
+        <strong>Purpose:</strong> A contact tracker specifically designed for
+        RVs.
+      </li>
+      <li class="container">
+        <strong>Data Storage:</strong> All data will be stored offline, locally
+        on the device being used to enter the information.
+      </li>
+      <li class="container">
+        <strong>Device Compatibility:</strong> Primarily designed for
+        smartphones, with the ability to transfer data to a computer via cable,
+        so will require computer interface which may be developed separately.
+        Computer app must be active with prompt to ensure phone is plugged in,
+        then one button to push and one to pull changes.
+      </li>
+      <li class="container">
+        <strong>Development Environment:</strong> VS Code for programming,
+        GitHub for version control.
+      </li>
+      <li class="container">
+        <strong>Coding Standards:</strong> Buttons and icons no bigger than are
+        necessary. Logical and orderly code structure. CSS will have section
+        numbers and names for clarity and maintainability. Extend this concept
+        into .js and .html coding.
+      </li>
+      <li class="container">
+        <strong>Dependencies:</strong> All external links and libraries used
+        will be free.
+      </li>
+      <li class="container">
+        <strong>Global:</strong>
+        <ul>
+          <li>
+            All Headers are frozen horizontal centered lines, separate
+            containers may be used to make formatting easier.
+          </li>
+          <li>
+            1st line will be the title “My RVs – “, sub-title “page name, rt
+            justified Gear Icon (NOT ON SETTINGS PAGE) – when clicked goes to
+            settingsView
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    ---
+
+    <h2>2) Application Views:</h2>
+    <p>
+      The application will feature four primary views. Navigation will be
+      explicit, and no view will have a navigation button that navigates to
+      itself.
+    </p>
+
+    <h3>settingsView – Page Name = “Settings”</h3>
+    <ul>
+      <li>This view manages application default settings and initial setup.</li>
+      <li>
+        This will be the default home page when the application opens (after
+        initial setup).
+      </li>
+      <li>
+        <strong>Initial App Load:</strong> The very first time the application
+        is launched, it will open directly to settingsView to ensure initial
+        setup. Subsequently, it will open to cardsView (Home).
+      </li>
+      <li>
+        <strong>Header (Frozen)</strong>
+        <ul>
+          <li>
+            <div class="header-line">
+              <div class="title">My RVs –</div>
+              <div class="subtitle">Settings</div>
+            </div>
+          </li>
+          <li>
+            <div class="header-line right-justified">
+              <span>
+                <a href="#" class="button primary">+RV</a>
+                <a href="#" class="icon-button">&#127968;</a>
+                <a href="#" class="icon-button">&#127760;</a>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Settings Fields</strong>
+        <ul>
+          <li>
+            <strong>City</strong> (Default city for new RV, used for pins
+            centering on mapView.)
+            <ul>
+              <li>
+                Validation: Input will be forced to first letter each word
+                capitalized
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>State</strong> (Default state for new RVs)
+            <ul>
+              <li>
+                Validation: Input will be forced to two capital letters (e.g.,
+                "CA" for California). Automatic conversion to uppercase will
+                occur, and saving will be prevented if not exactly two letters.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>Area</strong> (Default area name for new RVs), will become
+            one of the user-defined areas for filtering. Default is “No Area”
+            <ul>
+              <li>
+                Validation: Input will be forced to first letter each word
+                capitalized
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>Latitude</strong> (Map centering override, default latitude
+            for new RVs).
+          </li>
+          <li>
+            <strong>Longitude</strong> (Map centering override, default
+            longitude for new RVs).
+          </li>
+        </ul>
+      </li>
+      <div class="form-group">
+        <label for="defaultCity">City (Default city for new RV):</label>
+        <input
+          type="text"
+          id="defaultCity"
+          name="defaultCity"
+          placeholder="e.g., San Diego"
+        />
+      </div>
+      <div class="form-group">
+        <label for="defaultState">State (Default state for new RVs):</label>
+        <input
+          type="text"
+          id="defaultState"
+          name="defaultState"
+          placeholder="e.g., CA"
+          maxlength="2"
+        />
+      </div>
+      <div class="form-group">
+        <label for="defaultArea">Area (Default area name for new RVs):</label>
+        <input
+          type="text"
+          id="defaultArea"
+          name="defaultArea"
+          placeholder="e.g., Coastal Areas"
+        />
+      </div>
+      <div class="form-group">
+        <label for="defaultLatitude">Latitude (Map centering override):</label>
+        <input
+          type="number"
+          id="defaultLatitude"
+          name="defaultLatitude"
+          step="any"
+          placeholder="e.g., 32.7157"
+        />
+      </div>
+      <div class="form-group">
+        <label for="defaultLongitude"
+          >Longitude (Map centering override):</label
+        >
+        <input
+          type="number"
+          id="defaultLongitude"
+          name="defaultLongitude"
+          step="any"
+          placeholder="e.g., -117.1611"
+        />
+      </div>
+      <p class="first-time-use-message">
+        <strong
+          >These will be default values for Return Visit information. The city
+          and state or latitude longitude must be entered before adding
+          contacts.</strong
+        >
+      </p>
+      <li>
+        <strong>First-Time Use Requirement:</strong> A prominent line will be
+        displayed: "These will be default values for Return Visit information.
+        The city and state or latitude longitude must be entered before adding
+        contacts."
+      </li>
+    </ul>
+
+    ---
+    <h3>cardsView (Home Page)</h3>
+    <ul>
+      <li>This view displays RVs as contact cards.</li>
+      <li>
+        <strong>Header (Frozen)</strong> – may have sub containers for the
+        following
+        <ul>
+          <li>
+            <div class="header-line right-justified">
+              <span
+                ><div class="title">My RVs –</div>
+                <div class="subtitle">Home</div></span
+              >
+              <a href="#" class="icon-button">&#9881;</a>
+            </div>
+          </li>
+          <li>
+            <div class="header-line">
+              <span><strong>Sort by:</strong></span>
+              <div class="radio-group">
+                <label
+                  ><input
+                    type="radio"
+                    name="sortCards"
+                    value="oldestNewest"
+                    checked
+                  />
+                  Oldest to Newest (default)</label
+                >
+                <label
+                  ><input type="radio" name="sortCards" value="newestOldest" />
+                  Newest to Oldest</label
+                >
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="header-line">
+              <span><strong>Filter:</strong></span>
+              <div class="filter-options">
+                <label
+                  ><input
+                    type="checkbox"
+                    name="filterArea"
+                    value="allAreas"
+                    checked
+                  />
+                  All Areas (default)</label
+                >
+                <label
+                  ><input type="checkbox" name="filterArea" value="noArea" /> No
+                  Areas</label
+                >
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="header-line">
+              <span>
+                <a href="#" class="button primary">+RV</a>
+                <a href="#" class="icon-button">&#127760;</a>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Cards container</strong>
+        <ul>
+          <li>
+            <strong>Behavior:</strong> RV contact cards will always sort upon
+            initial entry to “Oldest to Newest” and “All Areas”, after this, the
+            view will sort to last user-defined
+          </li>
+          <li>Clicking a contact card will bring up the form for that card.</li>
+          <li>
+            <strong>Main Content:</strong> RV Contact Cards
+            <ul>
+              <li>
+                <strong>Structure:</strong> Each contact will have a dedicated
+                card displaying:
+              </li>
+              <ol>
+                <li>Top Left: RV name and address.</li>
+                <li>
+                  Next left justified: Last contacted date and a calculated
+                  count of "days ago" from the current date.
+                  <ul>
+                    <li>
+                      Visual Alert: If "days ago" count is greater than 14, the
+                      number will turn red.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  Top Right Corner: "Delete" button.
+                  <ul>
+                    <li>
+                      Confirmation: Clicking "Delete" will prompt a confirmation
+                      dialog: "Are you sure?"
+                    </li>
+                  </ul>
+                </li>
+                <li>Bottom Right Corner: The associated "Area" name.</li>
+              </ol>
+              <li>
+                Interaction: Clicking anywhere on a RV card (excluding the
+                "Delete" button) will navigate to that specific RV's formView
+                for editing.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    ---
+
+    <h3>formView (Add/Edit RV)</h3>
+    <p>Used for creating new RV entries or modifying existing ones.</p>
+    <ul>
+      <li>
+        <div class="header-line right-justified">
+          <span
+            ><div class="title">My RVs –</div>
+            <div class="subtitle">Add/Edit RV</div></span
+          >
+          <a href="#" class="icon-button">&#9881;</a>
+        </div>
+      </li>
+      <li>
+        <div class="header-line">
+          <span><strong>Sort by:</strong></span>
+          <div class="radio-group">
+            <label
+              ><input
+                type="radio"
+                name="sortForm"
+                value="oldestNewest"
+                checked
+              />
+              Oldest to Newest</label
+            >
+            <label
+              ><input type="radio" name="sortForm" value="newestOldest" />
+              Newest to Oldest</label
+            >
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="header-line">
+          <span><strong>Filter:</strong></span>
+          <div class="filter-options">
+            <label
+              ><input
+                type="checkbox"
+                name="filterForm"
+                value="allAreas"
+                checked
+              />
+              All Areas</label
+            >
+            <label
+              ><input type="checkbox" name="filterForm" value="noArea" /> No
+              Areas</label
+            >
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="header-line right-justified">
+          <span>
+            <a href="#" class="icon-button">&lt;</a>
+            <a href="#" class="icon-button">&#127968;</a>
+            <a href="#" class="icon-button">&#127760;</a>
+            <a href="#" class="icon-button">&gt;</a>
+          </span>
+        </div>
+      </li>
+      <li>
+        <strong>Navigation & Command Buttons</strong>
+        <ul>
+          <li>
+            <a href="#" class="button primary">Save</a>: Saves current work on
+            the form and remains on the formView.
+          </li>
+          <li>
+            <a href="#" class="button primary">Save & New</a>: Saves the current
+            form and opens a new, blank formView for a new entry.
+          </li>
+          <li>
+            <a href="#" class="button secondary">Save & Close</a>: Saves the
+            current form and returns to the view from which formView was called
+            (either cardsView or mapView).
+          </li>
+          <li>
+            <a href="#" class="button secondary">Cancel</a>: Discards all
+            unsaved data on the form and returns to the view from which formView
+            was called.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Unsaved Changes Prompt:</strong> If changes have been made but
+        not saved, navigating away via Home, Map, Save & Close, <, or > will
+        trigger a confirmation dialog. The prompt will explicitly state: "You
+        have unsaved changes. Do you want to Save, Discard changes, or Cancel
+        and stay on the form?"
+        <ul>
+          <li>Save = save the form and navigate to what was clicked</li>
+          <li>
+            Discard = discard the changes and navigate to what was clicked
+          </li>
+          <li>Cancel = cancel the navigation and stay in the form</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Form Fields:</strong>
+        <ul>
+          <li>
+            <strong>Sizing:</strong> Fields will be sized dynamically to
+            accommodate data efficiently (e.g., First Name and Last Name fields
+            may appear on a single horizontal line).
+          </li>
+          <li>
+            <strong>Data Fields:</strong>
+            <ul>
+              <li>First Name</li>
+              <li>Last Name</li>
+              <li>Address Number</li>
+              <li>Street Name</li>
+              <li>Apartment #</li>
+              <li>
+                Phone (Cell): Auto-formats as typing (e.g., (XXX) XXX-XXXX).
+              </li>
+              <li>Phone (Home): Auto-formats as typing.</li>
+              <li>Phone (Work): Auto-formats as typing.</li>
+              <li>
+                Auto or manual fill: If possible, the application will explore
+                auto-filling Latitude/Longitude based on the entered address,
+                city, & state.
+                <ul>
+                  <li>
+                    Latitude: Will have a pop-up explanation detailing the
+                    simplest way to obtain it.
+                  </li>
+                  <li>
+                    Longitude: Will have a pop-up explanation detailing the
+                    simplest way to obtain it.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Area Name (User-defined, defaults to the areas in settings, else
+                “No Area” for new entries).
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>Contact Log</strong> (at the bottom of the form):
+            <ul>
+              <li>
+                "First Contacted": Date/Time stamp field and a corresponding
+                Note field.
+                <ul>
+                  <li>
+                    Default: Date/Time defaults to the current date/time until
+                    the user changes it.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Date Picker: A date picker UI element (calendar icon) will be
+                provided for easy date selection.
+                <ul>
+                  <li>Note Field</li>
+                </ul>
+              </li>
+              <li>
+                Adding More Contacts: Once the initial contact is saved, a "+
+                Visit" button will become active at the bottom of the form.
+                Clicking it will add another Date/Time field (defaulting to
+                current) and a Note field, and a “Remove” button, below the
+                previous entry.
+                <ul>
+                  <li>
+                    Latest Contact: The date of the latest contact entry will be
+                    used to calculate "days since last contacted" for the
+                    cardsView.
+                  </li>
+                  <li>
+                    Visual Alert: If "days since last contacted" exceeds 14
+                    days, the display will turn red.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <div class="form-fields-container">
+            <div class="form-group">
+              <label for="firstName">First Name:</label>
+              <input type="text" id="firstName" name="firstName" />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name:</label>
+              <input type="text" id="lastName" name="lastName" />
+            </div>
+            <div class="form-group">
+              <label for="addressNumber">Address Number:</label>
+              <input type="text" id="addressNumber" name="addressNumber" />
+            </div>
+            <div class="form-group">
+              <label for="streetName">Street Name:</label>
+              <input type="text" id="streetName" name="streetName" />
+            </div>
+            <div class="form-group">
+              <label for="apartmentNumber">Apartment #:</label>
+              <input type="text" id="apartmentNumber" name="apartmentNumber" />
+            </div>
+            <div class="form-group">
+              <label for="phoneCell">Phone (Cell):</label>
+              <input
+                type="tel"
+                id="phoneCell"
+                name="phoneCell"
+                placeholder="(XXX) XXX-XXXX"
+              />
+            </div>
+            <div class="form-group">
+              <label for="phoneHome">Phone (Home):</label>
+              <input
+                type="tel"
+                id="phoneHome"
+                name="phoneHome"
+                placeholder="(XXX) XXX-XXXX"
+              />
+            </div>
+            <div class="form-group">
+              <label for="phoneWork">Phone (Work):</label>
+              <input
+                type="tel"
+                id="phoneWork"
+                name="phoneWork"
+                placeholder="(XXX) XXX-XXXX"
+              />
+            </div>
+            <div class="form-group">
+              <label for="rvLatitude">Latitude:</label>
+              <input
+                type="number"
+                id="rvLatitude"
+                name="rvLatitude"
+                step="any"
+                placeholder="e.g., 32.7157"
+              />
+              <span
+                class="tooltip-icon"
+                title="Simplest way to obtain Latitude: [Explanation here - will be added later]"
+                >?</span
+              >
+            </div>
+            <div class="form-group">
+              <label for="rvLongitude">Longitude:</label>
+              <input
+                type="number"
+                id="rvLongitude"
+                name="rvLongitude"
+                step="any"
+                placeholder="e.g., -117.1611"
+              />
+              <span
+                class="tooltip-icon"
+                title="Simplest way to obtain Longitude: [Explanation here - will be added later]"
+                >?</span
+              >
+            </div>
+            <div class="form-group">
+              <label for="areaName">Area Name:</label>
+              <input
+                type="text"
+                id="areaName"
+                name="areaName"
+                placeholder="e.g., Beachside"
+              />
+            </div>
+          </div>
+
+          <h4>Contact Log:</h4>
+          <div class="contact-log-entry">
+            <div class="form-group">
+              <label for="firstContactedDate"
+                >First Contacted (Date/Time):</label
+              >
+              <input
+                type="datetime-local"
+                id="firstContactedDate"
+                name="firstContactedDate"
+              />
+            </div>
+            <div class="form-group">
+              <label for="firstContactedNote">Note:</label>
+              <textarea
+                id="firstContactedNote"
+                name="firstContactedNote"
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+          <button class="button primary" id="addVisitButton">+ Visit</button>
+          <li>
+            <strong>Default Population:</strong> All default fields (including
+            Date/Time) will populate before any "dirty" (changed) state
+            validation is performed.
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    ---
+
+    <h3>mapView</h3>
+    <ul>
+      <li>
+        This view displays RV locations on a map, broken into two elements, the
+        frozen mapHeader and the mapView
+      </li>
+      <li>
+        <strong>mapHeader</strong> - consists of a single horizontal line:
+        <ul>
+          <li>
+            <div class="header-line right-justified">
+              <span
+                ><div class="title">My RVs –</div>
+                <div class="subtitle">Map</div></span
+              >
+              <a href="#" class="icon-button">&#9881;</a>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Filtering</strong> - a single line that wraps as user defined
+        areas populate:
+        <ul>
+          <li>
+            <div class="filter-options">
+              <label
+                ><input
+                  type="checkbox"
+                  name="filterMap"
+                  value="allAreas"
+                  checked
+                />
+                All Areas (default)</label
+              >
+              <label
+                ><input type="checkbox" name="filterMap" value="noArea" /> No
+                Area</label
+              >
+            </div>
+          </li>
+          <li>
+            Set to what was set by user before navigating to maps or All Areas
+            if navigating from settings.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Navigation Buttons</strong> (Horizontally Aligned and only large
+        enough to hold the word(s) or icon), suggest well known icons over
+        words:
+        <ul>
+          <li>
+            <a href="#" class="button primary">+ icon</a>: Navigates to formView
+            for a new entry.
+          </li>
+          <li>
+            <a href="#" class="icon-button">&#127968;</a>: Navigates to
+            cardsView.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Map Display:</strong>
+        <ul>
+          <li>
+            <strong>Pins:</strong>
+            <ul>
+              <li>
+                Blue Pin: Represents geolocated RVs (where an address or
+                Latitude/Longitude is provided and successfully mapped).
+                <ul>
+                  <li>
+                    Hover: Hovering over a blue pin will display the RV's name
+                    and address.
+                  </li>
+                  <li>
+                    Click: Clicking a blue pin will navigate to that specific
+                    RV's formView for editing.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Red Pin: Indicates RVs that have not been contacted for over 14
+                days.
+              </li>
+              <li>
+                Violet Pin (Centered): Used for RVs where an address cannot be
+                found and no Latitude/Longitude has been entered. These pins
+                will be centered on the map based on the default location from
+                settingsView.
+              </li>
+              <li>
+                No Located Pins: If multiple pins are at the exact same
+                location, they will "fan out" around the center point to prevent
+                stacking and ensure visibility.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>Geolocation Priority:</strong> Latitude and Longitude (if
+            present in an RV's data) will override an address for pin placement.
+          </li>
+          <li>
+            <strong>Map Centering:</strong>
+            <ul>
+              <li>
+                The map will initially center based on the default City and
+                State entered by the user in settingsView.
+              </li>
+              <li>
+                Override: If Latitude/Longitude are provided in settingsView,
+                they will take precedence for map centering.
+              </li>
+              <li>
+                Requirement: The user must enter at least a City/State or
+                Latitude/Longitude in settingsView for the map functionality to
+                be usable.
+              </li>
+            </ul>
+          </li>
+          <li><div class="map-container">Map Placeholder</div></li>
+        </ul>
+      </li>
+    </ul>
+
+    ---
+
+    <h2>User Interface (UI) & User Experience (UX) Enhancements</h2>
+    <ul>
+      <li>
+        <strong>Consistency:</strong> A consistent visual style (colors, fonts,
+        button shapes, spacing) will be maintained across all four views for a
+        cohesive and professional feel.
+      </li>
+      <li>
+        <strong>Clear Hierarchy:</strong> Font sizes, weights, and spacing will
+        be used effectively to clearly differentiate titles, subtitles, buttons,
+        and content, guiding the user's eye.
+      </li>
+      <li>
+        <strong>Button Placement:</strong> Navigation and command buttons will
+        have clear, predictable placement (e.g., top-right for settings, bottom
+        for primary actions). Thoughtful arrangement will be used for formView's
+        potentially numerous buttons.
+      </li>
+      <li>
+        <strong>Radio Buttons for Sorting:</strong> This is an effective choice
+        for mutually exclusive sorting options.
+      </li>
+      <li>
+        <strong>Checkboxes for Filter Options Display:</strong> For user-defined
+        filter options, a horizontal wrapping list as user areas are created,
+        All Areas populates all areas listed except No Area. No Area depopulates
+        all other options including All Areas.
+      </li>
+      <li>
+        <strong>Card Design (cardsView):</strong> Adequate padding around text
+        and elements within each card will ensure readability. The "days ago"
+        count and its red alert color will be prominent. The "Delete" button
+        will be clearly visible but designed to minimize accidental presses.
+      </li>
+      <li>
+        <strong>Form Field Layout (formView):</strong> Related fields will be
+        grouped. All input fields will be clearly labeled. The "Add RV Contact"
+        button will be visually distinct and appear only when relevant. The
+        Lat/Long pop-up explanation will be concise and easy to understand.
+      </li>
+      <li>
+        <strong>Map Interactions (mapView):</strong> Pin colors will be distinct
+        and easily identifiable (blue for located, red for overdue, violet for
+        unlocated). Hover information will appear and disappear quickly.
+        Clicking a pin will feel natural and directly lead to the contact's
+        form.
+      </li>
+      <li>
+        <strong>Settings Input:</strong> Each setting field will be clearly
+        labeled, with hints provided where necessary (e.g., "Enter your default
+        city here").
+      </li>
+    </ul>
+
+    ---
+
+    <h2>UI/UX Enhancements (Incorporated Suggestions)</h2>
+    <ul>
+      <li>
+        <strong>Visual Feedback for Actions:</strong>
+        <ul>
+          <li>
+            Saving: A brief visual indicator (e.g., a small, temporary "Saved!"
+            message or a subtle green flash on the button) will appear when
+            "Save," "Save & New," or "Save & Close" is clicked, reassuring the
+            user of success.
+          </li>
+          <li>
+            Loading: For mapView or cardsView (if significant data loading
+            occurs), a small spinner or "Loading..." message will be displayed
+            to prevent the user from thinking the app has frozen.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Date Picker for Contact Dates:</strong> A date picker UI element
+        (calendar icon) will be provided for all date fields, making data entry
+        faster and reducing errors.
+      </li>
+      <li>
+        <strong>Search Bar on cardsView:</strong> A dedicated search bar will be
+        implemented on cardsView to allow users to quickly find an RV by name,
+        address, or notes, complementing the filtering options.
+      </li>
+      <li>
+        <strong
+          >Confirmation Dialog for "Save & Close" / Navigation away from dirty
+          form:</strong
+        >
+        The prompt for unsaved changes will explicitly state: "You have unsaved
+        changes. Do you want to Save, Discard changes, or Cancel and stay on the
+        form?"
+      </li>
+      <li>
+        <strong>Phone Number Auto-Formatting:</strong> As the user types, phone
+        numbers will automatically format (e.g., (XXX) XXX-XXXX or
+        XXX-XXX-XXXX).
+      </li>
+      <li>
+        <strong>State Field Input Validation:</strong> The State field will be
+        strictly limited to two capital letters. Input will be automatically
+        converted to uppercase, and validation will prevent saving if it's not
+        exactly two letters.
+      </li>
+    </ul>
+
+    ---
+
+    <h2>Technical/Implementation Considerations</h2>
+    <ul>
+      <li>
+        <strong>Unique RV Identifier:</strong> Each RV entry will have a unique
+        identifier (e.g., a UUID) for internal data management (editing,
+        deleting, linking). This will be an internal field, not visible to the
+        user.
+      </li>
+      <li>
+        <strong>Date/Time Handling:</strong> Dates will be stored as timestamps
+        (e.g., milliseconds since epoch) for easier calculations and to avoid
+        localization issues. They will be formatted for display in the UI.
+      </li>
+      <li>
+        <strong>Local Storage API Choice:</strong> IndexedDB is the preferred
+        local storage API for robust, structured data storage, given the offline
+        data requirement. We will confirm this choice during initial setup.
+      </li>
+    </ul>
+
+    ---
+
+    <h2>Finalized Button Color Scheme</h2>
+    <ul>
+      <li>
+        <strong>Primary Action Buttons</strong> (e.g., "Save", "Add RV", "Home",
+        "Map"):
+        <ul>
+          <li>
+            Background:
+            <span style="color: #007bff; font-weight: bold"
+              >Blue (#007BFF)</span
+            >
+          </li>
+          <li>
+            Text:
+            <span
+              style="color: #ffffff; background-color: #333; font-weight: bold"
+              >White (#FFFFFF)</span
+            >
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Destructive Action Buttons</strong> (e.g., "Delete"):
+        <ul>
+          <li>
+            Background:
+            <span style="color: #dc3545; font-weight: bold">Red (#DC3545)</span>
+          </li>
+          <li>
+            Text:
+            <span
+              style="color: #ffffff; background-color: #333; font-weight: bold"
+              >White (#FFFFFF)</span
+            >
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Secondary Action/Neutral Buttons</strong> (e.g., "Cancel", "Save
+        & New", "Save & Close", Navigation < and >):
+        <ul>
+          <li>
+            Background:
+            <span style="color: #e0f2f7; font-weight: bold"
+              >Desaturated Blue (#E0F2F7)</span
+            >
+          </li>
+          <li>
+            Text:
+            <span style="color: #343a40; font-weight: bold"
+              >Dark Gray or Black (#343A40 or #000000)</span
+            >
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Gear Icon (Settings):</strong>
+        <ul>
+          <li>
+            Color:
+            <span style="color: #343a40; font-weight: bold"
+              >Dark Gray or Black (#343A40 or #000000)</span
+            >
+            for clear contrast against a light background.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Hover/Active States:</strong> Subtle visual changes (e.g.,
+        slightly darker background, border change) will be implemented for hover
+        and active states to provide crucial user feedback.
+      </li>
+    </ul>
+  </body>
+</html>
