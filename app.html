@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My RVs App</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div id="app-container">
+      <div id="settingsView" class="view">
+        <div class="header">
+          <div class="header-title">
+            <span>My RVs –</span>
+            <span class="subtitle">Settings</span>
+          </div>
+          <div class="header-icon-group">
+            <button class="icon-button" id="settingsToNewRVButton">
+              &#43;RV
+            </button>
+            <button class="icon-button" id="settingsToCardsButton">
+              &#127968;
+            </button>
+            <button class="icon-button" id="settingsToMapButton">
+              &#127760;
+            </button>
+          </div>
+        </div>
+        <div class="view-content">
+          <h3>Settings</h3>
+          <div class="form-group">
+            <label for="appDefaultCity">City (Default city for new RV):</label>
+            <input
+              type="text"
+              id="appDefaultCity"
+              name="appDefaultCity"
+              placeholder="e.g., San Diego"
+            />
+          </div>
+          <div class="form-group">
+            <label for="appDefaultState"
+              >State (Default state for new RVs):</label
+            >
+            <input
+              type="text"
+              id="appDefaultState"
+              name="appDefaultState"
+              placeholder="e.g., CA"
+              maxlength="2"
+            />
+          </div>
+          <div class="form-group">
+            <label for="appDefaultArea"
+              >Area (Default area name for new RVs):</label
+            >
+            <input
+              type="text"
+              id="appDefaultArea"
+              name="appDefaultArea"
+              placeholder="e.g., Coastal Areas"
+            />
+          </div>
+          <div class="form-group">
+            <label for="appDefaultLatitude"
+              >Latitude (Map centering override):</label
+            >
+            <input
+              type="number"
+              id="appDefaultLatitude"
+              name="appDefaultLatitude"
+              step="any"
+              placeholder="e.g., 32.7157"
+            />
+          </div>
+          <div class="form-group">
+            <label for="appDefaultLongitude"
+              >Longitude (Map centering override):</label
+            >
+            <input
+              type="number"
+              id="appDefaultLongitude"
+              name="appDefaultLongitude"
+              step="any"
+              placeholder="e.g., -117.1611"
+            />
+          </div>
+          <p class="first-time-use-message">
+            <strong
+              >These will be default values for Return Visit information. The
+              city and state or latitude longitude must be entered before adding
+              contacts.</strong
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+/* app.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* Make body take at least full viewport height */
+    background-color: #f0f2f5;
+    /* Light gray background */
+    color: #333;
+}
+
+#app-container {
+    width: 100%;
+    max-width: 400px;
+    /* Typical smartphone width */
+    height: 90vh;
+    /* Make app container take most of the screen height */
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Hide overflow for content within views */
+    border-radius: 8px;
+    /* Slightly rounded corners for the app container */
+}
+
+/* Basic styling for common elements (from design document) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #007BFF;
+    /* Primary blue from design */
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+    flex-shrink: 0;
+    /* Prevent header from shrinking */
+}
+
+.header-title {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.header-icon-group {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: white;
+    /* Icons in header are white */
+    padding: 0 5px;
+}
+
+.view-content {
+    flex-grow: 1;
+    /* Allow content to take remaining space */
+    padding: 15px;
+    overflow-y: auto;
+    /* Enable scrolling for content within a view */
+}
+
+.button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    text-align: center;
+    border: none;
+}
+
+.button.primary {
+    background-color: #007BFF;
+    /* Blue */
+    color: #FFFFFF;
+}
+
+.button.destructive {
+    background-color: #DC3545;
+    /* Red */
+    color: #FFFFFF;
+}
+
+.button.secondary {
+    background-color: #E0F2F7;
+    /* Desaturated Blue */
+    color: #343A40;
+    /* Dark Gray */
+}
+
+/* Styles for individual views */
+.view {
+    display: flex;
+    /* Changed from initial 'none' for testing */
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+    /* Allow scrolling within the view if content overflows */
+}
+
+/* Specific styling for the Settings View forms */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    /* Slightly darker gray for labels */
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+    width: calc(100% - 22px);
+    /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
+}
+
+.first-time-use-message {
+    background-color: #fff3cd;
+    /* Light yellow for alert */
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+}
