@@ -1,152 +1,579 @@
 /* app.css */
 
+/* --------------------------------------------------- */
+/* Section 1: Global Styles & Basic Layout (Body, Main Content) */
+/* --------------------------------------------------- */
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    /* Make body take at least full viewport height */
-    background-color: #f0f2f5;
-    /* Light gray background */
-    color: #333;
-}
-
-#app-container {
-    width: 100%;
-    max-width: 400px;
-    /* Typical smartphone width */
-    height: 90vh;
-    /* Make app container take most of the screen height */
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    /* Make body at least full viewport height */
     overflow: hidden;
-    /* Hide overflow for content within views */
-    border-radius: 8px;
-    /* Slightly rounded corners for the app container */
+    /* Prevent scrolling on body itself */
+    background-color: #f0f2f5;
+    /* Light background for the whole app */
 }
 
-/* Basic styling for common elements (from design document) */
-.header {
+/* Main Content Area - Container for all views */
+main#appContent {
+    flex-grow: 1;
+    /* Allows main content to fill available space */
+    overflow-y: auto;
+    /* Enables scrolling for content if it overflows */
+    padding-bottom: 70px;
+    /* Space for fixed footer */
+    position: relative;
+    /* For absolute positioning of children like add button */
+}
+
+/* Styles for all "views" (sections that act as pages) */
+.view {
+    display: none;
+    /* Hidden by default, JavaScript manages visibility */
+    padding: 20px;
+    max-width: 800px;
+    /* Max width for content readability */
+    margin: 20px auto;
+    /* Center the view horizontally */
+    background-color: #ffffff;
+    /* White background for individual views */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 180px);
+    /* Adjust based on header/footer height */
+    box-sizing: border-box;
+    /* Include padding in min-height calculation */
+}
+
+/* Make settings view visible initially (will be controlled by JS logic) */
+#settingsView {
+    display: block;
+    /* Overrides .view for initial load until JS takes over */
+}
+
+/* --------------------------------------------------- */
+/* Section 2: Header Styling */
+/* --------------------------------------------------- */
+.app-header {
+    background-color: #3f51b5;
+    /* Blue */
+    color: white;
+    padding: 10px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background-color: #007BFF;
-    /* Primary blue from design */
-    color: white;
-    font-weight: bold;
-    font-size: 1.1em;
-    flex-shrink: 0;
-    /* Prevent header from shrinking */
+    position: sticky;
+    /* Keeps header at top */
+    top: 0;
+    z-index: 100;
+    /* Ensure header is above other content */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: 50px;
+    /* Fixed height for header */
 }
 
-.header-title {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    flex-grow: 1;
+    /* Allows h1 to take available space */
+    text-align: center;
+    /* Center page name */
 }
 
-.header-icon-group {
-    display: flex;
-    gap: 10px;
-}
-
-.icon-button {
+/* Settings Icon Button in Header */
+#settingsBtn {
+    /* Targeting the button directly */
     background: none;
     border: none;
-    font-size: 1.5em;
     cursor: pointer;
-    color: white;
-    /* Icons in header are white */
-    padding: 0 5px;
-}
-
-.view-content {
-    flex-grow: 1;
-    /* Allow content to take remaining space */
-    padding: 15px;
-    overflow-y: auto;
-    /* Enable scrolling for content within a view */
-}
-
-.button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1em;
-    text-align: center;
-    border: none;
-}
-
-.button.primary {
-    background-color: #007BFF;
-    /* Blue */
-    color: #FFFFFF;
-}
-
-.button.destructive {
-    background-color: #DC3545;
-    /* Red */
-    color: #FFFFFF;
-}
-
-.button.secondary {
-    background-color: #E0F2F7;
-    /* Desaturated Blue */
-    color: #343A40;
-    /* Dark Gray */
-}
-
-/* Styles for individual views */
-.view {
+    padding: 8px;
+    /* For touch target area */
     display: flex;
-    /* Changed from initial 'none' for testing */
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-y: auto;
-    /* Allow scrolling within the view if content overflows */
+    /* For centering SVG */
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    /* Touch target width */
+    height: 48px;
+    /* Touch target height */
+    border-radius: 50%;
+    /* Optional: Make touch area circular */
+    transition: background-color 0.2s ease;
 }
 
-/* Specific styling for the Settings View forms */
-.form-group {
-    margin-bottom: 15px;
+#settingsBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Subtle hover effect */
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-    /* Slightly darker gray for labels */
+#settingsBtn svg {
+    fill: white;
+    /* Gear icon should be white */
+    width: 24px;
+    height: 24px;
 }
 
-.form-group input[type="text"],
-.form-group input[type="number"] {
-    width: calc(100% - 22px);
-    /* Account for padding and border */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+/* --------------------------------------------------- */
+/* Section 3: Footer Styling */
+/* --------------------------------------------------- */
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #eee;
+    /* Light grey footer background */
+    display: flex;
+    justify-content: center;
+    /* Center icons as a group */
+    gap: 20px;
+    /* Space between icons */
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    height: 60px;
+    /* Fixed height for footer */
+}
+
+.app-footer a {
+    /* Targeting the anchor tags within the footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    /* Fixed width for touch target */
+    height: 48px;
+    /* Fixed height for touch target */
+    border-radius: 50%;
+    /* Make them circular touch targets */
+    text-decoration: none;
+    /* Remove link underline */
+    color: black;
+    /* Default icon color (person/map) */
     box-sizing: border-box;
-    /* Include padding and border in the element's total width and height */
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.first-time-use-message {
-    background-color: #fff3cd;
-    /* Light yellow for alert */
-    border: 1px solid #ffeeba;
-    color: #856404;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 20px;
+.app-footer a:hover {
+    background-color: #ddd;
+    /* Subtle background on hover */
+    transform: scale(1.05);
+    /* Slight grow on hover */
+}
+
+.app-footer svg {
+    /* Styling the SVG icons themselves within the footer links */
+    fill: currentColor;
+    /* Inherit color from parent 'a' tag */
+    stroke: currentColor;
+    /* For outline icons like map */
+    width: 100%;
+    /* Make SVG fill its parent 'a' tag */
+    height: 100%;
+    /* Make SVG fill its parent 'a' tag */
+}
+
+/* --------------------------------------------------- */
+/* Section 4: Settings View Specific Styling */
+/* --------------------------------------------------- */
+#settingsView h2 {
     text-align: center;
-    font-size: 0.9em;
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.first-time-message {
+    background-color: #e0f7fa;
+    /* Light blue */
+    border-left: 5px solid #00bcd4;
+    /* Cyan border */
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    font-size: 0.95em;
+    color: #333;
+    line-height: 1.5;
+}
+
+.first-time-message strong {
+    color: #00796b;
+    /* Darker teal */
+}
+
+.setting-item {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align label and input to the start */
+}
+
+.setting-item label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 1.1em;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="number"] {
+    width: calc(100% - 20px);
+    /* Full width minus padding */
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+    /* Include padding in width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.setting-item input[type="text"]:focus,
+.setting-item input[type="number"]:focus {
+    border-color: #3f51b5;
+    /* Blue focus */
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    outline: none;
+}
+
+.field-note {
+    font-size: 0.8em;
+    color: #777;
+    margin-top: 5px;
+    display: block;
+    /* Ensure it takes its own line */
+}
+
+/* Coordinates Group Specific Styling */
+.coordinates-group {
+    display: grid;
+    /* Use CSS Grid for precise layout control */
+    grid-template-columns: auto 1fr auto;
+    /* Label, then inputs/button, then button */
+    align-items: center;
+    /* Vertically center items in their grid cells */
+    gap: 10px;
+    /* Space between grid items */
+    margin-bottom: 20px;
+    /* Standard margin at bottom */
+}
+
+.coordinates-group label {
+    grid-column: 1 / -1;
+    /* Make label span all columns */
+    text-align: center;
+    /* Center the label text */
+    margin-bottom: 10px;
+    /* Add space below label */
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.coordinates-group #defaultLatitude,
+.coordinates-group #defaultLongitude {
+    grid-column: 2 / 3;
+    /* Place inputs in the second column */
+}
+
+.coordinates-group #defaultLatitude {
+    grid-row: 2;
+    /* Latitude on row 2 */
+}
+
+.coordinates-group #defaultLongitude {
+    grid-row: 3;
+    /* Longitude on row 3 */
+}
+
+.coordinates-group #useCurrentLocationBtn {
+    grid-column: 3 / 4;
+    /* Place button in the third column */
+    grid-row: 2 / span 2;
+    /* Span both rows (Latitude and Longitude) */
+    height:auto;
+    /* Make button fill its grid cell height */
+}
+
+.coordinates-group input {
+    flex: 1;
+    /* Inputs take equal space */
+    width: 150px;
+    /* Minimum width for inputs */
+}
+
+/* Settings Actions Group (for Use Current, Export, Import, Save buttons) */
+.settings-actions {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow buttons to wrap on smaller screens */
+    justify-content: center;
+    /* Center buttons horizontally */
+    gap: 15px;
+    /* Space between buttons */
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Universal Button Styles (for utility-btn) */
+.utility-btn {
+    background-color: #4CAF50;
+    /* Default green, but overridden for specific buttons */
+    color: currentColor;
+    /* Default text/icon color */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    /* For icon+text layout */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    /* Space between icon and text */
+}
+
+.utility-btn:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+    transform: translateY(-1px);
+}
+
+.utility-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon-only buttons */
+.utility-btn.icon-button {
+    width: 50px;
+    /* Fixed size for icon-only buttons */
+    height: 50px;
+    /* Fixed size for icon-only buttons */
+    padding: 0;
+    /* No padding for icon-only */
+    font-size: 1.5em;
+    /* Adjust font size if text is present */
+    border-radius: 50%;
+    /* Circular for icon-only buttons */
+    background: none;
+    /* No background fill by default */
+    border: 2px solid;
+    /* Use current color for border */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Keep subtle shadow */
+    color: black;   /* Default icon/border color for icon-only buttons */  
+}
+
+/* Hover/Active states for text-icon-button */
+.utility-btn.text-icon-button:hover {
+    background-color: #512DA8;
+    /* Darker purple on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.utility-btn.text-icon-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.utility-btn.icon-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    /* Use current color for SVG fill */
+    stroke: currentColor;
+    /* Use current color for SVG stroke */
+}
+
+.utility-btn.icon-button span {
+    /* Hide text by default in icon-only buttons */
+    display: none;
+}
+
+/* Specific button colors (for icon-buttons, overrides general .utility-btn) */
+#useCurrentLocationBtn {
+    color: #673AB7;
+    /* Deep Purple text/icon */
+    border-color: #673AB7;
+}
+
+#useCurrentLocationBtn:hover {
+    background-color: #673AB7;
+    color: white;
+}
+
+#exportDataBtn {
+    color: #2196F3;
+    /* Blue text/icon */
+    border-color: #2196F3;
+}
+
+#exportDataBtn:hover {
+    background-color: #2196F3;
+    color: white;
+}
+
+#importDataBtn {
+    color: #FFC107;
+    /* Amber text/icon */
+    border-color: #FFC107;
+    transform: rotate(180deg);
+}
+
+#importDataBtn:hover {
+    background-color: #FFC107;
+    color: #333;
+    /* Dark text for amber background */
+}
+
+#saveSettingsBtn {
+    color: #4CAF50;
+    /* Green text/icon */
+    border-color: #4CAF50;
+}
+
+#saveSettingsBtn:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+
+/* --------------------------------------------------- */
+/* Section 5: My RVs View Specific Styling */
+/* --------------------------------------------------- */
+.myrvs-header {
+    display: flex;        /* Use flexbox for horizontal alignment */
+    align-items: center;  /* Vertically center items (h2 and button) */
+    justify-content: center;      /* CHANGED back to space-between */
+    gap: 20px;
+    margin-bottom: 20px;  /* Space between header and list content below */
+    padding-right: 10px;        /* Optional: Add some padding on the right if button feels too close to edge */
+    position: relative;
+}
+
+#myRVsView h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.rv-list {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    min-height: 100px;
+    /* Placeholder for list content */
+    border: 1px solid #eee;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.no-rvs-message {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 30px 0;
+}
+
+/* Add Button (Plus Sign) */
+.add-button {
+    position: absolute;    /* ADDED */
+    right: 20px;    /* ADDED */
+    top: 50%;    /* ADDED */
+    transform: translateY(-50%);    /* ADDED */
+    z-index: 10;    /* ADDED */
+    width: 36px;
+    height: 36px;
+    background: none;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+    border-radius: 50%;
+    font-size: 1.5em;
+    line-height: 36px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;    /* z-index: auto; (DELETE THIS LINE IF IT'S STILL THERE) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-button:hover {
+    background-color: #4CAF50;
+    /* Fill on hover */
+    color: white;
+    transform: scale(1.05);
+}
+
+.add-button:active {
+    transform: scale(1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --------------------------------------------------- */
+/* Section 6: Map View Specific Styling */
+/* --------------------------------------------------- */
+#mapView h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+#mapContainer {
+    width: 100%;
+    height: 400px;
+    /* Placeholder height, will be dynamic with Leaflet */
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+/* --------------------------------------------------- */
+/* Section 7: Media Queries for Responsiveness */
+/* --------------------------------------------------- */
+@media (max-width: 600px) {
+    .app-header h1 {
+        font-size: 1.3em;
+    }
+
+    .app-footer a {
+        width: 40px;
+        /* Slightly smaller touch target on small screens */
+        height: 40px;
+        padding: 5px;
+    }
+
+    .add-button {
+        width: 45px;
+        height: 45px;
+        font-size: 2em;
+        line-height: 45px;
+    }
+
+    .settings-actions {
+        gap: 10px;
+        /* Reduce gap on smaller screens */
+    }
+
+    .utility-btn {
+        padding: 10px 15px;
+        /* Adjust padding for text buttons */
+    }
+
+    .utility-btn.icon-button {
+        width: 45px;
+        /* Adjust size for icon-only buttons */
+        height: 45px;
+    }
 }
