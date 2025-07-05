@@ -52,6 +52,24 @@ document.addEventListener("DOMContentLoaded", () => {
       // If the requested view exists, show it
       views[viewId].style.display = "block";
       currentView = viewId;
+      // Conditionally show/hide settings button based on current view
+      if (settingsBtn) {
+        // Ensure button exists before trying to access
+        if (viewId === "settings") {
+          settingsBtn.style.display = "none"; // Hide if on settings page
+        } else {
+          settingsBtn.style.display = "flex"; // Show for other pages (using flex from CSS)
+        }
+      }
+      // Conditionally show/hide settings button based on current view
+      if (settingsBtn) {
+        // Ensure button exists before trying to access
+        if (viewId === "settings") {
+          settingsBtn.style.display = "none"; // Hide if on settings page
+        } else {
+          settingsBtn.style.display = "flex"; // Show for other pages (using flex from CSS)
+        }
+      }
       // Later: Update header title based on currentView
       // Later: Highlight active footer/header icon
     }

@@ -3,29 +3,58 @@
 /* --------------------------------------------------- */
 /* Section 1: Global Styles & Basic Layout (Body, Main Content) */
 /* --------------------------------------------------- */
+html {
+    scroll-behavior: smooth;
+    /* Optional: smooth scrolling */
+}
+
 body {
     margin: 0;
+    /* Ensures no default browser margin */
+    padding: 0;
+    /* Ensures no default browser padding */
     font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
+    display: block;
+    /* Change to block, app-container will handle flex */
     min-height: 100vh;
     /* Make body at least full viewport height */
-    overflow: hidden;
-    /* Prevent scrolling on body itself */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll from shadow */
     background-color: #f0f2f5;
-    /* Light background for the whole app */
+    /* Light background for the whole screen */
 }
+
+.app-container {
+    max-width: 800px;
+    /* Constrain overall app content width */
+    margin: 0 auto;
+    /* Center the app content horizontally */
+    display: flex;
+    /* Use flexbox for main layout direction */
+    flex-direction: column;
+    /* Stack header, main, footer vertically */
+    min-height: 100vh;
+    /* Ensure it's at least full viewport height */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow around the whole app */
+    background-color: #ffffff;
+    /* White background for the main app "card" */
+    overflow: hidden;
+    /* Crucial for containing inner elements and preventing scroll */
+    border-radius: 10px;
+    /* Rounded corners for the entire app card */
+}
+
 
 /* Main Content Area - Container for all views */
 main#appContent {
     flex-grow: 1;
-    /* Allows main content to fill available space */
+    /* Allows main content to fill all available vertical space */
     overflow-y: auto;
     /* Enables scrolling for content if it overflows */
-    padding-bottom: 70px;
-    /* Space for fixed footer */
-    position: relative;
-    /* For absolute positioning of children like add button */
+    padding: 0;
+    /* Remove any internal padding that creates gaps */
+    /* REMOVE: min-height here as views will manage their own height */
 }
 
 /* Styles for all "views" (sections that act as pages) */
@@ -33,18 +62,21 @@ main#appContent {
     display: none;
     /* Hidden by default, JavaScript manages visibility */
     padding: 20px;
-    max-width: 800px;
-    /* Max width for content readability */
-    margin: 20px auto;
-    /* Center the view horizontally */
-    background-color: #ffffff;
-    /* White background for individual views */
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    min-height: calc(100vh - 180px);
-    /* Adjust based on header/footer height */
+    /* Internal padding for content - KEEP THIS */
+    width: 100%;
+    /* Views fill the width of main#appContent */
+    flex-shrink: 0;
+    /* Prevent views from shrinking */
+    flex-grow: 1;
+    /* Allow views to fill vertical space */
     box-sizing: border-box;
-    /* Include padding in min-height calculation */
+    /* Include padding in width/height calculations */
+    /* REMOVE: max-width: 800px; */
+    /* REMOVE: margin: 0; */
+    /* REMOVE: background-color: #ffffff; */
+    /* REMOVE: border-radius: 10px; */
+    /* REMOVE: box-shadow: 0 4px 10px rgba(0,0,0,0.05); */
+    /* REMOVE: min-height: calc(100vh - 180px); */
 }
 
 /* Make settings view visible initially (will be controlled by JS logic) */
@@ -58,50 +90,43 @@ main#appContent {
 /* --------------------------------------------------- */
 .app-header {
     background-color: #3f51b5;
-    /* Blue */
     color: white;
-    padding: 10px 15px;
+    padding: 5px 5px;
+    /* CHANGED padding */
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    position: sticky;
-    /* Keeps header at top */
-    top: 0;
+    position: relative;
     z-index: 100;
-    /* Ensure header is above other content */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     height: 50px;
-    /* Fixed height for header */
+    width: 100%;
+    flex-shrink: 0;
+    border-radius: 10px 10px 0 0;
 }
 
 .app-header h1 {
     margin: 0;
-    font-size: 1.5em;
-    flex-grow: 1;
-    /* Allows h1 to take available space */
-    text-align: center;
-    /* Center page name */
+    font-size: 1.5em;    /* REMOVE: flex-grow: 1; */
+    position: absolute;    /* ADDED */
+    left: 50%;    /* ADDED */
+    transform: translateX(-50%);    /* ADDED */
 }
 
 /* Settings Icon Button in Header */
 #settingsBtn {
-    /* Targeting the button directly */
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
-    /* For touch target area */
-    display: flex;
-    /* For centering SVG */
-    align-items: center;
-    justify-content: center;
     width: 48px;
-    /* Touch target width */
+    /* (Based on your current CSS, keep this as it sets the touch target size) */
     height: 48px;
-    /* Touch target height */
+    /* (Based on your current CSS, keep this as it sets the touch target size) */
     border-radius: 50%;
-    /* Optional: Make touch area circular */
     transition: background-color 0.2s ease;
+    position: absolute;
+    /* ADDED */
+    right: 15px;
+    /* ADDED */
 }
 
 #settingsBtn:hover {
@@ -120,22 +145,28 @@ main#appContent {
 /* Section 3: Footer Styling */
 /* --------------------------------------------------- */
 .app-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
     background-color: #eee;
-    /* Light grey footer background */
     display: flex;
     justify-content: center;
-    /* Center icons as a group */
     gap: 20px;
-    /* Space between icons */
     padding: 10px 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    /* Keep shadow for footer bottom */
     z-index: 100;
+    /* Ensure footer is above other content */
     height: 60px;
     /* Fixed height for footer */
+    width: 100%;
+    /* Fill the width of its app-container parent */
+    flex-shrink: 0;
+    /* Prevent footer from shrinking */
+    border-radius: 0 0 10px 10px;
+    /* Rounded bottom corners for the entire app card */
+    /* REMOVE: position: fixed; */
+    /* REMOVE: bottom: 0; */
+    /* REMOVE: left: 0; */
+    /* REMOVE: width: 100%; */
+    /* Duplicated/replaced by line above */
 }
 
 .app-footer a {
@@ -306,6 +337,57 @@ main#appContent {
     /* Minimum width for inputs */
 }
 
+/* RV Form Coordinates Group Styling (mirrors Settings page) */
+.coordinates-group-rv {
+    display: grid;    /* Use CSS Grid for precise layout control */
+    grid-template-columns: auto 1fr auto;    /* Label, then inputs, then button */
+    align-items: center;    /* Vertically center items in their grid cells */
+    gap: 10px;    /* Space between grid items */
+    margin-bottom: 20px;    /* Standard margin at bottom */
+}
+
+.coordinates-group-rv label {
+    grid-column: 1 / -1;
+    /* Make label span all columns */
+    text-align: center;
+    /* Center the label text */
+    margin-bottom: 10px;
+    /* Add space below label */
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.coordinates-group-rv input {
+    width: 150px;
+    /* Fixed width for inputs */
+}
+
+.coordinates-group-rv #rvLatitude {
+    grid-column: 2 / 3;
+    /* Place inputs in the second column */
+    grid-row: 2;
+    /* Latitude on row 2 */
+}
+
+.coordinates-group-rv #rvLongitude {
+    grid-column: 2 / 3;
+    /* Place inputs in the second column */
+    grid-row: 3;
+    /* Longitude on row 3 */
+}
+
+.coordinates-group-rv #rvUseCurrentLocationBtn {
+    grid-column: 3 / 4;
+    /* Place button in the third column */
+    grid-row: 2 / span 2;
+    /* Span both rows (Latitude and Longitude) */
+    height: auto;
+    /* Make button fill its grid cell height */
+    align-self: center;
+    /* Vertically center button in its span */
+}
+
 /* Settings Actions Group (for Use Current, Export, Import, Save buttons) */
 .settings-actions {
     display: flex;
@@ -400,16 +482,6 @@ main#appContent {
 }
 
 /* Specific button colors (for icon-buttons, overrides general .utility-btn) */
-#useCurrentLocationBtn {
-    color: #673AB7;
-    /* Deep Purple text/icon */
-    border-color: #673AB7;
-}
-
-#useCurrentLocationBtn:hover {
-    background-color: #673AB7;
-    color: white;
-}
 
 #exportDataBtn {
     color: #2196F3;
@@ -532,8 +604,8 @@ main#appContent {
 
 #mapContainer {
     width: 100%;
-    height: 400px;
-    /* Placeholder height, will be dynamic with Leaflet */
+    height: 100%;
+    /* CHANGED to 100% */
     background-color: #f0f0f0;
     border-radius: 8px;
     margin: 0 auto;
