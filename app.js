@@ -24,6 +24,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const importDataBtn = document.getElementById("importDataBtn"); // The visible button
   const addRVBtn = document.getElementById("addRVBtn");
 
+  // RV Form Elements
+  const rvUseCurrentLocationBtn = document.getElementById(
+    "rvUseCurrentLocationBtn"
+  );
+  const rvLastContactedDateInput = document.getElementById(
+    "rvLastContactedDate"
+  );
+  const rvLastContactedDayInput = document.getElementById("rvLastContactedDay");
+  const rvLastContactedTimeInput = document.getElementById(
+    "rvLastContactedTime"
+  );
+
   // Footer Navigation Links
   const myRVsLink = document.getElementById("myRVsLink");
   const mapLink = document.getElementById("mapLink");
@@ -202,6 +214,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Event Listener for Save Settings Button
   saveSettingsBtn.addEventListener("click", saveSettings);
+  // --- RV Form Logic ---
+
+  // Function to update the Day field based on the Date field
+  const updateDayField = () => {
+    const dateValue = rvLastContactedDateInput.value;
+    if (dateValue) {
+      // Adding 'T00:00:00' to avoid timezone conversion issues on different browsers
+      const date = new Date(dateValue + "T00:00:00");
+      const options = { weekday: "short" }; // e.g., "Mon", "Tue"
+      rvLastContactedDayInput.value = date.toLocaleDateString("en-US", options);
+    } else {
+      rvLastContactedDayInput.value = ""; // Clear day if date is cleared
+    }
+  };
+
+  // Event listener for date input changes
+  rvLastContactedDateInput.addEventListener("change", updateDayField);
+
+  // Initial update in case date is pre-filled (e.g., from browser auto-fill)
+  updateDayField();
+
   // Event Listener for Use Current Location Button
   useCurrentLocationBtn.addEventListener("click", () => {
     if (navigator.geolocation) {

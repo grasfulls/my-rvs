@@ -174,82 +174,114 @@
         <section id="rvFormView" class="view">
           <h2>Add Return Visit</h2>
           <div class="rv-form-fields">
-            <div class="form-group">
-              <label for="rvName">Name:</label>
-              <input type="text" id="rvName" placeholder="e.g., John Smith" />
-            </div>
-            <div class="form-group">
-              <label for="rvAddress">Address:</label>
-              <input
-                type="text"
-                id="rvAddress"
-                placeholder="e.g., 123 Main St"
-              />
-            </div>
-            <div class="form-group">
-              <label for="rvCity">City:</label>
-              <input type="text" id="rvCity" placeholder="e.g., Anytown" />
-            </div>
-            <div class="form-group">
-              <label for="rvState">State:</label>
-              <input
-                type="text"
-                id="rvState"
-                maxlength="2"
-                placeholder="e.g., NY"
-              />
-            </div>
-            <div class="form-group">
-              <label for="rvArea">Area:</label>
-              <input
-                type="text"
-                id="rvArea"
-                placeholder="e.g., North District"
-              />
-              <small class="field-note"
-                >Defaults to "No Area" if blank. Inherits default from
-                Settings.</small
-              >
-            </div>
-            <div class="form-group coordinates-group-rv">
-              <label>Coordinates (Auto-filled or manual):</label>
-              <input type="number" id="rvLatitude" placeholder="Latitude" />
-              <input type="number" id="rvLongitude" placeholder="Longitude" />
-              <button
-                id="rvUseCurrentLocationBtn"
-                class="utility-btn text-icon-button"
-                title="Use Current Location"
-              >
-                <span>Use Current</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  width="24px"
-                  height="24px"
-                >
-                  <path
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                  />
-                </svg>
-              </button>
+            <div class="form-group-wrapper">
+              <div class="form-group">
+                <label for="rvName">Name:</label>
+                <input type="text" id="rvName" placeholder="e.g., John Smith" />
+              </div>
+              <div class="form-group">
+                <label for="rvAddress">Address:</label>
+                <input
+                  type="text"
+                  id="rvAddress"
+                  placeholder="e.g., 123 Main St"
+                />
+              </div>
+              <div class="form-group">
+                <label for="rvCity">City:</label>
+                <input type="text" id="rvCity" placeholder="e.g., Anytown" />
+              </div>
+              <div class="form-group">
+                <label for="rvState">State:</label>
+                <input
+                  type="text"
+                  id="rvState"
+                  maxlength="2"
+                  placeholder="e.g., NY"
+                />
+              </div>
+              <div class="form-group">
+                <div class="label-and-note">
+                  <label for="rvArea">Area:</label>
+                  <small class="field-note"
+                    >Defaults to "No Area" if blank. Inherits default from
+                    Settings.</small
+                  >
+                </div>
+                <input
+                  type="text"
+                  id="rvArea"
+                  placeholder="e.g., North District"
+                />
+              </div>
+              <div class="form-group">
+                <label for="rvEmail">Email:</label>
+                <input
+                  type="email"
+                  id="rvEmail"
+                  placeholder="e.g., example@domain.com"
+                />
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="rvLastContactedDate">Last Contacted Date:</label>
-              <input type="date" id="rvLastContactedDate" />
+            <div class="form-group-wrapper">
+              <div class="form-group coordinates-group-rv">
+                <label>Coordinates (Auto-filled or manual):</label>
+                <input type="number" id="rvLatitude" placeholder="Latitude" />
+                <input type="number" id="rvLongitude" placeholder="Longitude" />
+                <button
+                  id="rvUseCurrentLocationBtn"
+                  class="utility-btn text-icon-button"
+                  title="Use Current Location"
+                >
+                  <span>Use Current</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="24px"
+                    height="24px"
+                  >
+                    <path
+                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="rvLastContactedTime">Last Contacted Time:</label>
-              <input type="time" id="rvLastContactedTime" />
+
+            <div class="form-group-wrapper">
+              <div class="form-group contacted-group">
+                <label for="rvLastContactedDate">Contacted:</label>
+                <input type="date" id="rvLastContactedDate" />
+                <input
+                  type="text"
+                  id="rvLastContactedDay"
+                  placeholder="Day"
+                  readonly
+                />
+                <input type="time" id="rvLastContactedTime" />
+                <button class="add-visit-btn icon-button" title="Add Visit">
+                  +
+                </button>
+                <button
+                  class="remove-visit-btn icon-button"
+                  title="Remove Visit"
+                >
+                  -
+                </button>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="rvNote">Note:</label>
-              <textarea
-                id="rvNote"
-                rows="5"
-                placeholder="Details of the visit, topic, etc."
-              ></textarea>
+
+            <div class="form-group-wrapper">
+              <div class="form-group">
+                <label for="rvNote">Note:</label>
+                <textarea
+                  id="rvNote"
+                  rows="5"
+                  placeholder="Details of the visit, topic, etc."
+                ></textarea>
+              </div>
             </div>
           </div>
           <div class="form-actions">
@@ -270,95 +302,23 @@
                 />
               </svg>
             </button>
-            <button id="cancelRvBtn" class="utility-btn">Cancel</button>
-          </div>
-        </section>
-        <section id="rvFormView" class="view">
-          <h2>Add Return Visit</h2>
-          <div class="rv-form-fields">
-            <div class="form-group">
-              <label for="rvName">Name:</label>
-              <input type="text" id="rvName" placeholder="e.g., John Smith" />
-            </div>
-            <div class="form-group">
-              <label for="rvAddress">Address:</label>
-              <input
-                type="text"
-                id="rvAddress"
-                placeholder="e.g., 123 Main St"
-              />
-            </div>
-            <div class="form-group">
-              <label for="rvCity">City:</label>
-              <input type="text" id="rvCity" placeholder="e.g., Anytown" />
-            </div>
-            <div class="form-group">
-              <label for="rvState">State:</label>
-              <input
-                type="text"
-                id="rvState"
-                maxlength="2"
-                placeholder="e.g., NY"
-              />
-            </div>
-            <div class="form-group">
-              <label for="rvArea">Area:</label>
-              <input
-                type="text"
-                id="rvArea"
-                placeholder="e.g., North District"
-              />
-              <small class="field-note"
-                >Defaults to "No Area" if blank. Inherits default from
-                Settings.</small
+            <button
+              id="cancelRvBtn"
+              class="utility-btn icon-button"
+              title="Cancel"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="24px"
+                height="24px"
               >
-            </div>
-            <div class="form-group coordinates-group-rv">
-              <label>Coordinates (Auto-filled or manual):</label>
-              <button
-                id="rvUseCurrentLocationBtn"
-                class="utility-btn text-icon-button"
-                title="Use Current Location"
-              >
-                <span>Use Current</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  width="24px"
-                  height="24px"
-                >
-                  <path
-                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                  />
-                </svg>
-              </button>
-              <input type="number" id="rvLatitude" placeholder="Latitude" />
-              <input type="number" id="rvLongitude" placeholder="Longitude" />
-            </div>
-
-            <div class="form-group">
-              <label for="rvLastContactedDate">Last Contacted Date:</label>
-              <input type="date" id="rvLastContactedDate" />
-            </div>
-            <div class="form-group">
-              <label for="rvLastContactedTime">Last Contacted Time:</label>
-              <input type="time" id="rvLastContactedTime" />
-            </div>
-            <div class="form-group">
-              <label for="rvNote">Note:</label>
-              <textarea
-                id="rvNote"
-                rows="5"
-                placeholder="Details of the visit, topic, etc."
-              ></textarea>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button id="saveRvBtn" class="utility-btn primary-btn">
-              Save RV
+                <path
+                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
+                />
+              </svg>
             </button>
-            <button id="cancelRvBtn" class="utility-btn">Cancel</button>
           </div>
         </section>
       </main>
