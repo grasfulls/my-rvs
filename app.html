@@ -11,32 +11,39 @@
     <div class="app-container">
       <!-- Header Section -->
       <header class="app-header">
-        <h1>My RVs</h1>
-        <!-- Settings Button with SVG icon -->
-        <button
-          id="settingsBtn"
-          class="header-icon settings-icon"
-          aria-label="Settings"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            width="24px"
-            height="24px"
+        <div class="header-left-content">
+          <h1 class="main-header-title">My RVs</h1>
+          <span id="appSubheading" class="app-subheading"></span>
+        </div>
+        <div class="header-right-icons">
+          <!-- Add RV Button (moved here) -->
+          <button id="addRVBtn" class="add-button">+</button>
+          <!-- Settings Button with SVG icon -->
+          <button
+            id="settingsBtn"
+            class="header-icon settings-icon"
+            aria-label="Settings"
+            title="Settings"
           >
-            <path
-              d="M19.43 12.98c1.09-2.78-1.12-5.72-4.04-6.27l-.61-.11a.999.999 0 00-.73-.83l-.06-.01a.999.999 0 00-.91-.01l-.06.01a.999.999 0 00-.73.83l-.61.11c-2.92.55-5.13 3.49-4.04 6.27l.11.27a.999.999 0 00.83.73l.01.06a.999.999 0 00.01.91l-.01.06a.999.999 0 00-.83.73l-.11.27c-1.09 2.78 1.12 5.72 4.04 6.27l.61.11a.999.999 0 00.73.83l.06.01a.999.999 0 00.91-.01l-.06-.01a.999.999 0 00.73-.83l.61-.11c2.92-.55 5.13-3.49 4.04-6.27l-.11-.27a.999.999 0 00-.83-.73l-.01-.06a.999.999 0 00-.01-.91l.01-.06a.999.999 0 00.83-.73l.11-.27zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              width="24px"
+              height="24px"
+            >
+              <path
+                d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-1-9.5V7h2v1.5h1.5v2H14v2h-1.5v1.5h-2V14H11v-1.5H9.5V11H11V9.5zM19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.39-1.09-.7-1.71-.94l-.36-2.54c-.05-.24-.27-.42-.51-.42h-4c-.24 0-.46.18-.51.42l-.36 2.54c-.62.24-1.19.55-1.71.94l-2.49-1c-.22-.08-.49 0-.61.22l2-3.46c.12-.22-.07.49.12.64l2.11 1.65c-.04.32-.07.64-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z"
+              />
+            </svg>
+          </button>
+        </div>
       </header>
 
       <!-- Main Content Area -->
       <main id="appContent">
         <!-- Settings View Section -->
         <section id="settingsView" class="view">
-          <h2>Settings</h2>
           <p class="first-time-message">
             <strong>First-Time Use:</strong> These will be default values for
             Return Visit information.
@@ -119,6 +126,20 @@
             </button>
           </div>
 
+          <div class="setting-item">
+            <label for="googleMapsApiKey"
+              >Google Maps API Key (Optional):</label
+            >
+            <input
+              type="text"
+              id="googleMapsApiKey"
+              placeholder="Enter your Google Maps API Key"
+            />
+            <small class="field-note"
+              >Leave blank to use OpenStreetMap (free).</small
+            >
+          </div>
+
           <div class="settings-actions">
             <!-- Export Data Button with SVG icon -->
             <button
@@ -193,10 +214,42 @@
 
         <!-- My RVs List View Section -->
         <section id="myRVsView" class="view">
-          <div class="myrvs-header">
-            <h2>Contact Info</h2>
-            <!-- Add RV Button -->
-            <button id="addRVBtn" class="add-button">+</button>
+          <div class="sort-filter-controls">
+            <div class="sort-options">
+              <label class="sort-filter-label">Sort by:</label>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  id="sortOldNew"
+                  name="sortOrder"
+                  value="oldest"
+                  checked
+                />
+                <label for="sortOldNew">Oldest to Newest</label>
+                <input
+                  type="radio"
+                  id="sortNewOld"
+                  name="sortOrder"
+                  value="newest"
+                />
+                <label for="sortNewOld">Newest to Oldest</label>
+              </div>
+            </div>
+            <div class="filter-options">
+              <label class="sort-filter-label">Filter Options:</label>
+              <div class="checkbox-group" id="areaFilterCheckboxes">
+                <input
+                  type="checkbox"
+                  id="filterAllAreas"
+                  value="all"
+                  checked
+                />
+                <label for="filterAllAreas">All Areas</label>
+                <input type="checkbox" id="filterNoArea" value="No Area" />
+                <label for="filterNoArea">No Area</label>
+                <!-- Dynamic area checkboxes will be inserted here by JS -->
+              </div>
+            </div>
           </div>
           <div class="rv-list">
             <p class="no-rvs-message">
@@ -207,7 +260,24 @@
 
         <!-- Map View Section -->
         <section id="mapView" class="view">
-          <h2>Map</h2>
+          <div class="map-filter-controls sort-filter-controls">
+            <!-- Reusing sort-filter-controls for styling -->
+            <div class="filter-options">
+              <label class="sort-filter-label">Filter Options:</label>
+              <div class="checkbox-group" id="mapAreaFilterCheckboxes">
+                <input
+                  type="checkbox"
+                  id="mapFilterAllAreas"
+                  value="all"
+                  checked
+                />
+                <label for="mapFilterAllAreas">All Areas</label>
+                <input type="checkbox" id="mapFilterNoArea" value="No Area" />
+                <label for="mapFilterNoArea">No Area</label>
+                <!-- Dynamic area checkboxes will be inserted here by JS -->
+              </div>
+            </div>
+          </div>
           <div
             id="mapContainer"
             style="
@@ -221,7 +291,6 @@
 
         <!-- RV Form View Section (Add/Edit Return Visit) -->
         <section id="rvFormView" class="view">
-          <h2>Add Return Visit</h2>
           <div class="rv-form-fields">
             <div class="form-group-wrapper">
               <div class="form-group">
@@ -273,30 +342,42 @@
               </div>
             </div>
 
-            <div class="form-group-wrapper">
-              <div class="form-group coordinates-group-rv">
-                <label>Coordinates (Auto-filled or manual):</label>
-                <input type="number" id="rvLatitude" placeholder="Latitude" />
-                <input type="number" id="rvLongitude" placeholder="Longitude" />
-                <button
-                  id="rvUseCurrentLocationBtn"
-                  class="utility-btn text-icon-button"
-                  title="Use Current Location"
-                >
-                  <span>Use<br />Current</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="24px"
-                    height="24px"
-                  >
-                    <path
-                      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
-                    />
-                  </svg>
-                </button>
+            <label class="coordinates-main-label">
+              Coordinates (Auto-filled or manual):
+            </label>
+            <div class="form-group coordinates-group-rv">
+              <div class="coordinates-inputs">
+                <div class="form-group-lat-long">
+                  <label for="rvLatitude">Latitude:</label>
+                  <input type="number" id="rvLatitude" placeholder="Latitude" />
+                </div>
+                <div class="form-group-lat-long">
+                  <label for="rvLongitude">Longitude:</label>
+                  <input
+                    type="number"
+                    id="rvLongitude"
+                    placeholder="Longitude"
+                  />
+                </div>
               </div>
+              <button
+                id="rvUseCurrentLocationBtn"
+                class="utility-btn text-icon-button"
+                title="Use Current Location"
+              >
+                <span>Use<br />Current</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  width="24px"
+                  height="24px"
+                >
+                  <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                  />
+                </svg>
+              </button>
             </div>
 
             <div class="form-group-wrapper">
