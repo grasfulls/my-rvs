@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My RVs</title>
+    <!-- Link to the CSS file, which will be provided later -->
     <link rel="stylesheet" href="app.css" />
   </head>
   <body>
     <div class="app-container">
+      <!-- Header Section -->
       <header class="app-header">
         <h1>My RVs</h1>
+        <!-- Settings Button with SVG icon -->
         <button
           id="settingsBtn"
           class="header-icon settings-icon"
@@ -23,19 +26,25 @@
             height="24px"
           >
             <path
-              d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.07-.75-1.66-1.02L14.02 2.3c-.09-.2-.25-.33-.45-.33H9.43c-.2 0-.36.13-.45.33L7.3 5.66c-.59.27-1.14.62-1.66 1.02l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.12.22-.07.49.12.64l2.11 1.65c-.04.32-.07.64-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12-.22.39.3.61.22l2.49-1c.59.27 1.14.62 1.66 1.02l.71 2.76c.09.2.25.33.45.33h4.98c.2 0 .36-.13.45-.33l.71-2.76c.59-.27 1.14-.62 1.66-1.02l2.49 1c.22.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zm-7.43 2.52c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"
+              d="M19.43 12.98c1.09-2.78-1.12-5.72-4.04-6.27l-.61-.11a.999.999 0 00-.73-.83l-.06-.01a.999.999 0 00-.91-.01l-.06.01a.999.999 0 00-.73.83l-.61.11c-2.92.55-5.13 3.49-4.04 6.27l.11.27a.999.999 0 00.83.73l.01.06a.999.999 0 00.01.91l-.01.06a.999.999 0 00-.83.73l-.11.27c-1.09 2.78 1.12 5.72 4.04 6.27l.61.11a.999.999 0 00.73.83l.06.01a.999.999 0 00.91-.01l-.06-.01a.999.999 0 00.73-.83l.61-.11c2.92-.55 5.13-3.49 4.04-6.27l-.11-.27a.999.999 0 00-.83-.73l-.01-.06a.999.999 0 00-.01-.91l.01-.06a.999.999 0 00.83-.73l.11-.27zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"
             />
           </svg>
         </button>
       </header>
 
+      <!-- Main Content Area -->
       <main id="appContent">
+        <!-- Settings View Section -->
         <section id="settingsView" class="view">
           <h2>Settings</h2>
           <p class="first-time-message">
-            **First-Time Use:** These will be default values for Return Visit
-            information. **Either City and State, or Latitude and Longitude must
-            be entered** before adding contacts.
+            <strong>First-Time Use:</strong> These will be default values for
+            Return Visit information.
+            <strong
+              >Either City and State, or Latitude and Longitude must be
+              entered</strong
+            >
+            before adding contacts.
           </p>
 
           <div class="setting-item">
@@ -54,31 +63,48 @@
           </div>
 
           <div class="setting-item">
-            <label for="defaultArea">Area:</label>
+            <label for="defaultArea">
+              Area:
+              <small class="field-note"
+                >May be changed here or modified in each RV.</small
+              >
+            </label>
             <input
               type="text"
               id="defaultArea"
               placeholder="e.g., North District"
             />
-            <small class="field-note"
-              >May be changed here or modified in each RV.</small
-            >
           </div>
 
+          <label class="coordinates-main-label">
+            Coordinates (Overrides City/State for map centering):
+          </label>
+
           <div class="setting-item coordinates-group">
-            <label>Coordinates (Overrides City/State for map centering):</label>
-            <input type="number" id="defaultLatitude" placeholder="Latitude" />
-            <input
-              type="number"
-              id="defaultLongitude"
-              placeholder="Longitude"
-            />
+            <div class="coordinates-inputs">
+              <div class="form-group-lat-long">
+                <label for="defaultLatitude">Latitude:</label>
+                <input
+                  type="number"
+                  id="defaultLatitude"
+                  placeholder="e.g., 34.05"
+                />
+              </div>
+              <div class="form-group-lat-long">
+                <label for="defaultLongitude">Longitude:</label>
+                <input
+                  type="number"
+                  id="defaultLongitude"
+                  placeholder="e.g., -118.25"
+                />
+              </div>
+            </div>
             <button
               id="useCurrentLocationBtn"
               class="utility-btn text-icon-button"
               title="Use Current Location"
             >
-              <span>Use Current</span>
+              <span>Use<br />Current</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -94,6 +120,7 @@
           </div>
 
           <div class="settings-actions">
+            <!-- Export Data Button with SVG icon -->
             <button
               id="exportDataBtn"
               class="utility-btn icon-button"
@@ -109,6 +136,7 @@
                 <path d="M12 4l-8 8h5v8h6v-8h5z" />
               </svg>
             </button>
+            <!-- Import Data Button with SVG icon -->
             <button
               id="importDataBtn"
               class="utility-btn icon-button"
@@ -124,7 +152,7 @@
                 <path d="M12 4l-8 8h5v8h6v-8h5z" />
               </svg>
             </button>
-
+            <!-- Save Settings Button with SVG icon -->
             <button
               id="saveSettingsBtn"
               class="utility-btn primary-btn icon-button"
@@ -141,14 +169,33 @@
                   d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H9V5h6v4z"
                 />
               </svg>
-              <span>Save</span>
+            </button>
+            <!-- Cancel Settings Button with SVG icon -->
+            <button
+              id="cancelSettingsBtn"
+              class="utility-btn cancel-btn icon-button"
+              title="Cancel"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="24px"
+                height="24px"
+              >
+                <path
+                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
+                />
+              </svg>
             </button>
           </div>
         </section>
 
+        <!-- My RVs List View Section -->
         <section id="myRVsView" class="view">
           <div class="myrvs-header">
             <h2>Contact Info</h2>
+            <!-- Add RV Button -->
             <button id="addRVBtn" class="add-button">+</button>
           </div>
           <div class="rv-list">
@@ -158,6 +205,7 @@
           </div>
         </section>
 
+        <!-- Map View Section -->
         <section id="mapView" class="view">
           <h2>Map</h2>
           <div
@@ -171,6 +219,7 @@
           ></div>
         </section>
 
+        <!-- RV Form View Section (Add/Edit Return Visit) -->
         <section id="rvFormView" class="view">
           <h2>Add Return Visit</h2>
           <div class="rv-form-fields">
@@ -234,7 +283,7 @@
                   class="utility-btn text-icon-button"
                   title="Use Current Location"
                 >
-                  <span>Use Current</span>
+                  <span>Use<br />Current</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -284,7 +333,9 @@
               </div>
             </div>
           </div>
+
           <div class="form-actions">
+            <!-- Save RV Button with SVG icon -->
             <button
               id="saveRvBtn"
               class="utility-btn icon-button"
@@ -298,10 +349,13 @@
                 height="24px"
               >
                 <path
-                  d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H9V5h6v4z"
+                  d="M17 3H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 
+                3 1.34 3 3-1.34 3-3 3zm3-10H9V5h6v4z"
                 />
               </svg>
             </button>
+
+            <!-- Cancel RV Button with SVG icon -->
             <button
               id="cancelRvBtn"
               class="utility-btn icon-button"
@@ -315,7 +369,9 @@
                 height="24px"
               >
                 <path
-                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
+                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 
+                12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 
+                8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
                 />
               </svg>
             </button>
@@ -323,7 +379,9 @@
         </section>
       </main>
 
+      <!-- Footer Navigation -->
       <footer class="app-footer">
+        <!-- My RVs Link with SVG icon -->
         <a id="myRVsLink" aria-label="My RVs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -333,10 +391,14 @@
             height="24px"
           >
             <path
-              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4
+            -4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 
+            1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
             />
           </svg>
         </a>
+
+        <!-- Map Link with SVG icon -->
         <a id="mapLink" aria-label="Map">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -348,12 +410,18 @@
             stroke-linejoin="round"
           >
             <path
-              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 
+            7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 
+            9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 
+            12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 
+            2.5z"
             />
           </svg>
         </a>
       </footer>
     </div>
+
+    <!-- Link to the JavaScript file, which will be provided later -->
     <script src="app.js"></script>
   </body>
 </html>

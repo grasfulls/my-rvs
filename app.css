@@ -1,5 +1,4 @@
 /* app.css */
-
 /* --------------------------------------------------- */
 /* Section 1: Global Styles & Basic Layout (Body, Main Content) */
 /* --------------------------------------------------- */
@@ -10,79 +9,46 @@ html {
 
 body {
     margin: 0;
-    /* Ensures no default browser margin */
     padding: 0;
-    /* Ensures no default browser padding */
     font-family: Arial, sans-serif;
-    display: block;
-    /* Change to block, app-container will handle flex */
-    min-height: 100vh;
-    /* Make body at least full viewport height */
+    display: block;/ min-height: 100vh;
     overflow-x: hidden;
-    /* Prevent horizontal scroll from shadow */
     background-color: #f0f2f5;
-    /* Light background for the whole screen */
 }
 
 .app-container {
     max-width: 800px;
-    /* Constrain overall app content width */
     margin: 0 auto;
-    /* Center the app content horizontally */
     display: flex;
-    /* Use flexbox for main layout direction */
     flex-direction: column;
-    /* Stack header, main, footer vertically */
     min-height: 100vh;
-    /* Ensure it's at least full viewport height */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow around the whole app */
     background-color: #ffffff;
-    /* White background for the main app "card" */
     overflow: hidden;
-    /* Crucial for containing inner elements and preventing scroll */
     border-radius: 10px;
-    /* Rounded corners for the entire app card */
 }
-
 
 /* Main Content Area - Container for all views */
 main#appContent {
     flex-grow: 1;
-    /* Allows main content to fill all available vertical space */
     overflow-y: auto;
-    /* Enables scrolling for content if it overflows */
     padding: 0;
-    /* Remove any internal padding that creates gaps */
-    /* REMOVE: min-height here as views will manage their own height */
 }
 
 /* Styles for all "views" (sections that act as pages) */
 .view {
     display: none;
-    /* Hidden by default, JavaScript manages visibility */
     padding: 20px;
-    /* Internal padding for content - KEEP THIS */
     width: 100%;
-    /* Views fill the width of main#appContent */
     flex-shrink: 0;
-    /* Prevent views from shrinking */
     flex-grow: 1;
-    /* Allow views to fill vertical space */
     box-sizing: border-box;
-    /* Include padding in width/height calculations */
-    /* REMOVE: max-width: 800px; */
-    /* REMOVE: margin: 0; */
-    /* REMOVE: background-color: #ffffff; */
-    /* REMOVE: border-radius: 10px; */
-    /* REMOVE: box-shadow: 0 4px 10px rgba(0,0,0,0.05); */
-    /* REMOVE: min-height: calc(100vh - 180px); */
 }
 
 /* Make settings view visible initially (will be controlled by JS logic) */
+
 #settingsView {
     display: block;
-    /* Overrides .view for initial load until JS takes over */
 }
 
 /* --------------------------------------------------- */
@@ -92,7 +58,6 @@ main#appContent {
     background-color: #3f51b5;
     color: white;
     padding: 5px 5px;
-    /* CHANGED padding */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -106,10 +71,10 @@ main#appContent {
 
 .app-header h1 {
     margin: 0;
-    font-size: 1.5em;   
-    position: absolute;    
-    left: 50%;    
-    transform: translateX(-50%);   
+    font-size: 1.5em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Settings Icon Button in Header */
@@ -123,16 +88,14 @@ main#appContent {
     transition: background-color 0.2s ease;
     position: absolute;
     right: 15px;
-
 }
 
 #settingsBtn:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    /* Subtle hover effect */
 }
 
 #settingsBtn svg {
-    fill: white;  
+    fill: white;
     width: 24px;
     height: 24px;
 }
@@ -147,262 +110,57 @@ main#appContent {
     gap: 20px;
     padding: 10px 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    /* Keep shadow for footer bottom */
     z-index: 100;
-    /* Ensure footer is above other content */
     height: 60px;
-    /* Fixed height for footer */
     width: 100%;
-    /* Fill the width of its app-container parent */
     flex-shrink: 0;
-    /* Prevent footer from shrinking */
     border-radius: 0 0 10px 10px;
-    /* Rounded bottom corners for the entire app card */
-    /* REMOVE: position: fixed; */
-    /* REMOVE: bottom: 0; */
-    /* REMOVE: left: 0; */
-    /* REMOVE: width: 100%; */
-    /* Duplicated/replaced by line above */
 }
 
 .app-footer a {
-    /* Targeting the anchor tags within the footer */
     display: flex;
     align-items: center;
     justify-content: center;
     width: 48px;
-    /* Fixed width for touch target */
     height: 48px;
-    /* Fixed height for touch target */
     border-radius: 50%;
-    /* Make them circular touch targets */
     text-decoration: none;
-    /* Remove link underline */
     color: black;
-    /* Default icon color (person/map) */
     box-sizing: border-box;
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .app-footer a:hover {
     background-color: #ddd;
-    /* Subtle background on hover */
     transform: scale(1.05);
-    /* Slight grow on hover */
 }
 
 .app-footer svg {
-    /* Styling the SVG icons themselves within the footer links */
     fill: currentColor;
-    /* Inherit color from parent 'a' tag */
     stroke: currentColor;
-    /* For outline icons like map */
     width: 100%;
-    /* Make SVG fill its parent 'a' tag */
     height: 100%;
-    /* Make SVG fill its parent 'a' tag */
+}
+
+/* Footer Icon Specific Colors */
+#myRVsLink {
+    color: #2196F3;
+    /* Blue for the person icon */
+}
+
+#mapLink {
+    color: #673AB7;
+    /* Violet for the pin icon */
 }
 
 /* --------------------------------------------------- */
-/* Section 4: Settings View Specific Styling */
+/* Section 4: Universal Button Styles */
 /* --------------------------------------------------- */
-#settingsView h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-    font-size: 1.8em;
-}
 
-.first-time-message {
-    background-color: #e0f7fa;
-    /* Light blue */
-    border-left: 5px solid #00bcd4;
-    /* Cyan border */
-    padding: 15px;
-    margin-bottom: 30px;
-    border-radius: 5px;
-    font-size: 0.95em;
-    color: #333;
-    line-height: 1.5;
-}
-
-.first-time-message strong {
-    color: #00796b;
-    /* Darker teal */
-}
-
-.setting-item {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    /* Align label and input to the start */
-}
-
-.setting-item label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #555;
-    font-size: 1.1em;
-}
-
-.setting-item input[type="text"],
-.setting-item input[type="number"] {
-    width: calc(100% - 20px);
-    /* Full width minus padding */
-    padding: 12px 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1em;
-    box-sizing: border-box;
-    /* Include padding in width */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.setting-item input[type="text"]:focus,
-.setting-item input[type="number"]:focus {
-    border-color: #3f51b5;
-    /* Blue focus */
-    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
-    outline: none;
-}
-
-.field-note {
-    font-size: 0.8em;
-    color: #777;
-    margin-left: 5px;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-/* Coordinates Group Specific Styling */
-.coordinates-group {
-    display: grid;
-    /* Use CSS Grid for precise layout control */
-    grid-template-columns: auto 1fr auto;
-    /* Label, then inputs/button, then button */
-    align-items: center;
-    /* Vertically center items in their grid cells */
-    gap: 10px;
-    /* Space between grid items */
-    margin-bottom: 20px;
-    /* Standard margin at bottom */
-}
-
-.coordinates-group label {
-    grid-column: 1 / -1;
-    /* Make label span all columns */
-    text-align: center;
-    /* Center the label text */
-    margin-bottom: 10px;
-    /* Add space below label */
-    font-weight: bold;
-    color: #333;
-    font-size: 1.1em;
-}
-
-.coordinates-group #defaultLatitude,
-.coordinates-group #defaultLongitude {
-    grid-column: 2 / 3;
-    /* Place inputs in the second column */
-}
-
-.coordinates-group #defaultLatitude {
-    grid-row: 2;
-    /* Latitude on row 2 */
-}
-
-.coordinates-group #defaultLongitude {
-    grid-row: 3;
-    /* Longitude on row 3 */
-}
-
-.coordinates-group #useCurrentLocationBtn {
-    grid-column: 3 / 4;
-    /* Place button in the third column */
-    grid-row: 2 / span 2;
-    /* Span both rows (Latitude and Longitude) */
-    height:auto;
-    /* Make button fill its grid cell height */
-}
-
-.coordinates-group-rv input {
-    width: 150px;
-    margin-right: 10px;
-    grid-column: 2 / 3;
-}
-
-/* RV Form Coordinates Group Styling (mirrors Settings page) */
-.coordinates-group-rv {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-.coordinates-group-rv label {
-    grid-column: 1 / 4;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #333;
-    font-size: 1.1em;
-    text-align: left !important;
-}
-
-.coordinates-group-rv input {
-    width: 150px;
-    /* Fixed width for inputs to make them shorter */
-    margin-right: 10px;
-    /* Gap between input and button */
-}
-
-.coordinates-group-rv #rvLatitude {
-    grid-column: 1 / 2;
-    /* Latitude in first column */
-    grid-row: 2;
-    /* Place Latitude on row 2 */
-}
-
-.coordinates-group-rv #rvLongitude {
-    grid-column: 1 / 2;
-    /* Longitude in first column */
-    grid-row: 3;
-    /* Place Longitude on row 3 */
-}
-
-.coordinates-group-rv #rvUseCurrentLocationBtn {
-    grid-column: 3 / 4;
-    grid-row: 2 / span 2;
-    height: auto;
-    align-self: center;
-    justify-self: start;
-    width: 110px;
-    flex-shrink: 0;
-}
-/* Settings Actions Group (for Use Current, Export, Import, Save buttons) */
-.settings-actions {
-    display: flex;
-    flex-wrap: wrap;
-    /* Allow buttons to wrap on smaller screens */
-    justify-content: center;
-    /* Center buttons horizontally */
-    gap: 15px;
-    /* Space between buttons */
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-/* Universal Button Styles (for utility-btn) */
+/* Base style for all utility buttons */
 .utility-btn {
     background-color: #4CAF50;
-    /* Default green, but overridden for specific buttons */
-    color: currentColor;
-    /* Default text/icon color */
+    color: white;
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
@@ -411,16 +169,14 @@ main#appContent {
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     display: flex;
-    /* For icon+text layout */
     align-items: center;
     justify-content: center;
     gap: 8px;
-    /* Space between icon and text */
 }
 
 .utility-btn:hover {
+
     background-color: #45a049;
-    /* Darker green on hover */
     transform: translateY(-1px);
 }
 
@@ -429,30 +185,56 @@ main#appContent {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Icon-only buttons */
 .utility-btn.icon-button {
     width: 50px;
-    /* Fixed size for icon-only buttons */
     height: 50px;
-    /* Fixed size for icon-only buttons */
     padding: 0;
-    /* No padding for icon-only */
-    font-size: 1.5em;
-    /* Adjust font size if text is present */
     border-radius: 50%;
-    /* Circular for icon-only buttons */
     background: none;
-    /* No background fill by default */
     border: 2px solid;
-    /* Use current color for border */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Keep subtle shadow */
-    color: black;   /* Default icon/border color for icon-only buttons */  
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    color: black;
 }
 
-/* Hover/Active states for text-icon-button */
+.utility-btn.icon-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    stroke: currentColor;
+
+}
+
+.utility-btn.icon-button span {
+    display: none;
+}
+
+.utility-btn.text-icon-button {
+    width: auto;
+    height: auto;
+    /* Allow height to adjust to content */
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: none;
+    /* Ensure no border */
+}
+
+.utility-btn.text-icon-button span {
+    display: inline-block;
+    /* Allows <br> to work and vertical alignment */
+    line-height: 1.2;
+    /* Adjust line height for two lines of text */
+    text-align: right;
+    /* Align text to the right if icon is on the right */
+    padding-right: 5px;
+    /* Small padding between text and icon */
+}
+
+.utility-btn.text-icon-button svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
 .utility-btn.text-icon-button:hover {
-    background-color: #512DA8;
-    /* Darker purple on hover */
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -462,25 +244,47 @@ main#appContent {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.utility-btn.icon-button svg {
-    width: 24px;
-    height: 24px;
-    fill: currentColor;
-    /* Use current color for SVG fill */
-    stroke: currentColor;
-    /* Use current color for SVG stroke */
+/* Specific styles for the "Use Current" buttons */
+#useCurrentLocationBtn,
+#rvUseCurrentLocationBtn {
+    background-color: #8BC34A;
+    /* Light Green */
+    color: white;
+    /* Text color */
+    border-color: #8BC34A;
+    /* Border color matches background */
+    height: auto;
+    /* Crucial: Allow height to adapt to two lines of text */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Keep a subtle shadow, not an outline */
 }
 
-.utility-btn.icon-button span {
-    /* Hide text by default in icon-only buttons */
-    display: none;
+#useCurrentLocationBtn:hover,
+#rvUseCurrentLocationBtn:hover {
+    background-color: #689F38;
+    /* Dark Green on hover */
 }
 
-/* Specific button colors (for icon-buttons, overrides general .utility-btn) */
+#useCurrentLocationBtn svg,
+#rvUseCurrentLocationBtn svg {
+    fill: #673AB7;
+    /* Light Violet for the pin */
+    stroke: #673AB7;
+    /* Light Violet for the pin */
+}
+
+/* Hover state for the SVG pin inside the "Use Current" buttons */
+#useCurrentLocationBtn:hover svg,
+#rvUseCurrentLocationBtn:hover svg {
+    fill: #512DA8;
+    /* Dark Violet on hover */
+    stroke: #512DA8;
+    /* Dark Violet on hover */
+}
+
 
 #exportDataBtn {
     color: #2196F3;
-    /* Blue text/icon */
     border-color: #2196F3;
 }
 
@@ -491,7 +295,6 @@ main#appContent {
 
 #importDataBtn {
     color: #FFC107;
-    /* Amber text/icon */
     border-color: #FFC107;
     transform: rotate(180deg);
 }
@@ -499,23 +302,225 @@ main#appContent {
 #importDataBtn:hover {
     background-color: #FFC107;
     color: #333;
-    /* Dark text for amber background */
 }
 
-#saveSettingsBtn {
-    color: #4CAF50;
-    /* Green text/icon */
+#saveSettingsBtn,
+#saveRvBtn {
+    color: white;
+    background-color: #4CAF50;
     border-color: #4CAF50;
 }
 
-#saveSettingsBtn:hover {
-    background-color: #4CAF50;
+#saveSettingsBtn:hover,
+#saveRvBtn:hover {
+    background-color: #45a049;
+}
+
+/* New style for the Cancel button */
+.utility-btn.cancel-btn {
+    color: #f44336;
+    /* Red color */
+    border-color: #f44336;
+    /* Red border */
+}
+
+.utility-btn.cancel-btn:hover {
+    background-color: #f44336;
+    /* Red background on hover */
     color: white;
+    /* White text on hover */
 }
 
 
 /* --------------------------------------------------- */
-/* Section 5: My RVs View Specific Styling */
+/* Section 5: Settings View Specific Styling */
+/* --------------------------------------------------- */
+
+#settingsView h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.first-time-message {
+    background-color: #e0f7fa;
+    border-left: 5px solid #00bcd4;
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    font-size: 0.95em;
+    color: #333;
+    line-height: 1.5;
+}
+
+.first-time-message strong {
+    color: #00796b;
+}
+
+/* General Settings Form Item Styling (City, State, Area) */
+.setting-item {
+    margin-bottom: 20px;
+    /* Larger gap BETWEEN form groups */
+    box-sizing: border-box;
+    display: flex;
+    /* Use flex for base layout */
+    flex-direction: column;
+    /* Stack label and input vertically */
+    gap: 5px;
+    /* Small gap between label and input */
+    align-items: flex-start;
+    /* Align label and input to the left */
+    width: 100%;
+    /* Take full width */
+    padding-left: 20px;
+    /* Align with form content */
+    padding-right: 20px;
+}
+
+.setting-item label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1.1em;
+    margin-bottom: 0;
+    /* Let gap control spacing */
+}
+
+/* For Area field specific alignment of label and note */
+.setting-item label .field-note {
+    /* Target the small note inside the label */
+    font-size: 0.8em;
+    color: #777;
+    flex-shrink: 0;
+    white-space: nowrap;
+    margin-left: 5px;
+    /* Small horizontal gap between label text and note */
+}
+
+/* General input styling for text and number fields in Settings */
+.setting-item input[type="text"],
+.setting-item input[type="number"] {
+    width: calc(100% - 20px);
+    /* Full width minus padding, like settings */
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.setting-item input[type="text"]:focus,
+.setting-item input[type="number"]:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    outline: none;
+}
+
+/* Coordinates Group Specific Styling (Settings View) */
+.setting-item.coordinates-group {
+    display: flex;
+    flex-direction: row;
+    /* Keep as row to place button to the right */
+    flex-wrap: wrap;
+    /* Keep for responsiveness */
+    align-items: center;
+    /* Vertically center items */
+    gap: 15px;
+    /* Gap between inputs and button */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: flex-start;
+    /* Align items to the start of the flex container */
+}
+
+.coordinates-main-label {
+    text-align: left;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+    padding-left: 0;
+    width: 100%;
+    /* Ensure it takes full width in flex context */
+}
+
+.coordinates-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Gap between Latitude and Longitude inputs */
+}
+
+.form-group-lat-long {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-sizing: border-box;
+}
+
+.form-group-lat-long label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1.1em;
+    margin-bottom: 0;
+}
+
+label[for="defaultLongitude"] {
+    margin-top: 10px;
+}
+
+.form-group-lat-long input[type="number"] {
+    width: 150px;
+    /* Set a fixed width to make inputs shorter */
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 0px;
+}
+
+.form-group-lat-long input[type="number"]:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    outline: none;
+}
+
+#defaultLongitude {
+    margin-top: 0px;
+}
+
+#useCurrentLocationBtn {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    background-color: #8BC34A;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: auto;
+    height: auto;
+    /* Changed to auto to adapt to two lines of text */
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow, not an outline */
+}
+
+#useCurrentLocationBtn:hover {
+    background-color: #689F38;
+}
+
+/* --------------------------------------------------- */
+/* Section 6: My RVs View Specific Styling */
 /* --------------------------------------------------- */
 
 /* My RVs Header (for "Contact Info" title and '+' button) */
@@ -525,9 +530,7 @@ main#appContent {
     justify-content: center;
     margin-bottom: 20px;
     padding-right: 20px;
-    /* Space for the absolute add button */
-    position: relative;
-    /* For absolute positioning of the add button */
+    /* position: relative; */
 }
 
 /* Ensure H2 within myrvs-header is centered */
@@ -541,7 +544,6 @@ main#appContent {
 .add-button {
     position: absolute;
     right: 20px;
-    /* Position from right edge of .myrvs-header */
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
@@ -593,43 +595,36 @@ main#appContent {
     padding: 30px 0;
 }
 
-
 /* --- RV ENTRY FORM VIEW STYLING (rvFormView) --- */
-
-/* Overall container for form fields */
 .rv-form-fields {
     padding: 0 20px;
-    /* Padding to align with settings views inputs */
 }
 
-/* Wrapper for each form group to manage alignment */
+/* Wrapper for each form group to manage overall spacing (Name, Address, etc.) */
 .form-group-wrapper {
     margin-bottom: 20px;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
 }
 
 /* Style for individual form-group divs (label + input/elements) */
 .rv-form-fields .form-group {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
-    align-items: center;
+    gap: 5px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    box-sizing: border-box;
     flex-wrap: wrap;
-    justify-content: space-between;
 }
 
-/* Adjust general form inputs (Name, Address, City, State, Area, Email, Note) */
+/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
 .rv-form-fields .form-group input[type="text"],
 .rv-form-fields .form-group input[type="number"],
 .rv-form-fields .form-group input[type="date"],
 .rv-form-fields .form-group input[type="time"],
 .rv-form-fields .form-group textarea,
 .rv-form-fields .form-group input[type="email"] {
-    /* Added email input */
-    width: calc(100% - 20px);
-    /* Full width minus padding, like settings */
+    width: 100%;
     padding: 12px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -645,139 +640,121 @@ main#appContent {
     outline: none;
 }
 
+/* Specific styling for label and note combination (e.g., Area field) */
+.form-group .label-and-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    width: 100%;
+    margin-bottom: 0px;
+    box-sizing: border-box;
+}
+
+.field-note {
+    font-size: 0.8em;
+    color: #777;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
 
 /* RV Form Coordinates Group Styling (mirrors Settings page) */
 .form-group.coordinates-group-rv {
-    display: grid;
-    /* Use CSS Grid for precise layout control */
-    /* Define columns: Input Fields Column (flexible), Button Column */
-    grid-template-columns: 1fr auto;
+    display: flex;
+    flex-direction: row;
+    /* Back to row */
+    flex-wrap: wrap;
+    /* Keep for responsiveness */
     align-items: center;
-    /* Vertically center items in their grid cells */
-    gap: 10px;
-    /* Gap between input area and button */
-    margin-bottom: 20px;
-    /* Standard margin at bottom */
+    /* Align items to the center vertically */
+    gap: 15px;
+    /* Gap between inputs and button */
     box-sizing: border-box;
     padding: 0;
-    /* Remove internal padding to align with outer .rv-form-fields padding */
+    justify-content: flex-start;
+    /* Align items to the start of the flex container */
 }
 
 .form-group.coordinates-group-rv label {
-    grid-column: 1 / -1;
-    /* Label spans all columns */
     text-align: center;
-    /* Center the label text */
     margin-bottom: 10px;
     font-weight: bold;
     color: #333;
     font-size: 1.1em;
+    width: 100%;
+    /* Ensure it takes full width in flex context */
 }
 
 .form-group.coordinates-group-rv input {
-    /* Use current value, inherit from general form input styling for common styles */
     width: 150px;
-    /* Fixed width for inputs to make them shorter */
-    flex-shrink: 0;
-    /* Prevent them from shrinking */
+    /* Set a fixed width to make inputs shorter */
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
     box-sizing: border-box;
-    /* Include padding in width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 0px;
 }
 
 .form-group.coordinates-group-rv #rvLatitude {
-    grid-column: 1 / 2;
-    /* Latitude in first column */
-    grid-row: 2;
-    /* Place Latitude on row 2 */
+    /* No longer needs grid properties */
 }
 
 .form-group.coordinates-group-rv #rvLongitude {
-    grid-column: 1 / 2;
-    /* Longitude in first column */
-    grid-row: 3;
-    /* Place Longitude on row 3 */
+    /* No longer needs grid properties */
 }
 
 .form-group.coordinates-group-rv #rvUseCurrentLocationBtn {
-    grid-column: 2 / 3;
-    /* Place button in the second column */
-    grid-row: 2 / span 2;
-    /* Span both rows (Latitude and Longitude) */
     height: auto;
-    /* Make button height determined by content */
+    /* Changed to auto to adapt to two lines of text */
     align-self: center;
-    /* Vertically center button in its span */
-    justify-self: end;
-    /* Align button to the end (right) of its grid cell */
-    width: 110px;
-    /* Fixed width for "Use Current" button to match Settings */
+    /* Ensure it's centered if parent is flex */
+    width: auto;
+    /* Changed from fixed width */
     flex-shrink: 0;
-    /* Prevent it from shrinking */
 }
 
 /* Contacted Date/Time Group with Add/Remove Buttons */
+
 .form-group.contacted-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
     box-sizing: border-box;
-    padding-left: 0;
-    /* CHANGED */
+    padding-left: 20px;
     padding-right: 20px;
-    /* Keep this for consistency */
-    flex-wrap: wrap;
-    justify-content: space-between;
 }
 
 .form-group.contacted-group label {
-    flex-shrink: 0;
-    /* Prevent label from shrinking */
+    grid-column: 1 / 2;
     margin-bottom: 0;
-    /* Remove bottom margin for inline alignment */
     text-align: left;
-    /* Ensure label is left-aligned */
 }
 
-/* Ensure inputs are flexible but contained within the flex row */
-.form-group.contacted-group input[type="date"],
-.form-group.contacted-group input[type="text"]#rvLastContactedDay,
-.form-group.contacted-group input[type="time"] {
-    flex-grow: 1;
-    /* Allow inputs to grow */
-    width: auto;
-    /* Auto width based on content/flex-grow */
+.form-group.contacted-group input[type="date"] {
+    grid-column: 2 / 3;
+    grid-row: 1;
     max-width: 150px;
-    /* Limit max width for date */
 }
 
 .form-group.contacted-group input[type="text"]#rvLastContactedDay {
+    grid-column: 3 / 4;
+    grid-row: 1;
     max-width: 80px;
-    /* Override for smaller day field */
+    text-align: center;
 }
 
 .form-group.contacted-group input[type="time"] {
+    grid-column: 4 / 5;
+    grid-row: 1;
     max-width: 120px;
-    /* Override for time field */
 }
 
-
-/* Styling for Add/Remove Visit buttons next to date/time */
-.date-time-actions {
-    display: flex;
-    /* Make buttons horizontal */
-    gap: 5px;
-    /* Small space between + and - buttons */
-    align-items: center;
-    /* Vertically center buttons */
-    margin-left: auto;
-    /* Pushes the button group to the right if there's extra space */
-    flex-shrink: 0;
-    /* Prevents button group from shrinking */
-}
-
-.add-visit-btn,
-.remove-visit-btn {
+.form-group.contacted-group .add-visit-btn,
+.form-group.contacted-group .remove-visit-btn {
     width: 30px;
     height: 30px;
     font-size: 1.2em;
@@ -791,48 +768,53 @@ main#appContent {
     transition: all 0.2s ease;
 }
 
-.add-visit-btn {
+.form-group.contacted-group .add-visit-btn {
+    grid-column: 5 / 6;
+    grid-row: 1;
     color: #4CAF50;
     border-color: #4CAF50;
 }
 
-.add-visit-btn:hover {
+.form-group.contacted-group .add-visit-btn:hover {
     background-color: #4CAF50;
     color: white;
+
 }
 
-.remove-visit-btn {
+.form-group.contacted-group .remove-visit-btn {
+    grid-column: 6 / 7;
+    grid-row: 1;
     color: #f44336;
     border-color: #f44336;
-    display: block;
-    /* Ensure it's not hidden, will manage with JS */
+    display: none;
 }
 
-.remove-visit-btn:hover {
+.form-group.contacted-group .remove-visit-btn:hover {
     background-color: #f44336;
     color: white;
 }
 
 /* Form Actions (Save/Cancel buttons) */
-.form-actions {
+.settings-actions {
+    /* Corrected class name from .form-actions to .settings-actions */
     display: flex;
     justify-content: center;
     /* Center the buttons horizontally */
-    gap: 15px;
-    /* Space between buttons */
+    gap: 20px;
+    /* Space between buttons, consistent with footer */
+    flex-wrap: wrap;
+    /* Allow buttons to wrap on smaller screens */
     margin-top: 30px;
-    /* Space from form fields above */
     padding-top: 20px;
     border-top: 1px solid #eee;
-    /* Separator line */
     padding-left: 20px;
-    /* Match form padding */
     padding-right: 20px;
-    /* Match form padding */
 }
+
 /* --------------------------------------------------- */
-/* Section 6: Map View Specific Styling */
+/* Section 7: Map View Specific Styling */
 /* --------------------------------------------------- */
+
 #mapView h2 {
     text-align: center;
     color: #333;
@@ -843,15 +825,15 @@ main#appContent {
 #mapContainer {
     width: 100%;
     height: 100%;
-    /* CHANGED to 100% */
     background-color: #f0f0f0;
     border-radius: 8px;
     margin: 0 auto;
 }
 
 /* --------------------------------------------------- */
-/* Section 7: Media Queries for Responsiveness */
+/* Section 8: Media Queries for Responsiveness */
 /* --------------------------------------------------- */
+
 @media (max-width: 600px) {
     .app-header h1 {
         font-size: 1.3em;
@@ -859,7 +841,6 @@ main#appContent {
 
     .app-footer a {
         width: 40px;
-        /* Slightly smaller touch target on small screens */
         height: 40px;
         padding: 5px;
     }
@@ -872,18 +853,14 @@ main#appContent {
     }
 
     .settings-actions {
-        gap: 10px;
-        /* Reduce gap on smaller screens */
-    }
-
-    .utility-btn {
-        padding: 10px 15px;
-        /* Adjust padding for text buttons */
-    }
-
-    .utility-btn.icon-button {
-        width: 45px;
-        /* Adjust size for icon-only buttons */
-        height: 45px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 }
