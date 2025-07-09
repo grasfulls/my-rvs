@@ -1,3 +1,270 @@
+/* --------------------------------------------------- */
+/* Section 1: Global Styles & Basic Layout (Body, Main Content) */
+/* --------------------------------------------------- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: block;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: #f0f2f5;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    overflow: hidden;
+    border-radius: 0;
+    /* Changed from 10px to 0 */
+}
+
+/* Main Content Area - Container for all views */
+main#appContent {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Styles for all "views" (sections that act as pages) */
+.view {
+    display: none;
+    padding: 20px;
+    width: 100%;
+    flex-shrink: 0;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+/* Make settings view visible initially (will be controlled by JS logic) */
+#settingsView {
+    display: none;
+    /* Controlled by JS now */
+}
+
+/* Loading Spinner */
+#loadingSpinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+    /* Above everything else */
+    flex-direction: column;
+    gap: 15px;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loadingSpinner p {
+    font-size: 1.2em;
+    color: #555;
+}
+
+/* --------------------------------------------------- */
+/* Section 2: Header Styling */
+/* --------------------------------------------------- */
+.app-header {
+    background-color: #3f51b5;
+    color: white;
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+    height: 25px;
+    /* Half height from 50px to 25px */
+    width: 100%;
+    flex-shrink: 0;
+    border-radius: 0;
+    /* Changed from 10px 10px 0 0; to 0 */
+}
+
+.header-left-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Changed from center to flex-start */
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+    gap: 8px;
+}
+
+.app-header h1.main-header-title {
+    margin: 0;
+    font-size: 1em;
+    /* Adjusted font size for smaller header */
+    flex-shrink: 0;
+    display: none;
+    /* Added to hide the main title */
+}
+
+.app-subheading {
+    font-size: 0.8em;
+    /* Adjusted font size for smaller header */
+    opacity: 0.9;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 25px;
+    /* Center text vertically in new header height */
+}
+
+.header-right-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+
+/* Add Button (Plus Sign) - now part of header-left-content flex layout */
+#addRVBtn {
+    width: 20px;
+    /* Adjusted size for smaller header */
+    height: 20px;
+    /* Adjusted size for smaller header */
+    background: none;
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+    /* Adjusted border for smaller size */
+    border-radius: 50%;
+    font-size: 1em;
+    /* Adjusted font size */
+    line-height: 20px;
+    /* Adjusted line height */
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    /* Adjusted shadow */
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 5px;
+    /* Small margin to separate from subtitle */
+}
+
+#addRVBtn:hover {
+    background-color: #4CAF50;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#addRVBtn:active {
+    transform: scale(1);
+    box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.2);
+}
+
+/* --------------------------------------------------- */
+/* Section 3: Footer Styling */
+/* --------------------------------------------------- */
+.app-footer {
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    height: 50px;
+    /* Decreased from 60px to 50px */
+    width: 100%;
+    flex-shrink: 0;
+    border-radius: 0 0 10px 10px;
+    position: fixed;
+    /* Fixed position */
+    bottom: 0;
+    /* Stick to the bottom */
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Adjust for centering */
+    max-width: 800px;
+    /* Match app-container max-width */
+}
+
+.app-footer a,
+.app-footer button {
+    /* Apply to both anchors and buttons in footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: #555;
+    /* Default dark grey color */
+    box-sizing: border-box;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    background: none;
+    /* Ensure no default button background */
+    border: none;
+    /* Ensure no default button border */
+    cursor: pointer;
+    /* Ensure buttons have pointer cursor */
+}
+
+.app-footer a:hover,
+.app-footer button:hover {
+    background-color: #ddd;
+    transform: scale(1.05);
+}
+
+.app-footer a.active,
+.app-footer button.active {
+    /* Active state for footer items */
+    color: #2196F3;
+    /* Blue when active */
+}
+
+.app-footer svg {
+    fill: currentColor;
+    stroke: currentColor;
+    width: 100%;
+    height: 100%;
+}
+
+/* Adjust main content padding to prevent content from being hidden behind fixed footer */
+main#appContent {
+    padding-bottom: 70px;
+    /* Height of footer (50px) + some extra space */
+}
 
 /* --------------------------------------------------- */
 /* Section 4: Universal Button Styles */
@@ -7,11 +274,13 @@
 .utility-btn {
     background-color: #4CAF50;
     color: white;
-    padding: 12px 20px;
+    padding: 10px 15px;
+    /* Decreased padding */
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
+    /* Slightly smaller font */
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     display: flex;
@@ -21,7 +290,6 @@
 }
 
 .utility-btn:hover {
-
     background-color: #45a049;
     transform: translateY(-1px);
 }
@@ -32,8 +300,10 @@
 }
 
 .utility-btn.icon-button {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    /* Matched footer icon size */
+    height: 40px;
+    /* Matched footer icon size */
     padding: 0;
     border-radius: 50%;
     background: none;
@@ -41,7 +311,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     color: black;
     display: flex;
-    /* Ensure it's a flex item itself if it contains SVG/span */
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -50,11 +319,12 @@
 }
 
 .utility-btn.icon-button svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    /* Adjusted SVG size to fit new button size */
+    height: 20px;
+    /* Adjusted SVG size to fit new button size */
     fill: currentColor;
     stroke: currentColor;
-
 }
 
 .utility-btn.icon-button span {
@@ -64,22 +334,17 @@
 .utility-btn.text-icon-button {
     width: auto;
     height: auto;
-    /* Allow height to adjust to content */
-    padding: 8px 15px;
+    padding: 6px 12px;
+    /* Decreased padding */
     border-radius: 8px;
     border: none;
-    /* Ensure no border */
 }
 
 .utility-btn.text-icon-button span {
     display: inline-block;
-    /* Allows <br> to work and vertical alignment */
     line-height: 1.2;
-    /* Adjust line height for two lines of text */
     text-align: right;
-    /* Align text to the right if icon is on the right */
     padding-right: 5px;
-    /* Small padding between text and icon */
 }
 
 .utility-btn.text-icon-button svg {
@@ -101,62 +366,37 @@
 #useCurrentLocationBtn,
 #rvUseCurrentLocationBtn {
     background-color: #8BC34A;
-    /* Light Green */
     color: white;
-    /* Text color */
     border-color: #8BC34A;
-    /* Border color matches background */
     height: auto;
-    /* Crucial: Allow height to adapt to two lines of text */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Keep a subtle shadow, not an outline */
 }
 
 #useCurrentLocationBtn:hover,
 #rvUseCurrentLocationBtn:hover {
     background-color: #689F38;
-    /* Dark Green on hover */
 }
 
 #useCurrentLocationBtn svg,
 #rvUseCurrentLocationBtn svg {
     fill: #673AB7;
-    /* Light Violet for the pin */
     stroke: #673AB7;
-    /* Light Violet for the pin */
 }
 
 /* Hover state for the SVG pin inside the "Use Current" buttons */
 #useCurrentLocationBtn:hover svg,
 #rvUseCurrentLocationBtn:hover svg {
     fill: #512DA8;
-    /* Dark Violet on hover */
     stroke: #512DA8;
-    /* Dark Violet on hover */
 }
 
+/* Removed specific colors for export/import buttons as they are now in footer */
+/* #exportDataBtn { color: #2196F3; border-color: #2196F3; } */
+/* #exportDataBtn:hover { background-color: #2196F3; color: white; } */
+/* #importDataBtn { color: #FFC107; border-color: #FFC107; transform: rotate(180deg); } */
+/* #importDataBtn:hover { background-color: #FFC107; color: #333; } */
 
-#exportDataBtn {
-    color: #2196F3;
-    border-color: #2196F3;
-}
-
-#exportDataBtn:hover {
-    background-color: #2196F3;
-    color: white;
-}
-
-#importDataBtn {
-    color: #FFC107;
-    border-color: #FFC107;
-    transform: rotate(180deg);
-}
-
-#importDataBtn:hover {
-    background-color: #FFC107;
-    color: #333;
-}
-
+/* Removed save/cancel buttons from form-actions, so these rules are now obsolete */
 #saveSettingsBtn,
 #saveRvBtn {
     color: white;
@@ -172,16 +412,12 @@
 /* New style for the Cancel button */
 .utility-btn.cancel-btn {
     color: #f44336;
-    /* Red color */
     border-color: #f44336;
-    /* Red border */
 }
 
 .utility-btn.cancel-btn:hover {
     background-color: #f44336;
-    /* Red background on hover */
     color: white;
-    /* White text on hover */
 }
 
 /* Message Box Styling */
@@ -219,6 +455,33 @@
     background-color: #2196F3;
 }
 
+/* Modal Overlay for Confirmation */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
 
 /* --------------------------------------------------- */
 /* Section 5: Settings View Specific Styling */
@@ -235,7 +498,10 @@
     background-color: #e0f7fa;
     border-left: 5px solid #00bcd4;
     padding: 15px;
-    margin-bottom: 30px;
+    margin-top: 0;
+    /* Ensures no top margin from header */
+    margin-bottom: 10px;
+    /* Consistent gap to next element */
     border-radius: 5px;
     font-size: 0.95em;
     color: #333;
@@ -246,289 +512,43 @@
     color: #00796b;
 }
 
-/* General S/* app.css */
-/* --------------------------------------------------- */
-/* Section 1: Global Styles & Basic Layout (Body, Main Content) */
-/* --------------------------------------------------- */
-html {
-    scroll-behavior: smooth;
-    /* Optional: smooth scrolling */
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    display: block;
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-color: #f0f2f5;
-}
-
-.app-container {
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-/* Main Content Area - Container for all views */
-main#appContent {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 0;
-}
-
-/* Styles for all "views" (sections that act as pages) */
-.view {
-    display: none;
-    padding: 20px;
-    /* Default padding for larger screens */
-    width: 100%;
-    flex-shrink: 0;
-    flex-grow: 1;
-    box-sizing: border-box;
-}
-
-/* Make settings view visible initially (will be controlled by JS logic) */
-
-#settingsView {
-    display: block;
-}
-
-/* --------------------------------------------------- */
-/* Section 2: Header Styling */
-/* --------------------------------------------------- */
-.app-header {
-    background-color: #3f51b5;
-    color: white;
-    padding: 5px 15px;
-    /* Adjusted horizontal padding */
-    display: flex;
-    justify-content: space-between;
-    /* Space out left and right content blocks */
-    align-items: center;
-    /* Vertically center all items in the header */
-    position: relative;
-    z-index: 100;
-    height: 60px;
-    /* Fixed height for consistent header */
-    width: 100%;
-    flex-shrink: 0;
-    border-radius: 10px 10px 0 0;
-}
-
-.header-left-content {
-    display: flex;
-    align-items: center;
-    /* Aligns items vertically in the center */
-    justify-content: center;
-    /* Centers the combined title block horizontally */
-    flex-grow: 1;
-    /* Allows it to take available space for centering */
-    /* Remove any conflicting margins/padding here */
-    margin: 0;
-    padding: 0;
-    gap: 8px;
-    /* Small gap between title and subheading */
-}
-
-.app-header h1.main-header-title {
-    margin: 0;
-    font-size: 2em;
-    /* Main title font size */
-    flex-shrink: 0;
-    /* Prevent from shrinking */
-}
-
-.app-subheading {
-    font-size: 0.9em;
-    /* Smaller font for subheading */
-    opacity: 0.9;
-    /* Slightly less prominent */
-    white-space: nowrap;
-    /* Prevent subheading from wrapping */
-    flex-shrink: 0;
-    /* Prevent from shrinking */
-}
-
-
-.header-right-icons {
-    /* Container for + and settings button */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    /* Gap between + button and settings icon */
-    flex-shrink: 0;
-    /* Prevent from shrinking */
-    margin-right: 15px;
-    /* Margin from right edge */
-}
-
-/* Settings Icon Button in Header */
-#settingsBtn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    transition: background-color 0.2s ease;
-    flex-shrink: 0;
-}
-
-#settingsBtn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-#settingsBtn svg {
-    fill: white;
-    width: 40px;
-    /* Increased size for the gear icon */
-    height: 40px;
-    /* Increased size for the gear icon */
-}
-
-/* Add Button (Plus Sign) - now part of header-right-icons flex layout */
-#addRVBtn {
-    width: 36px;
-    height: 36px;
-    background: none;
-    color: #4CAF50;
-    /* Green color */
-    border: 2px solid #4CAF50;
-    border-radius: 50%;
-    font-size: 1.5em;
-    line-height: 36px;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    /* Prevent button from shrinking */
-}
-
-#addRVBtn:hover {
-    background-color: #4CAF50;
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-#addRVBtn:active {
-    transform: scale(1);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-
-/* --------------------------------------------------- */
-/* Section 3: Footer Styling */
-/* --------------------------------------------------- */
-.app-footer {
-    background-color: #eee;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px 0;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-    height: 60px;
-    width: 100%;
-    flex-shrink: 0;
-    border-radius: 0 0 10px 10px;
-}
-
-.app-footer a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    text-decoration: none;
-    color: black;
-    box-sizing: border-box;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.app-footer a:hover {
-    background-color: #ddd;
-    transform: scale(1.05);
-}
-
-.app-footer svg {
-    fill: currentColor;
-    stroke: currentColor;
-    width: 100%;
-    height: 100%;
-}
-
-/* Footer Icon Specific Colors */
-#myRVsLink {
-    color: #2196F3;
-    /* Blue for the person icon */
-}
-
-#mapLink {
-    color: #673AB7;
-    /* Violet for the pin icon */
-}
-ettings Form Item Styling (City, State, Area) */
+/* General Settings Form Item Styling (City, State, Area) */
 .setting-item {
-    margin-bottom: 20px;
-    /* Larger gap BETWEEN form groups */
+    margin-bottom: 10px;
     box-sizing: border-box;
     display: flex;
-    /* Use flex for base layout */
     flex-direction: column;
-    /* Stack label and input vertically */
-    gap: 5px;
-    /* Small gap between label and input */
+    gap: 3px;
     align-items: flex-start;
-    /* Align label and input to the left */
     width: 100%;
-    /* Take full width */
     padding-left: 20px;
-    /* Align with form content */
     padding-right: 20px;
 }
 
 .setting-item label {
     font-weight: bold;
     color: #555;
-    font-size: 1.1em;
+    font-size: 1em;
     margin-bottom: 0;
-    /* Let gap control spacing */
 }
 
 /* For Area field specific alignment of label and note */
 .setting-item label .field-note {
-    /* Target the small note inside the label */
-    font-size: 0.8em;
+    font-size: 0.75em;
     color: #777;
     flex-shrink: 0;
     white-space: nowrap;
     margin-left: 5px;
-    /* Small horizontal gap between label text and note */
 }
 
 /* General input styling for text and number fields in Settings */
 .setting-item input[type="text"],
 .setting-item input[type="number"] {
     width: calc(100% - 20px);
-    /* Full width minus padding, like settings */
-    padding: 12px 10px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -544,67 +564,59 @@ ettings Form Item Styling (City, State, Area) */
 .setting-item.coordinates-group {
     display: flex;
     flex-direction: row;
-    /* Keep as row to place button to the right */
     flex-wrap: wrap;
-    /* Keep for responsiveness */
     align-items: center;
-    /* Vertically center items */
-    gap: 15px;
-    /* Gap between inputs and button */
-    margin-top: 10px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
     box-sizing: border-box;
     padding-left: 20px;
     padding-right: 20px;
     justify-content: flex-start;
-    /* Align items to the start of the flex container */
 }
 
 .coordinates-main-label {
     text-align: left;
     display: block;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 0px;
     font-weight: bold;
     color: #333;
-    font-size: 1.1em;
+    font-size: 1em;
     padding-left: 0;
     width: 100%;
-    /* Ensure it takes full width in flex context */
 }
 
 .coordinates-inputs {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    /* Gap between Latitude and Longitude inputs */
+    gap: 5px;
 }
 
 .form-group-lat-long {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
     box-sizing: border-box;
 }
 
 .form-group-lat-long label {
     font-weight: bold;
     color: #555;
-    font-size: 1.1em;
+    font-size: 1em;
     margin-bottom: 0;
 }
 
 label[for="defaultLongitude"] {
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .form-group-lat-long input[type="number"] {
-    width: 150px;
-    /* Set a fixed width to make inputs shorter */
-    padding: 12px 10px;
+    width: 120px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -619,160 +631,112 @@ label[for="defaultLongitude"] {
     margin-top: 0px;
 }
 
-#useCurrentLocationBtn {
-    flex-shrink: 0;
-    box-sizing: border-box;
-    background-color: #8BC34A;
-    color: white;
+/* Removed Export/Import buttons from settings-actions */
+.settings-actions {
     display: flex;
-    align-items: center;
+    flex-direction: row;
     justify-content: center;
-    gap: 5px;
-    width: auto;
-    height: auto;
-    /* Changed to auto to adapt to two lines of text */
-    padding: 8px 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow, not an outline */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 30px;
+    padding: 20px;
+    border-top: 1px solid #eee;
 }
 
-#useCurrentLocationBtn:hover {
-    background-color: #689F38;
+.settings-actions button.icon-button {
+    display: inline-flex !important;
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin: 0;
 }
 
 /* --------------------------------------------------- */
 /* Section 6: My RVs View Specific Styling */
 /* --------------------------------------------------- */
 
-/* My RVs Header (for "Contact Info" title and '+' button) */
-/* This is now the main header, its content is handled by .header-left-content and .header-right-icons */
-/* The h2.view-subheading is now removed from the HTML for myRVsView, mapView, rvFormView */
 .myrvs-section-header {
-    /* This rule is now effectively for the myRVsView section itself */
-    /* Remove previous flex properties as it no longer contains h2 and + button directly */
-    /* It's just a placeholder div if needed, or can be removed if not used for layout */
-    /* For now, keep it minimal to avoid breaking existing padding/margin */
     margin-bottom: 0;
-    /* Remove margin from here */
     padding: 0;
-    /* Remove padding from here */
     height: auto;
-    /* Allow height to collapse */
 }
-
 
 /* Sort and Filter Controls Container */
 .sort-filter-controls {
     position: sticky;
-    /* Make it sticky */
     top: 0px;
-    /* Stick below the header (header height is 60px) */
     background-color: #ffffff;
-    /* Match app container background */
     z-index: 50;
-    /* Ensure it's above content but below header */
     padding: 5px 20px;
-    /* Reduced padding to bring closer to header */
     border-bottom: 1px solid #eee;
-    /* Subtle separator */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    /* Subtle shadow */
     display: flex;
     flex-direction: column;
-    /* Stack sort and filter options vertically */
     align-items: flex-start;
-    /* Left-justify items within this block */
     gap: 5px;
-    /* Reduced gap between sort and filter sections */
     box-sizing: border-box;
     margin-top: 0px;
-    /* Set margin-top to 0px explicitly */
 }
 
 /* Specific styling for sort and filter options within the combined row */
 .sort-options {
     width: 100%;
-    /* Take full width of parent */
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    /* Left-justify its content */
     gap: 10px;
     flex-shrink: 0;
-    /* Prevent from shrinking too much */
 }
 
 .filter-options {
     width: 100%;
-    /* Take full width of parent */
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    /* Left-justify its content */
     gap: 10px;
     flex-wrap: wrap;
-    /* Allow checkboxes to wrap */
     flex-grow: 1;
-    /* Allow filter options to take remaining space */
 }
-
 
 .sort-filter-label {
     font-size: 0.85em;
-    /* Smaller font for labels */
     font-weight: bold;
     color: #555;
     margin-bottom: 0;
-    /* Remove margin-bottom as it's now horizontal */
     flex-shrink: 0;
-    /* Prevent label from shrinking */
 }
 
 .radio-group,
 .checkbox-group {
     display: flex;
     flex-wrap: wrap;
-    /* Allow items to wrap */
     justify-content: flex-start;
-    /* Left-justify radio/checkbox items within their group */
     gap: 10px;
-    /* Reduced space between individual radio/checkbox items */
-    /* flex-grow: 1; Removed as parent is already growing */
 }
 
 .radio-group input[type="radio"],
 .checkbox-group input[type="checkbox"] {
     margin-right: 5px;
-    /* Space between input and its label */
     transform: scale(1.05);
-    /* Slightly smaller checkboxes/radios */
     cursor: pointer;
 }
 
 .radio-group label,
 .checkbox-group label {
     font-size: 0.85em;
-    /* Smaller font for options */
     color: #444;
     cursor: pointer;
 }
 
-
 /* RV List Container (for displaying RV cards - content yet to be added) */
 .rv-list {
     margin-top: 10px;
-    /* Reduced margin-top to create small gap to controls */
     display: flex;
-    /* Use flexbox for layout */
     flex-direction: column;
-    /* Stack cards vertically */
     gap: 15px;
-    /* Gap between cards */
     padding: 10px;
-    /* Padding inside the list container */
     background-color: transparent;
     border-radius: 8px;
     min-height: 100px;
@@ -795,9 +759,7 @@ label[for="defaultLongitude"] {
     padding: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
-    /* For positioning trash icon and area */
     cursor: pointer;
-    /* Indicate clickable card */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -810,7 +772,6 @@ label[for="defaultLongitude"] {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    /* Align name and actions at the top */
     margin-bottom: 5px;
 }
 
@@ -818,23 +779,17 @@ label[for="defaultLongitude"] {
     margin: 0;
     font-size: 1.2em;
     color: #3f51b5;
-    /* Blue for name */
     flex-grow: 1;
-    /* Allow name to take available space */
 }
 
 .rv-card-actions {
     flex-shrink: 0;
-    /* Prevent actions from shrinking */
     margin-left: 10px;
-    /* Space between name and actions */
 }
 
 .rv-card-actions .delete-rv-btn {
     width: 50px;
-    /* Matched size of other icon buttons */
     height: 50px;
-    /* Matched size of other icon buttons */
     padding: 0;
     border-radius: 50%;
     background: none;
@@ -875,7 +830,6 @@ label[for="defaultLongitude"] {
     border-radius: 5px;
 }
 
-
 /* --- RV ENTRY FORM VIEW STYLING (rvFormView) --- */
 .rv-form-fields {
     padding: 0 20px;
@@ -883,7 +837,7 @@ label[for="defaultLongitude"] {
 
 /* Wrapper for each form group to manage overall spacing (Name, Address, etc.) */
 .form-group-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 /* Style for individual form-group divs (label + input/elements) */
@@ -891,9 +845,9 @@ label[for="defaultLongitude"] {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 5px;
+    gap: 3px;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     box-sizing: border-box;
     flex-wrap: wrap;
 }
@@ -906,10 +860,10 @@ label[for="defaultLongitude"] {
 .rv-form-fields .form-group textarea,
 .rv-form-fields .form-group input[type="email"] {
     width: 100%;
-    padding: 12px 10px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -933,7 +887,7 @@ label[for="defaultLongitude"] {
 }
 
 .field-note {
-    font-size: 0.8em;
+    font-size: 0.75em;
     color: #777;
     flex-shrink: 0;
     white-space: nowrap;
@@ -943,122 +897,93 @@ label[for="defaultLongitude"] {
 .form-group.coordinates-group-rv {
     display: flex;
     flex-direction: row;
-    /* Back to row */
     flex-wrap: wrap;
-    /* Keep for responsiveness */
     align-items: center;
-    /* Align items to the center vertically */
-    gap: 15px;
-    /* Gap between inputs and button */
+    gap: 10px;
     box-sizing: border-box;
     padding: 0;
     justify-content: flex-start;
-    /* Align items to the start of the flex container */
 }
 
 .form-group.coordinates-group-rv label {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-weight: bold;
     color: #333;
-    font-size: 1.1em;
+    font-size: 1em;
     width: 100%;
-    /* Ensure it takes full width in flex context */
 }
 
 .form-group.coordinates-group-rv input {
-    width: 150px;
-    /* Set a fixed width to make inputs shorter */
-    padding: 12px 10px;
+    width: 120px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group.coordinates-group-rv #rvLatitude {
-    /* No longer needs grid properties */
-}
-
-.form-group.coordinates-group-rv #rvLongitude {
-    /* No longer needs grid properties */
-}
-
 .form-group.coordinates-group-rv #rvUseCurrentLocationBtn {
     height: auto;
-    /* Changed to auto to adapt to two lines of text */
     align-self: center;
-    /* Ensure it's centered if parent is flex */
     width: auto;
-    /* Changed from fixed width */
     flex-shrink: 0;
+    padding: 6px 12px;
 }
 
 /* Contacted Date/Time Group with Add/Remove Buttons */
 
 .form-group.contacted-group {
     display: flex;
-    /* Changed to flexbox */
     flex-direction: row;
-    /* Horizontal layout */
     align-items: center;
-    /* Vertically align items */
-    gap: 10px;
-    /* Gap between items */
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 10px;
     box-sizing: border-box;
     padding-left: 20px;
     padding-right: 20px;
     flex-wrap: wrap;
-    /* Allow wrapping on small screens */
 }
 
 .form-group.contacted-group label {
-    /* Removed grid-column, grid-row */
     margin-bottom: 0;
     text-align: left;
     flex-shrink: 0;
-    /* Prevent label from shrinking */
     white-space: nowrap;
-    /* Keep label on one line */
 }
 
 .form-group.contacted-group input[type="date"] {
-    /* Removed grid-column, grid-row */
-    max-width: 150px;
+    max-width: 120px;
     flex-shrink: 0;
-    /* Ensure this is present */
     flex-grow: 0;
-    /* Ensure this is present */
+    padding: 8px 10px;
+    font-size: 0.9em;
 }
 
 .form-group.contacted-group input[type="text"]#rvLastContactedDay {
-    /* Removed grid-column, grid-row */
-    width: 80px;
-    /* Fixed width for day input */
+    width: 70px;
     text-align: center;
     flex-shrink: 0;
-    /* Ensure this is present */
     flex-grow: 0;
-    /* Ensure this is present */
+    padding: 8px 10px;
+    font-size: 0.9em;
 }
 
 .form-group.contacted-group input[type="time"] {
-    /* Removed grid-column, grid-row */
-    max-width: 120px;
+    max-width: 100px;
     flex-shrink: 0;
-    /* Ensure this is present */
     flex-grow: 0;
-    /* Ensure this is present */
+    padding: 8px 10px;
+    font-size: 0.9em;
 }
 
 .form-group.contacted-group .add-visit-btn,
 .form-group.contacted-group .remove-visit-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 1.2em;
-    line-height: 30px;
+    width: 25px;
+    height: 25px;
+    font-size: 1em;
+    line-height: 25px;
     padding: 0;
     border-radius: 50%;
     border: 1px solid;
@@ -1067,11 +992,9 @@ label[for="defaultLongitude"] {
     box-shadow: none;
     transition: all 0.2s ease;
     flex-shrink: 0;
-    /* Prevent buttons from shrinking */
 }
 
 .form-group.contacted-group .add-visit-btn {
-    /* Removed grid-column, grid-row */
     color: #4CAF50;
     border-color: #4CAF50;
 }
@@ -1079,11 +1002,9 @@ label[for="defaultLongitude"] {
 .form-group.contacted-group .add-visit-btn:hover {
     background-color: #4CAF50;
     color: white;
-
 }
 
 .form-group.contacted-group .remove-visit-btn {
-    /* Removed grid-column, grid-row */
     color: #f44336;
     border-color: #f44336;
     display: none;
@@ -1094,20 +1015,10 @@ label[for="defaultLongitude"] {
     color: white;
 }
 
-/* Form Actions (Save/Cancel buttons) */
+/* Form Actions (Save/Cancel buttons) - REMOVED */
 .form-actions {
-    display: flex;
-    justify-content: center;
-    /* Center the buttons horizontally */
-    gap: 20px;
-    /* Space between buttons, consistent with footer */
-    flex-wrap: wrap;
-    /* Allow buttons to wrap on smaller screens */
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-    padding-left: 20px;
-    padding-right: 20px;
+    display: none;
+    /* Hide the entire form-actions div */
 }
 
 /* --------------------------------------------------- */
@@ -1123,7 +1034,7 @@ label[for="defaultLongitude"] {
 
 #mapContainer {
     width: 100%;
-    height: 100%;
+    height: 400px;
     background-color: #f0f0f0;
     border-radius: 8px;
     margin: 0 auto;
@@ -1155,77 +1066,82 @@ label[for="defaultLongitude"] {
 @media (max-width: 600px) {
     .app-header h1 {
         font-size: 1.8em;
-        /* Slightly larger for better hierarchy on small screens */
     }
 
     .coordinates-inputs {
         flex-direction: column;
-        gap: 8px;  
+        gap: 8px;
     }
 
     .app-footer a {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
         padding: 5px;
     }
 
     #addRVBtn {
-        width: 45px;
-        height: 45px;
-        font-size: 2em;
-        line-height: 45px;
+        width: 30px;
+        height: 30px;
+        font-size: 1.2em;
+        line-height: 30px;
     }
 
     /* Adjustments for general view padding on small screens */
     .view {
-        padding: 10px;
-        /* Reduced overall padding for views */
+        padding: 5px;
     }
 
     .setting-item {
-        margin-bottom: 15px;
-        padding-left: 10px;
-        padding-right: 10px;
+        margin-bottom: 8px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
     .coordinates-main-label {
-        margin-top: 15px;
+        margin-top: 10px;
     }
 
     #rvUseCurrentLocationBtn {
-        padding: 6px 10px;
-        /* Smaller padding for button */
-        font-size: 0.9em;
-        /* Slightly smaller font */
+        padding: 4px 8px;
+        font-size: 0.8em;
     }
 
     /* RV Form specific adjustments */
     .rv-form-fields {
-        padding: 0 10px;
-        /* Reduced horizontal padding */
+        padding: 0 5px;
     }
 
     .rv-form-fields .form-group {
-        margin-bottom: 15px;
-        /* Reduced margin between form groups */
+        margin-bottom: 8px;
     }
 
     .form-group.contacted-group {
-        /* These media query styles might need adjustment after the main fix */
-        gap: 8px;
-        /* Reduced gap */
-        padding-left: 10px;
-        padding-right: 10px;
+        gap: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
     .form-group.contacted-group input[type="date"],
     .form-group.contacted-group input[type="time"] {
         max-width: 100%;
-        /* Allow date/time inputs to take full available width */
     }
 
     .form-group.contacted-group input[type="text"]#rvLastContactedDay {
-        max-width: 60px;
-        /* Adjust day field width */
+        max-width: 50px;
     }
-}
+
+    .utility-btn.icon-button {
+        width: 35px;
+        height: 35px;
+    }
+
+    .utility-btn.icon-button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .form-actions {
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 10px;
+    } }

@@ -1,7 +1,4 @@
-// app.js
-
-// --- Global Variables ---
-// No Firebase instances needed for local storage
+// --- Global Variables (Local Storage and App Data) ---
 let rvs = []; // Array to hold all RV objects
 let settings = {}; // Object to hold user settings
 
@@ -15,29 +12,24 @@ const rvFormView = document.getElementById("rvFormView");
 const settingsBtn = document.getElementById("settingsBtn");
 const myRVsLink = document.getElementById("myRVsLink");
 const mapLink = document.getElementById("mapLink");
-const addRVBtn = document.getElementById("addRVBtn"); // Now in main header
-const saveRvBtn = document.getElementById("saveRvBtn");
-const cancelRvBtn = document.getElementById("cancelRvBtn");
+const addRVBtn = document.getElementById("addRVBtn");
+const loadingSpinner = document.getElementById("loadingSpinner");
 
 // Settings View Elements
 const defaultCityInput = document.getElementById("defaultCity");
 const defaultStateInput = document.getElementById("defaultState");
-const defaultAreaInput = document.getElementById("defaultArea");
 const defaultLatitudeInput = document.getElementById("defaultLatitude");
 const defaultLongitudeInput = document.getElementById("defaultLongitude");
 const useCurrentLocationBtn = document.getElementById("useCurrentLocationBtn");
 const exportDataBtn = document.getElementById("exportDataBtn");
 const importDataBtn = document.getElementById("importDataBtn");
-const saveSettingsBtn = document.getElementById("saveSettingsBtn");
-const cancelSettingsBtn = document.getElementById("cancelSettingsBtn");
-const googleMapsApiKeyInput = document.getElementById("googleMapsApiKey"); // Google Maps API Key input
+const googleMapsApiKeyInput = document.getElementById("googleMapsApiKey");
 
 // RV Form View Elements
 const rvNameInput = document.getElementById("rvName");
 const rvAddressInput = document.getElementById("rvAddress");
 const rvCityInput = document.getElementById("rvCity");
 const rvStateInput = document.getElementById("rvState");
-const rvAreaInput = document.getElementById("rvArea");
 const rvEmailInput = document.getElementById("rvEmail");
 const rvLatitudeInput = document.getElementById("rvLatitude");
 const rvLongitudeInput = document.getElementById("rvLongitude");
@@ -47,13 +39,13 @@ const rvUseCurrentLocationBtn = document.getElementById(
 const rvLastContactedDateInput = document.getElementById("rvLastContactedDate");
 const rvLastContactedDayInput = document.getElementById("rvLastContactedDay");
 const rvLastContactedTimeInput = document.getElementById("rvLastContactedTime");
-const addVisitBtnForm = document.querySelector("#rvFormView .add-visit-btn"); // Renamed to avoid conflict
+const addVisitBtnForm = document.querySelector("#rvFormView .add-visit-btn");
 const removeVisitBtnForm = document.querySelector(
   "#rvFormView .remove-visit-btn"
-); // Renamed to avoid conflict
+);
 const rvNoteInput = document.getElementById("rvNote");
 
-const rvListContainer = document.querySelector(".rv-list"); // Container for RV cards
+const rvListContainer = document.querySelector(".rv-list");
 const sortOldNewRadio = document.getElementById("sortOldNew");
 const sortNewOldRadio = document.getElementById("sortNewOld");
 const filterAllAreasCheckbox = document.getElementById("filterAllAreas");
@@ -61,11 +53,10 @@ const filterNoAreaCheckbox = document.getElementById("filterNoArea");
 const areaFilterCheckboxesDiv = document.getElementById("areaFilterCheckboxes");
 const mapAreaFilterCheckboxesDiv = document.getElementById(
   "mapAreaFilterCheckboxes"
-); // New: Map filter checkboxes div
+);
 
 let currentRVId = null; // To store the ID of the RV being edited
 let mapInitialized = false; // Flag to prevent multiple map initializations
-let formHasUnsavedChanges = false;
 
 // --- Utility Functions ---
 
@@ -80,25 +71,24 @@ function showMessage(message, type = "info") {
   messageBox.textContent = message;
 
   // Ensure the message box is appended to the body and styled correctly
-  // The CSS for .message-box should handle position, z-index, opacity, and transition
-  // The inline styles here are a fallback/reinforcement
   messageBox.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 15px 25px;
-        border-radius: 8px;
-        color: white;
-        font-weight: bold;
-        z-index: 1000;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        opacity: 0;
-        transition: opacity 0.3s ease-in-out;
-        text-align: center;
-        min-width: 200px;
-    `;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      text-align: center;
+      min-width: 200px;
+  `;
 
+  // Apply background color based on type (CSS classes are preferred, but inline for robustness)
   switch (type) {
     case "success":
       messageBox.style.backgroundColor = "#4CAF50";
@@ -128,6 +118,121 @@ function showMessage(message, type = "info") {
     messageBox.style.opacity = 0;
     messageBox.addEventListener("transitionend", () => messageBox.remove());
   }, 3000);
+}
+
+/**
+ * Displays a custom confirmation dialog.
+ * @param {string} message - The message to display.
+ * @param {function} onConfirm - Callback function if user confirms.
+ * @param {function} onCancel - Callback function if user cancels (optional).
+ */
+function showConfirmationDialog(message, onConfirm, onCancel = () => {}) {
+  const modalOverlay = document.createElement("div");
+  modalOverlay.className = "modal-overlay";
+  modalOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+  `;
+
+  const modalContent = document.createElement("div");
+  modalContent.className = "modal-content";
+  modalContent.style.cssText = `
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+  `;
+
+  const messageParagraph = document.createElement("p");
+  messageParagraph.textContent = message;
+  messageParagraph.style.cssText = `
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      color: #333;
+  `;
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.cssText = `
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+  `;
+
+  const confirmButton = document.createElement("button");
+  confirmButton.textContent = "Confirm";
+  confirmButton.className = "utility-btn primary-btn";
+  confirmButton.style.cssText = `
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.2s;
+  `;
+  confirmButton.onmouseover = () =>
+    (confirmButton.style.backgroundColor = "#45a049");
+  confirmButton.onmouseout = () =>
+    (confirmButton.style.backgroundColor = "#4CAF50");
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+  cancelButton.className = "utility-btn cancel-btn";
+  cancelButton.style.cssText = `
+      background-color: #f44336;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.2s;
+  `;
+  cancelButton.onmouseover = () =>
+    (cancelButton.style.backgroundColor = "#d32f2f");
+  cancelButton.onmouseout = () =>
+    (cancelButton.style.backgroundColor = "#f44336");
+
+  confirmButton.onclick = () => {
+    modalOverlay.style.opacity = 0;
+    modalOverlay.addEventListener("transitionend", () => modalOverlay.remove());
+    onConfirm();
+  };
+
+  cancelButton.onclick = () => {
+    modalOverlay.style.opacity = 0;
+    modalOverlay.addEventListener("transitionend", () => modalOverlay.remove());
+    onCancel();
+  };
+
+  buttonContainer.appendChild(cancelButton);
+  buttonContainer.appendChild(confirmButton);
+  modalContent.appendChild(messageParagraph);
+  modalContent.appendChild(buttonContainer);
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
+
+  // Animate in
+  setTimeout(() => {
+    modalOverlay.style.opacity = 1;
+    modalContent.style.transform = "translateY(0)";
+  }, 10);
 }
 
 /**
@@ -188,43 +293,77 @@ function hideAllViews() {
 }
 
 /**
+ * Checks if essential settings are complete.
+ * @returns {boolean} - True if settings are complete, false otherwise.
+ */
+function areSettingsComplete() {
+  const city = defaultCityInput.value.trim();
+  const state = defaultStateInput.value.trim();
+  const lat = parseFloat(defaultLatitudeInput.value);
+  const lon = parseFloat(defaultLongitudeInput.value);
+
+  // Settings are complete if either City/State are present OR Lat/Long are present
+  return (city && state) || (!isNaN(lat) && !isNaN(lon));
+}
+
+/**
  * Shows a specific view section and updates header/footer visual states.
+ * Also enforces settings completion for certain views.
  * @param {HTMLElement} viewToShow - The view element to display.
  */
 function showView(viewToShow) {
+  // If trying to navigate away from settings and settings are incomplete
+  if (viewToShow !== settingsView && !areSettingsComplete()) {
+    showMessage(
+      "Please complete your default City/State or Coordinates in Settings before proceeding.",
+      "warning"
+    );
+    // Ensure settings view remains active if validation fails
+    hideAllViews();
+    settingsView.style.display = "block";
+    document
+      .querySelectorAll(".app-footer a, .app-footer button")
+      .forEach((item) => {
+        item.classList.remove("active");
+      });
+    settingsBtn.classList.add("active");
+    return; // Prevent navigation
+  }
+
   hideAllViews();
   viewToShow.style.display = "block";
 
   // Update subheading in the main header
   const appSubheading = document.getElementById("appSubheading");
+  appSubheading.textContent = "Local Data"; // Default subtitle
+
+  // Remove active class from all footer links/buttons first
+  document
+    .querySelectorAll(".app-footer a, .app-footer button")
+    .forEach((item) => {
+      item.classList.remove("active");
+    });
+
   if (viewToShow === settingsView) {
     appSubheading.textContent = "Settings";
     addRVBtn.style.display = "none"; // Hide add button in settings view
+    settingsBtn.classList.add("active"); // Add active class to settings button
   } else if (viewToShow === myRVsView) {
     appSubheading.textContent = "Contact Info";
     addRVBtn.style.display = "flex"; // Show add button in contacts view
     generateAreaFilterCheckboxes("contact"); // Regenerate filter options for contacts view
+    myRVsLink.classList.add("active"); // Add active class to My RVs link
   } else if (viewToShow === mapView) {
     appSubheading.textContent = "Map";
     addRVBtn.style.display = "none"; // Hide add button in map view
     loadDataFromLocalStorage(); // Ensure settings are fresh before initializing map
     initMap(); // Initialize map when map view is shown
     generateAreaFilterCheckboxes("map"); // Regenerate filter options for map view
+    mapLink.classList.add("active"); // Add active class to Map link
   } else if (viewToShow === rvFormView) {
     appSubheading.textContent = "RV Information"; // Set subheading for RV form view
-    addRVBtn.style.display = "fles"; // Hide add button in RV form view
+    addRVBtn.style.display = "none"; // Hide add button in RV form view
   }
-
-  // Update footer active state
-  document.querySelectorAll(".app-footer a").forEach((link) => {
-    link.classList.remove("active");
-  });
-  if (viewToShow === myRVsView) {
-    myRVsLink.classList.add("active");
-  } else if (viewToShow === mapView) {
-    mapLink.classList.add("active");
-  }
-  // settingsBtn visibility is handled above based on view
 }
 
 // --- Local Storage Functions ---
@@ -281,42 +420,45 @@ function saveDataToLocalStorage() {
 function populateSettingsForm() {
   defaultCityInput.value = settings.defaultCity || "";
   defaultStateInput.value = settings.defaultState || "";
-  defaultAreaInput.value = settings.defaultArea || "";
   defaultLatitudeInput.value = settings.defaultLatitude || "";
   defaultLongitudeInput.value = settings.defaultLongitude || "";
-  googleMapsApiKeyInput.value = settings.googleMapsApiKey || ""; // Populate API key field
+  googleMapsApiKeyInput.value = settings.googleMapsApiKey || "";
 }
 
 /**
  * Saves settings to local storage.
  */
 async function saveSettings() {
-  // Made async to await geocoding
   const defaultCity = defaultCityInput.value.trim();
   const defaultState = defaultStateInput.value.trim();
-  const defaultArea = defaultAreaInput.value.trim();
   let defaultLatitude = parseFloat(defaultLatitudeInput.value);
   let defaultLongitude = parseFloat(defaultLongitudeInput.value);
-  const googleMapsApiKey = googleMapsApiKeyInput.value.trim(); // Get API key value
+  const googleMapsApiKey = googleMapsApiKeyInput.value.trim();
 
-  // If City/State are provided but Lat/Long are not, try to geocode
+  // If City/State are provided and Lat/Long are empty, try to geocode
   if (
     defaultCity &&
     defaultState &&
     (isNaN(defaultLatitude) || isNaN(defaultLongitude))
   ) {
+    console.log(
+      `Attempting to geocode City: ${defaultCity}, State: ${defaultState}`
+    );
     const coords = await geocodeCityState(defaultCity, defaultState);
     if (coords) {
       defaultLatitude = coords.lat;
       defaultLongitude = coords.lon;
       defaultLatitudeInput.value = coords.lat.toFixed(6); // Update UI
       defaultLongitudeInput.value = coords.lon.toFixed(6); // Update UI
+      console.log(
+        `Geocoded coordinates: Lat ${defaultLatitude}, Lon ${defaultLongitude}`
+      );
     } else {
       showMessage(
         "Could not find coordinates for the entered City and State. Please enter valid location or coordinates.",
         "warning"
       );
-      return; // Prevent saving if geocoding fails and no manual coordinates
+      // Don't return here, allow saving incomplete settings if user insists
     }
   } else if (
     !defaultCity &&
@@ -328,24 +470,21 @@ async function saveSettings() {
       "Either City/State or Latitude/Longitude must be entered for default settings.",
       "warning"
     );
-    return;
+    // Don't return here, allow saving incomplete settings if user insists
   }
 
   settings = {
     defaultCity: defaultCity,
     defaultState: defaultState,
-    defaultArea: defaultArea,
     defaultLatitude: isNaN(defaultLatitude) ? null : defaultLatitude,
     defaultLongitude: isNaN(defaultLongitude) ? null : defaultLongitude,
-    googleMapsApiKey: googleMapsApiKey, // Save the API key
+    googleMapsApiKey: googleMapsApiKey,
     lastUpdated: new Date().toISOString(),
   };
 
   saveDataToLocalStorage();
-  showMessage("Settings saved successfully!", "success");
-  // If API key changed, force map re-initialization on next map view
-  mapInitialized = false;
-  showView(myRVsView); // Navigate back to RV list after saving
+  showMessage("Settings saved automatically!", "success"); // Changed message
+  mapInitialized = false; // Force map re-initialization on next map view
 }
 
 /**
@@ -357,7 +496,6 @@ function getCurrentLocation(latInput, longInput) {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        // Made async to await reverse geocoding
         latInput.value = position.coords.latitude.toFixed(6);
         longInput.value = position.coords.longitude.toFixed(6);
         showMessage("Location retrieved successfully!", "success");
@@ -367,6 +505,7 @@ function getCurrentLocation(latInput, longInput) {
         } else if (latInput === rvLatitudeInput) {
           await updateCityStateFromCoordinates("rv");
         }
+        saveSettings(); // Autosave after getting current location
       },
       (error) => {
         console.error("Error getting location:", error);
@@ -441,7 +580,7 @@ function importData() {
 
           if (importedData.rvs && Array.isArray(importedData.rvs)) {
             rvs = importedData.rvs;
-            renderRVs(rvs); // Update UI
+            renderRVs(); // Update UI
           }
           saveDataToLocalStorage(); // Save imported data to local storage
           showMessage("Data imported successfully!", "success");
@@ -479,7 +618,6 @@ function sortRVs(rvsArray, sortOrder) {
     if (sortOrder === "oldest") {
       return dateA.getTime() - dateB.getTime();
     } else {
-      // newest
       return dateB.getTime() - dateA.getTime();
     }
   });
@@ -496,17 +634,16 @@ function sortRVs(rvsArray, sortOrder) {
  */
 function filterRVs(rvsArray, selectedAreas) {
   if (selectedAreas.includes("all")) {
-    return rvsArray; // If 'All Areas' is checked, return all RVs
+    return rvsArray;
   }
   if (selectedAreas.length === 0) {
-    // If no specific area is selected and 'All Areas' is not
-    // This scenario should be handled by handleFilterChange to ensure 'No Area' is selected if nothing else is.
-    // If it still happens, it means no areas are filtered, so return everything if 'No Area' was explicitly selected.
-    if (document.getElementById("filterNoArea").checked) {
-      // Only return No Area if explicitly checked
+    if (
+      document.getElementById("filterNoArea") &&
+      document.getElementById("filterNoArea").checked
+    ) {
       return rvsArray.filter((rv) => (rv.area || "No Area") === "No Area");
     }
-    return []; // If nothing is explicitly filtered, show nothing.
+    return [];
   }
 
   return rvsArray.filter((rv) => selectedAreas.includes(rv.area || "No Area"));
@@ -520,29 +657,27 @@ function renderRVs() {
 
   // 1. Apply Filtering
   const selectedFilterAreas = Array.from(
-    document.querySelectorAll('.filter-options input[type="checkbox"]:checked')
+    document.querySelectorAll(
+      '#areaFilterCheckboxes input[type="checkbox"]:checked'
+    )
   ).map((cb) => cb.value);
 
-  // Adjust logic for 'All Areas' checkbox
   if (filterAllAreasCheckbox.checked) {
-    rvsToDisplay = rvs; // Show all if 'All Areas' is selected
+    rvsToDisplay = rvs;
   } else if (selectedFilterAreas.length > 0) {
     rvsToDisplay = filterRVs(rvs, selectedFilterAreas);
   } else {
-    // If 'All Areas' is not checked and no other filter is selected
-    // This case indicates user intends to see no results or only 'No Area' if selected.
-    // handleFilterChange already ensures filterNoAreaCheckbox is checked if nothing else.
     if (filterNoAreaCheckbox.checked) {
       rvsToDisplay = rvs.filter((rv) => (rv.area || "No Area") === "No Area");
     } else {
-      rvsToDisplay = []; // No filters selected, no results
+      rvsToDisplay = [];
     }
   }
 
   // 2. Apply Sorting
-  const selectedSortOrder = document.querySelector(
-    '.sort-options input[name="sortOrder"]:checked'
-  ).value;
+  const selectedSortOrder =
+    document.querySelector('.sort-options input[name="sortOrder"]:checked')
+      ?.value || "oldest"; // Default to 'oldest' if no radio is checked
   rvsToDisplay = sortRVs(rvsToDisplay, selectedSortOrder);
 
   rvListContainer.innerHTML = ""; // Clear existing list
@@ -558,34 +693,33 @@ function renderRVs() {
     rvCard.className = "rv-card";
     rvCard.dataset.id = rv.id; // Store unique ID
 
-    // Determine display name
     const displayName = rv.name || rv.address || "Unnamed RV";
 
-    // Get last visited date for display and calculate days since
     const lastVisitedDate = rv.lastContacted?.date || "N/A";
     const daysSinceLastVisited = getDaysSince(lastVisitedDate);
 
     rvCard.innerHTML = `
-            <div class="rv-card-header">
-                <h3>${displayName}</h3>
-                <div class="rv-card-actions">
-                    <button class="delete-rv-btn icon-button" title="Delete RV">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <p>${rv.address || ""}</p>
-            <p>${rv.city || ""}, ${rv.state || ""}</p>
-            <p class="last-visited-info">Days since last visited: ${daysSinceLastVisited}</p>
-            <div class="area-display">${rv.area || "No Area"}</div>
-        `;
+      <div class="rv-card-header">
+        <h3>${displayName}</h3>
+        <div class="rv-card-actions">
+          <button class="delete-rv-btn icon-button" title="Delete RV">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px">
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <p>${rv.address || ""}</p>
+      <p>${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
+      <p class="last-visited-info">Days since last visited: ${daysSinceLastVisited}</p>
+      ${
+        rv.area ? `<div class="area-display">${rv.area}</div>` : ""
+      } <!-- Conditionally display area -->
+    `;
     rvListContainer.appendChild(rvCard);
 
     // Add event listener to the card itself for editing
     rvCard.addEventListener("click", (event) => {
-      // Prevent clicking on the delete button from also triggering edit
       if (!event.target.closest(".delete-rv-btn")) {
         editRV(rv.id);
       }
@@ -595,6 +729,7 @@ function renderRVs() {
   // Add event listeners to newly rendered delete buttons
   document.querySelectorAll(".delete-rv-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent card click from firing
       const rvId = event.target.closest(".rv-card").dataset.id;
       showConfirmationDialog("Are you sure you want to delete this RV?", () =>
         deleteRV(rvId)
@@ -608,7 +743,7 @@ function renderRVs() {
  * @param {'contact'|'map'} viewType - Indicates which view's filter checkboxes to generate.
  */
 function generateAreaFilterCheckboxes(viewType) {
-  const uniqueAreas = new Set(rvs.map((rv) => rv.area || "No Area"));
+  // Since the 'Area' input is removed, we only need 'All Areas' and 'No Area' filters.
   let targetDiv, filterAllId, filterNoAreaId;
 
   if (viewType === "contact") {
@@ -620,23 +755,20 @@ function generateAreaFilterCheckboxes(viewType) {
     filterAllId = "mapFilterAllAreas";
     filterNoAreaId = "mapFilterNoArea";
   } else {
-    return; // Invalid viewType
+    return;
   }
 
-  const currentCheckedAreas = Array.from(
-    targetDiv.querySelectorAll('input[type="checkbox"]:checked')
-  ).map((cb) => cb.value);
+  // Store current checked state of the permanent checkboxes
+  const currentAllChecked =
+    targetDiv.querySelector(`#${filterAllId}`)?.checked || true;
+  const currentNoAreaChecked =
+    targetDiv.querySelector(`#${filterNoAreaId}`)?.checked || false;
 
-  // Clear existing dynamic checkboxes, but keep permanent ones
+  // Clear all existing children except the permanent checkboxes
   Array.from(targetDiv.children).forEach((child) => {
     if (
-      child.tagName === "INPUT" &&
       child.id !== filterAllId &&
-      child.id !== filterNoAreaId
-    ) {
-      child.remove();
-    } else if (
-      child.tagName === "LABEL" &&
+      child.id !== filterNoAreaId &&
       child.htmlFor !== filterAllId &&
       child.htmlFor !== filterNoAreaId
     ) {
@@ -644,28 +776,60 @@ function generateAreaFilterCheckboxes(viewType) {
     }
   });
 
-  uniqueAreas.forEach((area) => {
-    if (area !== "No Area") {
-      // 'No Area' is already a permanent checkbox
-      const checkbox = document.createElement("input");
+  // Ensure permanent checkboxes exist and are in the correct order
+  const recreateCheckbox = (id, value, text, checked) => {
+    let checkbox = targetDiv.querySelector(`#${id}`);
+    let label = targetDiv.querySelector(`label[for="${id}"]`);
+
+    if (!checkbox) {
+      checkbox = document.createElement("input");
       checkbox.type = "checkbox";
-      checkbox.id = `${viewType}FilterArea${area.replace(/\s+/g, "")}`;
-      checkbox.value = area;
-      checkbox.checked = currentCheckedAreas.includes(area); // Maintain checked state
-
-      const label = document.createElement("label");
-      label.htmlFor = checkbox.id;
-      label.textContent = area;
-
+      checkbox.id = id;
+      checkbox.value = value;
       targetDiv.appendChild(checkbox);
+    }
+    if (!label) {
+      label = document.createElement("label");
+      label.htmlFor = id;
       targetDiv.appendChild(label);
     }
-  });
+    checkbox.checked = checked;
+    label.textContent = text;
+    return { checkbox, label };
+  };
+
+  const allCb = recreateCheckbox(
+    filterAllId,
+    "all",
+    "All Areas",
+    currentAllChecked
+  );
+  const noAreaCb = recreateCheckbox(
+    filterNoAreaId,
+    "No Area",
+    "No Area",
+    currentNoAreaChecked
+  );
+
+  if (targetDiv.firstChild !== allCb.checkbox) {
+    targetDiv.prepend(allCb.label);
+    targetDiv.prepend(allCb.checkbox);
+  }
+  if (
+    allCb.checkbox.nextSibling !== noAreaCb.checkbox &&
+    allCb.label.nextSibling !== noAreaCb.checkbox
+  ) {
+    const insertAfter = allCb.label;
+    if (insertAfter) {
+      insertAfter.after(noAreaCb.label);
+      insertAfter.after(noAreaCb.checkbox);
+    }
+  }
 
   // Re-attach event listeners to all checkboxes
   targetDiv.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-    checkbox.removeEventListener("change", handleFilterChange); // Remove old listener
-    checkbox.addEventListener("change", handleFilterChange); // Add new listener
+    checkbox.removeEventListener("change", handleFilterChange);
+    checkbox.addEventListener("change", handleFilterChange);
   });
 }
 
@@ -692,14 +856,12 @@ function handleFilterChange(event) {
   );
 
   if (changedCheckbox.value === "all") {
-    // If 'All Areas' is checked/unchecked
     allCheckboxesInGroup.forEach((cb) => {
       if (cb.value !== "all") {
-        cb.checked = false; // Uncheck all others
+        cb.checked = false;
       }
     });
     if (!changedCheckbox.checked) {
-      // If 'All Areas' is unchecked, and no other is explicitly checked, check 'No Area'
       const anyOtherChecked = allCheckboxesInGroup.some(
         (cb) => cb.checked && cb.value !== "all"
       );
@@ -708,22 +870,29 @@ function handleFilterChange(event) {
       }
     }
   } else {
-    // If any specific area checkbox is checked/unchecked
     if (changedCheckbox.checked) {
       if (filterAllAreasCheckboxInGroup) {
-        filterAllAreasCheckboxInGroup.checked = false; // Uncheck 'All Areas'
+        filterAllAreasCheckboxInGroup.checked = false;
       }
     } else {
-      // If a specific area is unchecked, and no other is checked (including dynamic ones), check 'All Areas'
       const anyOtherChecked = allCheckboxesInGroup.some(
         (cb) => cb.checked && cb.value !== "all"
       );
       if (!anyOtherChecked) {
-        filterAllAreasCheckboxInGroup.checked = true;
+        if (filterAllAreasCheckboxInGroup) {
+          filterAllAreasCheckboxInGroup.checked = true;
+        } else if (filterNoAreaCheckboxInGroup) {
+          // Fallback if no "All Areas"
+          filterNoAreaCheckboxInGroup.checked = true;
+        }
       }
     }
   }
-  renderRVs(); // Re-render with new filters
+  renderRVs();
+  if (mapView.style.display === "block") {
+    // Only update map if map view is active
+    updateMap();
+  }
 }
 
 // --- RV Form View Functions (Add/Edit) ---
@@ -736,25 +905,17 @@ function clearRVForm() {
   rvAddressInput.value = "";
   rvCityInput.value = "";
   rvStateInput.value = "";
-  rvAreaInput.value = settings.defaultArea || "No Area"; // Set default area on new form
+  // No rvAreaInput to set
   rvEmailInput.value = "";
   rvLatitudeInput.value = "";
   rvLongitudeInput.value = "";
   rvLastContactedDateInput.value = "";
-  const formInputs = document.querySelectorAll(
-    "#rvFormView input, #rvFormView textarea"
-  );
-  formInputs.forEach((input) => {
-    input.addEventListener("input", () => {
-      formHasUnsavedChanges = true;
-    });
-  });
   rvLastContactedDayInput.value = "";
   rvLastContactedTimeInput.value = "";
   rvNoteInput.value = "";
-  currentRVId = null; // Clear current RV ID
-  // Removed the line that attempts to set textContent of h2
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none"; // Check if element exists before accessing
+  currentRVId = null;
+  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none";
+  // formHasUnsavedChanges is no longer needed
 }
 
 /**
@@ -765,14 +926,13 @@ function editRV(rvId) {
   const rvToEdit = rvs.find((rv) => rv.id === rvId);
 
   if (rvToEdit) {
-    currentRVId = rvId; // Set the current RV ID for saving
-    // Removed the line that attempts to set textContent of h2
+    currentRVId = rvId;
 
     rvNameInput.value = rvToEdit.name || "";
     rvAddressInput.value = rvToEdit.address || "";
     rvCityInput.value = rvToEdit.city || "";
     rvStateInput.value = rvToEdit.state || "";
-    rvAreaInput.value = rvToEdit.area || "";
+    // No rvAreaInput to populate
     rvEmailInput.value = rvToEdit.email || "";
     rvLatitudeInput.value = rvToEdit.latitude || "";
     rvLongitudeInput.value = rvToEdit.longitude || "";
@@ -786,9 +946,10 @@ function editRV(rvId) {
     if (removeVisitBtnForm)
       removeVisitBtnForm.style.display = rvToEdit.lastContacted?.date
         ? "inline-flex"
-        : "none"; // Check if element exists
+        : "none";
 
     showView(rvFormView);
+    // formHasUnsavedChanges is no longer needed
   } else {
     showMessage("RV not found.", "error");
     console.error("No such RV with ID:", rvId);
@@ -796,14 +957,14 @@ function editRV(rvId) {
 }
 
 /**
- * Saves a new or updates an existing Return Visit.
+ * Saves a new or updates an existing Return Visit to local storage.
  */
 function saveRV() {
   const name = rvNameInput.value.trim();
   const address = rvAddressInput.value.trim();
   const city = rvCityInput.value.trim();
   const state = rvStateInput.value.trim();
-  let area = rvAreaInput.value.trim();
+  // Area field removed, will always be "No Area"
   const email = rvEmailInput.value.trim();
   const latitude = parseFloat(rvLatitudeInput.value);
   const longitude = parseFloat(rvLongitudeInput.value);
@@ -813,31 +974,27 @@ function saveRV() {
 
   // Basic validation
   if (!name && !address) {
+    // Only show warning, don't prevent saving if other fields are valid
+    // This allows partial entries to be saved if user leaves a field
+    // but still highlights missing key info.
     showMessage(
       "Please enter at least a Name or Address for the Return Visit.",
       "warning"
     );
-    return;
-  }
-
-  // If area is empty, try to use default from settings
-  if (!area) {
-    area = settings.defaultArea || "No Area";
   }
 
   const rvData = {
-    id: currentRVId || generateUniqueId(), // Use existing ID or generate new
+    id: currentRVId || generateUniqueId(),
     name: name,
     address: address,
     city: city,
     state: state,
-    area: area,
+    area: "No Area", // Always "No Area"
     email: email,
     latitude: isNaN(latitude) ? null : latitude,
     longitude: isNaN(longitude) ? null : longitude,
     lastContacted: lastContactedDate
       ? {
-          // Renamed to lastVisited in UI, but keeping data field name for now
           date: lastContactedDate,
           time: lastContactedTime,
           timestamp: new Date(
@@ -848,32 +1005,30 @@ function saveRV() {
     note: note,
     createdAt: currentRVId
       ? rvs.find((rv) => rv.id === currentRVId)?.createdAt
-      : new Date().toISOString(), // Preserve createdAt for existing, set for new
+      : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
   if (currentRVId) {
-    // Update existing RV
     const index = rvs.findIndex((rv) => rv.id === currentRVId);
     if (index !== -1) {
       rvs[index] = rvData;
-      showMessage("RV Information updated successfully!", "success"); // Changed message
+      showMessage("RV Information updated successfully!", "success");
     }
   } else {
-    // Add new RV
     rvs.push(rvData);
-    showMessage("RV Information added successfully!", "success"); // Changed message
+    showMessage("RV Information added successfully!", "success");
   }
 
   saveDataToLocalStorage();
   renderRVs(); // Re-render the list
   updateMap(); // Update the map
-  clearRVForm();
-  showView(myRVsView); // Go back to RV list
+  // clearRVForm(); // No longer clearing the form automatically
+  // showView(myRVsView); // No longer navigating back automatically
 }
 
 /**
- * Deletes a Return Visit.
+ * Deletes a Return Visit from local storage.
  * @param {string} rvId - The ID of the RV to delete.
  */
 function deleteRV(rvId) {
@@ -890,8 +1045,7 @@ function deleteRV(rvId) {
 }
 
 /**
- * Adds a new visit entry (currently just updates lastContacted).
- * In a more complex app, this would add to an array of visits.
+ * Adds a new visit entry (currently just updates lastContacted fields).
  */
 function addVisit() {
   const now = new Date();
@@ -901,19 +1055,158 @@ function addVisit() {
   rvLastContactedDateInput.value = dateString;
   rvLastContactedDayInput.value = getFormattedDay(dateString);
   rvLastContactedTimeInput.value = timeString;
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "inline-flex"; // Corrected variable name
-  showMessage("Current date/time added to 'Visited' fields.", "info"); // Changed message
+  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "inline-flex";
+  showMessage("Current date/time added to 'Visited' fields.", "info");
+  saveRV(); // Autosave after adding visit
 }
 
 /**
- * Removes the last visit entry (currently just clears lastContacted).
+ * Removes the last visit entry (currently just clears lastContacted fields).
  */
 function removeVisit() {
   rvLastContactedDateInput.value = "";
   rvLastContactedDayInput.value = "";
   rvLastContactedTimeInput.value = "";
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none"; // Corrected variable name
-  showMessage("Visited date/time cleared.", "info"); // Changed message
+  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none";
+  showMessage("Visited date/time cleared.", "info");
+  saveRV(); // Autosave after removing visit
+}
+
+// --- Geocoding/Reverse Geocoding Functions ---
+
+/**
+ * Fetches coordinates for a given city and state using Nominatim (OpenStreetMap).
+ * @param {string} city - The city name.
+ * @param {string} state - The state abbreviation.
+ * @returns {Promise<{lat: number, lon: number}|null>} - Latitude and longitude or null if not found.
+ */
+async function geocodeCityState(city, state) {
+  if (!city || !state) {
+    console.log("Geocoding: City or State is empty.");
+    return null;
+  }
+  const query = encodeURIComponent(`${city}, ${state}, USA`);
+  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
+  console.log("Geocoding URL:", url);
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log("Geocoding response data:", data);
+    if (data && data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    }
+  } catch (error) {
+    console.error("Error geocoding city/state:", error);
+  }
+  return null;
+}
+
+/**
+ * Fetches city and state for given coordinates using Nominatim (OpenStreetMap).
+ * @param {number} lat - Latitude.
+ * @param {number} lon - Longitude.
+ * @returns {Promise<{city: string, state: string}|null>} - City and state or null if not found.
+ */
+async function reverseGeocodeCoordinates(lat, lon) {
+  if (isNaN(lat) || isNaN(lon)) {
+    console.log("Reverse Geocoding: Latitude or Longitude is not a number.");
+    return null;
+  }
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+  console.log("Reverse Geocoding URL:", url);
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log("Reverse Geocoding response data:", data);
+    if (data && data.address) {
+      const address = data.address;
+      const city =
+        address.city ||
+        address.town ||
+        address.city_district ||
+        address.village ||
+        address.hamlet ||
+        "";
+      const state = address.state_code || address.state || "";
+      return { city: city, state: state };
+    }
+  } catch (error) {
+    console.error("Error reverse geocoding coordinates:", error);
+  }
+  return null;
+}
+
+/**
+ * Updates city/state fields based on latitude/longitude input.
+ * @param {'default'|'rv'} type - Indicates which form to update.
+ */
+async function updateCityStateFromCoordinates(type) {
+  let latInput, longInput, cityInput, stateInput;
+  if (type === "default") {
+    latInput = defaultLatitudeInput;
+    longInput = defaultLongitudeInput;
+    cityInput = defaultCityInput;
+    stateInput = defaultStateInput;
+  } else {
+    latInput = rvLatitudeInput;
+    longInput = rvLongitudeInput;
+    cityInput = rvCityInput;
+    stateInput = rvStateInput;
+  }
+
+  const lat = parseFloat(latInput.value);
+  const lon = parseFloat(longInput.value);
+
+  if (!isNaN(lat) && !isNaN(lon)) {
+    const result = await reverseGeocodeCoordinates(lat, lon);
+    if (result) {
+      cityInput.value = result.city;
+      stateInput.value = result.state;
+    } else {
+      // If reverse geocoding fails, clear city/state
+      cityInput.value = "";
+      stateInput.value = "";
+      showMessage(
+        "Could not find city/state for these coordinates.",
+        "warning"
+      );
+    }
+  }
+}
+
+/**
+ * Updates latitude/longitude fields based on city/state input.
+ * @param {'default'|'rv'} type - Indicates which form to update.
+ */
+async function updateCoordinatesFromCityState(type) {
+  let latInput, longInput, cityInput, stateInput;
+  if (type === "default") {
+    latInput = defaultLatitudeInput;
+    longInput = defaultLongitudeInput;
+    cityInput = defaultCityInput;
+    stateInput = defaultStateInput;
+  } else {
+    latInput = rvLatitudeInput;
+    longInput = rvLongitudeInput;
+    cityInput = rvCityInput;
+    stateInput = rvStateInput;
+  }
+
+  const city = cityInput.value.trim();
+  const state = stateInput.value.trim();
+
+  if (city && state) {
+    const result = await geocodeCityState(city, state);
+    if (result) {
+      latInput.value = result.lat.toFixed(6);
+      longInput.value = result.lon.toFixed(6);
+    } else {
+      // If geocoding fails, clear coordinates
+      latInput.value = "";
+      longInput.value = "";
+      showMessage("Could not find coordinates for this city/state.", "warning");
+    }
+  }
 }
 
 // --- Map View Functions ---
@@ -956,87 +1249,22 @@ function loadCss(url) {
 }
 
 /**
- * Fetches coordinates for a given city and state using Nominatim (OpenStreetMap).
- * @param {string} city - The city name.
- * @param {string} state - The state abbreviation.
- * @returns {Promise<{lat: number, lon: number}|null>} - Latitude and longitude or null if not found.
- */
-async function geocodeCityState(city, state) {
-  if (!city || !state) return null;
-  const query = encodeURIComponent(`${city}, ${state}, USA`);
-  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    if (data && data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-    }
-  } catch (error) {
-    console.error("Error geocoding city/state:", error);
-  }
-  return null;
-}
-
-/**
- * Fetches city and state for given coordinates using Nominatim (OpenStreetMap).
- * @param {number} lat - Latitude.
- * @param {number} lon - Longitude.
- * @returns {Promise<{city: string, state: string}|null>} - City and state or null if not found.
- */
-async function reverseGeocodeCoordinates(lat, lon) {
-  if (isNaN(lat) || isNaN(lon)) return null;
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    if (data && data.address) {
-      const address = data.address;
-      const city =
-        address.city ||
-        address.town ||
-        address.city_district ||
-        address.village ||
-        address.hamlet ||
-        "";
-      const state = address.state_code || address.state || ""; // state_code for 2-letter state
-      return { city: city, state: state };
-    }
-  } catch (error) {
-    console.error("Error reverse geocoding coordinates:", error);
-  }
-  return null;
-}
-
-/**
  * Initializes the map based on user settings (Google Maps or Leaflet/OSM).
  */
 async function initMap() {
-  // Ensure settings are loaded before determining map provider
-  loadDataFromLocalStorage();
-
-  // Determine if Google Maps API key is provided
   const googleMapsApiKey =
     settings.googleMapsApiKey && settings.googleMapsApiKey.trim() !== "";
 
-  // If Google Maps is currently initialized and we need to switch to Leaflet, destroy Google Map.
-  if (map && !googleMapsApiKey) {
-    const mapContainer = document.getElementById("mapContainer");
-    mapContainer.innerHTML = ""; // Clear Google Map elements
-    map = null;
-    mapInitialized = false; // Reset flag
-  }
-  // If Leaflet is currently initialized and we need to switch to Google Maps, destroy Leaflet Map.
-  if (leafletMap && googleMapsApiKey) {
-    leafletMap.remove();
-    leafletMap = null;
-    mapInitialized = false; // Reset flag
-  }
-
   const mapContainer = document.getElementById("mapContainer");
-  mapContainer.style.height = "400px"; // Ensure map container has a height
+  mapContainer.style.height = "400px";
 
   if (googleMapsApiKey) {
-    // Use Google Maps
+    if (leafletMap) {
+      // Destroy Leaflet map if it exists and we're switching to Google
+      leafletMap.remove();
+      leafletMap = null;
+      mapInitialized = false;
+    }
     if (!window.google || !window.google.maps || !mapInitialized) {
       try {
         const oldGoogleMapScript = document.querySelector(
@@ -1058,10 +1286,15 @@ async function initMap() {
         return;
       }
     } else {
-      window.mapReady(); // Google Maps script already loaded, just initialize map
+      window.mapReady();
     }
   } else {
-    // Use Leaflet/OpenStreetMap
+    if (map) {
+      // Destroy Google map if it exists and we're switching to Leaflet
+      map = null; // Simply nullify the map object
+      mapInitialized = false;
+      mapContainer.innerHTML = ""; // Clear map container
+    }
     initLeafletMap();
   }
 }
@@ -1076,12 +1309,22 @@ window.mapReady = function () {
     return;
   }
 
-  const defaultLat = parseFloat(settings.defaultLatitude) || 34.05;
-  const defaultLng = parseFloat(settings.defaultLongitude) || -118.25;
+  // Use default settings latitude/longitude, no hardcoded fallbacks
+  const defaultLat = parseFloat(settings.defaultLatitude);
+  const defaultLng = parseFloat(settings.defaultLongitude);
+
+  console.log("Map centering on:", defaultLat, defaultLng); // Added console log
+
+  // Only set center if valid coordinates exist in settings
+  const center =
+    !isNaN(defaultLat) && !isNaN(defaultLng)
+      ? { lat: defaultLat, lng: defaultLng }
+      : { lat: 0, lng: 0 }; // Default to 0,0 if no valid settings coords
+  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 10 : 1; // Zoom out if no specific location
 
   map = new google.maps.Map(document.getElementById("mapContainer"), {
-    center: { lat: defaultLat, lng: defaultLng },
-    zoom: 10,
+    center: center,
+    zoom: zoom,
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: false,
@@ -1105,7 +1348,6 @@ async function initLeafletMap() {
     return;
   }
 
-  // Load Leaflet CSS and JS if not already loaded
   if (typeof L === "undefined") {
     try {
       const oldLeafletCss = document.querySelector(
@@ -1126,10 +1368,19 @@ async function initLeafletMap() {
     }
   }
 
-  const defaultLat = parseFloat(settings.defaultLatitude) || 34.05;
-  const defaultLng = parseFloat(settings.defaultLongitude) || -118.25;
+  // Use default settings latitude/longitude, no hardcoded fallbacks
+  const defaultLat = parseFloat(settings.defaultLatitude);
+  const defaultLng = parseFloat(settings.defaultLongitude);
 
-  leafletMap = L.map("mapContainer").setView([defaultLat, defaultLng], 10);
+  console.log("Map centering on:", defaultLat, defaultLng); // Added console log
+
+  const center =
+    !isNaN(defaultLat) && !isNaN(defaultLng)
+      ? [defaultLat, defaultLng]
+      : [0, 0]; // Default to 0,0 if no valid settings coords
+  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 10 : 1; // Zoom out if no specific location
+
+  leafletMap = L.map("mapContainer").setView(center, zoom);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
@@ -1151,33 +1402,34 @@ function updateMap() {
       : "leaflet";
   const activeMap = mapProvider === "google" ? map : leafletMap;
 
-  // Clear existing markers
-  if (mapProvider === "google" && map) {
-    markers.forEach((marker) => marker.setMap(null));
-    markers = [];
-  } else if (mapProvider === "leaflet" && leafletMap) {
-    markers.forEach((marker) => leafletMap.removeLayer(marker));
-    markers = [];
-  } else {
+  if (!activeMap) {
     console.log("No active map initialized to update markers.");
     return;
+  }
+
+  // Clear existing markers
+  if (mapProvider === "google") {
+    markers.forEach((marker) => marker.setMap(null));
+    markers = [];
+  } else {
+    // Leaflet
+    markers.forEach((marker) => leafletMap.removeLayer(marker));
+    markers = [];
   }
 
   const bounds =
     mapProvider === "google"
       ? new google.maps.LatLngBounds()
-      : L.latLngBounds(); // Corrected for Leaflet
+      : L.latLngBounds();
   let pinsAdded = 0;
 
-  // Store used coordinates to apply fanning offset
-  const usedCoords = {}; // Format: "lat,lon": count
+  const usedCoords = {};
 
   rvs.forEach((rv) => {
     let lat = parseFloat(rv.latitude);
     let lon = parseFloat(rv.longitude);
     let isGeolocated = !isNaN(lat) && !isNaN(lon);
 
-    // Determine pin color and position
     let pinColor = "#2196F3"; // Default Blue
     let markerLat = lat;
     let markerLon = lon;
@@ -1185,10 +1437,18 @@ function updateMap() {
 
     if (!isGeolocated) {
       // If not geolocated, use default settings coordinates and violet color
-      markerLat = parseFloat(settings.defaultLatitude) || 34.05;
-      markerLon = parseFloat(settings.defaultLongitude) || -118.25;
-      pinColor = "#673AB7"; // Violet for non-geolocated
-      markerTitle += " (Location Unknown)";
+      // Only use default if they are actually set in settings, otherwise skip marker
+      const defaultLat = parseFloat(settings.defaultLatitude);
+      const defaultLng = parseFloat(settings.defaultLongitude);
+      if (!isNaN(defaultLat) && !isNaN(defaultLng)) {
+        markerLat = defaultLat;
+        markerLon = defaultLng;
+        pinColor = "#673AB7"; // Violet for non-geolocated
+        markerTitle += " (Location Unknown)";
+      } else {
+        // Skip adding marker if no specific or default coordinates are available
+        return;
+      }
     } else {
       // Check for red pin condition (14+ days ago)
       const today = new Date();
@@ -1205,63 +1465,56 @@ function updateMap() {
     }
 
     const coordKey = `${markerLat},${markerLon}`;
-    // Apply fanning offset if coordinates are identical
     if (usedCoords[coordKey]) {
-      const offset = 0.0001 * usedCoords[coordKey]; // Small offset
+      const offset = 0.0001 * usedCoords[coordKey];
       markerLat += offset;
       markerLon += offset;
     }
     usedCoords[coordKey] = (usedCoords[coordKey] || 0) + 1;
 
-    if (mapProvider === "google" && map) {
-      // Create custom SVG icon for Google Maps
+    if (mapProvider === "google") {
       const svgIcon = {
         path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
         fillColor: pinColor,
         fillOpacity: 1,
-        strokeWeight: 0, // No stroke for cleaner look
-        scale: 1.5, // Adjust size
-        anchor: new google.maps.Point(12, 24), // Center of the base of the pin
+        strokeWeight: 0,
+        scale: 1.5,
+        anchor: new google.maps.Point(12, 24),
       };
 
       const marker = new google.maps.Marker({
         position: { lat: markerLat, lng: markerLon },
         map: map,
         title: markerTitle,
-        icon: svgIcon, // Use custom SVG icon
+        icon: svgIcon,
       });
 
-      // Store RV ID on the marker for easy access in click handler
       marker.rvId = rv.id;
 
-      // Info window content (for hover)
       const infoWindowContent = `
-                <div style="padding: 10px; font-family: Arial, sans-serif;">
-                    <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
-                      rv.name || "Unnamed RV"
-                    }</h4>
-                    <p style="margin-bottom: 3px;">${rv.address || ""}, ${
-        rv.city || ""
-      }, ${rv.state || ""}</p>
-                </div>
-            `;
+        <div style="padding: 10px; font-family: Arial, sans-serif;">
+          <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
+            rv.name || "Unnamed RV"
+          }</h4>
+          <p style="margin-bottom: 3px;">${rv.address || ""}${
+        rv.address && (rv.city || rv.state) ? ", " : ""
+      }${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
+        </div>
+      `;
       const infoWindow = new google.maps.InfoWindow({
         content: infoWindowContent,
       });
 
-      // Event listener for hover (mouseover/mouseout)
       marker.addListener("mouseover", () => infoWindow.open(map, marker));
       marker.addListener("mouseout", () => infoWindow.close());
-
-      // Event listener for click (to open form)
       marker.addListener("click", () => editRV(marker.rvId));
 
       markers.push(marker);
-      // Only extend bounds for pins that were originally geolocated, not the fanned ones or default-centered ones
       if (isGeolocated)
         bounds.extend(new google.maps.LatLng(markerLat, markerLon));
       pinsAdded++;
-    } else if (mapProvider === "leaflet" && leafletMap) {
+    } else {
+      // Leaflet
       const svgIconUrl = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${encodeURIComponent(
         pinColor
       )}" width="24px" height="24px"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
@@ -1276,88 +1529,70 @@ function updateMap() {
         icon: customIcon,
       }).addTo(leafletMap);
 
-      // Store RV ID on the marker for easy access in click handler
       marker.rvId = rv.id;
 
-      // Popup content (for hover/click)
       const popupContent = `
-                <div style="padding: 5px; font-family: Arial, sans-serif;">
-                    <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
-                      rv.name || "Unnamed RV"
-                    }</h4>
-                    <p style="margin-bottom: 3px;">${rv.address || ""}, ${
-        rv.city || ""
-      }, ${rv.state || ""}</p>
-                </div>
-            `;
+        <div style="padding: 5px; font-family: Arial, sans-serif;">
+          <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
+            rv.name || "Unnamed RV"
+          }</h4>
+          <p style="margin-bottom: 3px;">${rv.address || ""}${
+        rv.address && (rv.city || rv.state) ? ", " : ""
+      }${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
+        </div>
+      `;
       marker.bindPopup(popupContent);
-
-      // Directly open form on click for Leaflet
       marker.on("click", () => editRV(marker.rvId));
 
       markers.push(marker);
-      if (isGeolocated) bounds.extend(L.latLng(markerLat, markerLon)); // Only extend bounds for geolocated pins
+      if (isGeolocated) bounds.extend(L.latLng(markerLat, markerLon));
       pinsAdded++;
     }
   });
 
-  // Adjust map bounds or center on default if no pins
   if (pinsAdded > 0) {
-    if (mapProvider === "google" && map) {
+    if (mapProvider === "google") {
       if (!bounds.isEmpty()) {
-        // Only fit bounds if there are actual geolocated pins
         map.fitBounds(bounds);
       } else {
         // If only non-geolocated pins were added (e.g., all violet)
-        const defaultLat = parseFloat(settings.defaultLatitude) || 34.05;
-        const defaultLng = parseFloat(settings.defaultLongitude) || -118.25;
-        map.setCenter({ lat: defaultLat, lng: defaultLng });
-        map.setZoom(10); // A reasonable default zoom for a single point
+        // and no valid default coordinates, map will stay at its initial center/zoom
       }
-    } else if (mapProvider === "leaflet" && leafletMap) {
+    } else {
+      // Leaflet
       if (bounds.isValid()) {
-        // Corrected: Use isValid() for Leaflet bounds
         leafletMap.fitBounds(bounds);
       } else {
         // If only non-geolocated pins were added
-        const defaultLat = parseFloat(settings.defaultLatitude) || 34.05;
-        const defaultLng = parseFloat(settings.defaultLongitude) || -118.25;
-        leafletMap.setView([defaultLat, defaultLng], 10); // A reasonable default zoom for a single point
+        // and no valid default coordinates, map will stay at its initial center/zoom
       }
     }
   } else {
-    // If no pins at all, center on default location
-    const defaultLat = parseFloat(settings.defaultLatitude) || 34.05;
-    const defaultLng = parseFloat(settings.defaultLongitude) || -118.25;
-    if (mapProvider === "google" && map) {
-      map.setCenter({ lat: defaultLat, lng: defaultLng });
-      map.setZoom(10);
-    } else if (mapProvider === "leaflet" && leafletMap) {
-      leafletMap.setView([defaultLat, defaultLng], 10);
-    }
+    // If no pins at all, map will stay at its initial center/zoom
   }
 }
 
 // --- Event Listeners ---
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Load all data from local storage on app start
-  loadDataFromLocalStorage();
+document.addEventListener("DOMContentLoaded", async () => {
+  loadingSpinner.style.display = "flex"; // Show loading spinner
 
-  // Set initial view based on whether settings exist (first-time use)
-  if (Object.keys(settings).length === 0) {
-    showView(settingsView);
-    showMessage(
-      "Welcome! Please set your default city/state or coordinates.",
-      "info"
-    );
-  } else {
+  // Initialize app data from local storage
+  loadDataFromLocalStorage();
+  populateSettingsForm();
+
+  // Initial view decision based on settings completion
+  if (areSettingsComplete()) {
     showView(myRVsView);
     renderRVs(); // Render RVs once loaded
+  } else {
+    showView(settingsView);
+    showMessage(
+      "Welcome! Please set your default City/State or Coordinates in Settings.",
+      "info"
+    );
   }
-
-  // Populate settings form if data was loaded
-  populateSettingsForm();
+  loadingSpinner.style.display = "none"; // Hide loading spinner after data initialization
 
   // Navigation Buttons
   settingsBtn.addEventListener("click", () => {
@@ -1365,23 +1600,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   myRVsLink.addEventListener("click", () => {
     showView(myRVsView);
-    renderRVs(); // Re-render RVs
   });
   mapLink.addEventListener("click", () => {
     showView(mapView);
   });
 
-  // Settings View Buttons
-  useCurrentLocationBtn.addEventListener("click", () =>
-    getCurrentLocation(defaultLatitudeInput, defaultLongitudeInput)
-  );
-  exportDataBtn.addEventListener("click", exportData);
-  importDataBtn.addEventListener("click", importData);
-  saveSettingsBtn.addEventListener("click", saveSettings);
-  cancelSettingsBtn.addEventListener("click", () => {
-    populateSettingsForm(); // Revert any unsaved changes by reloading from 'settings' variable
-    showView(myRVsView); // Go back to RV list
-  });
+  // Settings Autosave: Add blur listeners to all relevant inputs for autosave
+  document
+    .querySelectorAll(
+      '#settingsView input[type="text"], #settingsView input[type="number"]'
+    )
+    .forEach((input) => {
+      input.addEventListener("blur", saveSettings);
+    });
 
   // Add event listeners for input changes to trigger geocoding/reverse geocoding
   defaultCityInput.addEventListener("change", () =>
@@ -1407,59 +1638,26 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCityStateFromCoordinates("rv")
   );
   rvLongitudeInput.addEventListener("change", () =>
-    updateCityStateFromCoordinates("rv")
+    updateCoordinatesFromCityState("rv")
   );
 
   // My RVs View Buttons
   addRVBtn.addEventListener("click", () => {
-    const formIsVisible = rvFormView.style.display === "block";
-
-    if (formIsVisible && formHasUnsavedChanges) {
-      const confirmDiscard = confirm(
-        "You have unsaved changes. Save or Discard?"
-      );
-      if (!confirmDiscard) return;
-    }
-
     clearRVForm();
     showView(rvFormView);
-    formHasUnsavedChanges = false;
   });
 
-  // RV Form View Buttons
-  saveRvBtn.addEventListener("click", () => {
-    saveRV();
-    formHasUnsavedChanges = false;
-  });
-
-  cancelRvBtn.addEventListener("click", () => {
-    clearRVForm(); // Clear form
-    showView(myRVsView); // Go back to RV list
-    formHasUnsavedChanges = false;
-  });
-  rvUseCurrentLocationBtn.addEventListener("click", () =>
-    getCurrentLocation(rvLatitudeInput, rvLongitudeInput)
-  );
-
-  // Contacted Date/Time functionality
-  rvLastContactedDateInput.addEventListener("change", (event) => {
-    rvLastContactedDayInput.value = getFormattedDay(event.target.value);
-  });
-
-  const formInputs = document.querySelectorAll(
-    "#rvFormView input, #rvFormView textarea"
-  );
-  formInputs.forEach((input) => {
-    input.addEventListener("input", () => {
-      formHasUnsavedChanges = true;
+  // RV Form Autosave: Add blur listeners to all relevant inputs for autosave
+  document
+    .querySelectorAll("#rvFormView input, #rvFormView textarea")
+    .forEach((input) => {
+      input.addEventListener("blur", saveRV);
     });
-  });
 
-  addVisitBtnForm.addEventListener("click", addVisit); // Corrected variable name
-  removeVisitBtnForm.addEventListener("click", removeVisit); // Corrected variable name
+  addVisitBtnForm.addEventListener("click", addVisit);
+  removeVisitBtnForm.addEventListener("click", removeVisit);
 
   // Sort and Filter Event Listeners
-  // Added null checks before adding event listeners to prevent errors if elements are not found
   if (sortOldNewRadio) {
     sortOldNewRadio.addEventListener("change", handleSortFilterChange);
   }
@@ -1472,7 +1670,5 @@ document.addEventListener("DOMContentLoaded", () => {
   if (filterNoAreaCheckbox) {
     filterNoAreaCheckbox.addEventListener("change", handleFilterChange);
   }
-  // Dynamic area checkboxes will have listeners re-attached in generateAreaFilterCheckboxes
-  // Initial generation on load
-  generateAreaFilterCheckboxes("contact"); // Ensure correct viewType is passed
+  generateAreaFilterCheckboxes("contact");
 });
