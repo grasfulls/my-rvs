@@ -56,7 +56,12 @@ const mapAreaFilterCheckboxesDiv = document.getElementById(
   "mapAreaFilterCheckboxes"
 );
 
+// Previous/Next RV Navigation Elements
+const prevRvBtn = document.getElementById("prevRvBtn");
+const nextRvBtn = document.getElementById("nextRvBtn");
+
 let currentRVId = null; // To store the ID of the RV being edited
+let currentRvIndex = -1; // To store the index of the RV being edited in the filtered list
 let mapInitialized = false; // Flag to prevent multiple map initializations
 
 // --- Utility Functions ---
@@ -175,7 +180,7 @@ function showConfirmationDialog(message, onConfirm, onCancel = () => {}) {
   `;
 
   const confirmButton = document.createElement("button");
-  confirmButton.textContent = "Confirm";
+  confirmButton.textContent = "Proceed"; // Changed text to "Proceed"
   confirmButton.className = "utility-btn primary-btn";
   confirmButton.style.cssText = `
       background-color: #4CAF50;
@@ -193,7 +198,7 @@ function showConfirmationDialog(message, onConfirm, onCancel = () => {}) {
     (confirmButton.style.backgroundColor = "#4CAF50");
 
   const cancelButton = document.createElement("button");
-  cancelButton.textContent = "Cancel";
+  cancelButton.textContent = "Go Back"; // Changed text to "Go Back"
   cancelButton.className = "utility-btn cancel-btn";
   cancelButton.style.cssText = `
       background-color: #f44336;
@@ -257,18 +262,38 @@ function getFormattedDay(dateString) {
 }
 
 /**
+ * Formats a phone number string to (XXX) XXX-XXXX.
+ * @param {string} phoneNumberString - The raw phone number string.
+ * @returns {string} - Formatted phone number.
+ */
+function formatPhoneNumber(phoneNumberString) {
+  const cleaned = ("" + phoneNumberString).replace(/\D/g, ""); // Remove non-digits
+  let formattedValue = "";
+  if (cleaned.length > 0) {
+    formattedValue += "(" + cleaned.substring(0, 3);
+  }
+  if (cleaned.length >= 4) {
+    formattedValue += ") " + cleaned.substring(3, 6);
+  }
+  if (cleaned.length >= 7) {
+    formattedValue += "-" + cleaned.substring(6, 10);
+  }
+  return formattedValue;
+}
+
+/**
  * Calculates days since a given date.
- * @param {string} dateString - The date string (YYYY-MM-DD).
+ * @param {string} dateString - The date string (e.g., "YYYY-MM-DD").
  * @returns {number|string} - Number of days ago, "Today", "Yesterday", or "N/A".
  */
 function getDaysSince(dateString) {
   if (!dateString) return "N/A";
+  const date = new Date(dateString);
   const today = new Date();
-  const visitDate = new Date(dateString);
   today.setHours(0, 0, 0, 0); // Normalize to start of day
-  visitDate.setHours(0, 0, 0, 0); // Normalize to start of day
+  date.setHours(0, 0, 0, 0); // Normalize to start of day
 
-  const diffTime = today.getTime() - visitDate.getTime(); // Calculate difference in milliseconds
+  const diffTime = today.getTime() - date.getTime(); // Calculate difference in milliseconds
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert to full days
 
   if (diffDays === 0) {
@@ -313,6 +338,33 @@ function areSettingsComplete() {
  * @param {HTMLElement} viewToShow - The view element to display.
  */
 function showView(viewToShow) {
+  // Get the currently active view before changing it
+  const currentActiveView = document.querySelector(
+    '.view[style*="display: block"]'
+  );
+
+  // If trying to navigate away from RV form and name is empty
+  if (
+    currentActiveView === rvFormView &&
+    viewToShow !== rvFormView &&
+    rvNameInput.value.trim() === ""
+  ) {
+    showConfirmationDialog(
+      "Contact cannot be saved without a Name. Do you want to proceed without saving this contact?",
+      () => {
+        // User confirmed to proceed without saving this specific contact
+        clearRVForm(); // Clear the form without saving
+        // Now proceed to the originally intended view
+        proceedToShowView(viewToShow);
+      },
+      () => {
+        // User chose to go back, stay on the RV form
+        // Do nothing, keep the current view as rvFormView
+      }
+    );
+    return; // Stop further execution of showView until dialog is handled
+  }
+
   // If trying to navigate away from settings and settings are incomplete
   if (viewToShow !== settingsView && !areSettingsComplete()) {
     showMessage(
@@ -331,6 +383,19 @@ function showView(viewToShow) {
     return; // Prevent navigation
   }
 
+  // If we reach here, it means either:
+  // 1. We are navigating to settingsView (no validation needed to enter settings)
+  // 2. We are navigating away from settingsView and settings are complete
+  // 3. We are navigating away from rvFormView and name is not empty (or user confirmed to discard)
+  // 4. We are navigating between other views (no special validation)
+  proceedToShowView(viewToShow);
+}
+
+/**
+ * Helper function to actually change the view after validation.
+ * @param {HTMLElement} viewToShow - The view element to display.
+ */
+function proceedToShowView(viewToShow) {
   hideAllViews();
   viewToShow.style.display = "block";
 
@@ -345,13 +410,19 @@ function showView(viewToShow) {
       item.classList.remove("active");
     });
 
+  // Control addRVBtn visibility (now always visible in header for relevant views)
+  addRVBtn.style.display = "flex"; // Default to flex
+  // Control Previous/Next buttons visibility in footer
+  prevRvBtn.style.display = "none";
+  nextRvBtn.style.display = "none";
+
   if (viewToShow === settingsView) {
     appSubheading.textContent = "Settings";
     addRVBtn.style.display = "none"; // Hide add button in settings view
     settingsBtn.classList.add("active"); // Add active class to settings button
   } else if (viewToShow === myRVsView) {
     appSubheading.textContent = "Contact Info";
-    addRVBtn.style.display = "flex"; // Show add button in contacts view
+    // addRVBtn.style.display is already flex from above
     generateAreaFilterCheckboxes("contact"); // Regenerate filter options for contacts view
     myRVsLink.classList.add("active"); // Add active class to My RVs link
   } else if (viewToShow === mapView) {
@@ -363,7 +434,10 @@ function showView(viewToShow) {
     mapLink.classList.add("active"); // Add active class to Map link
   } else if (viewToShow === rvFormView) {
     appSubheading.textContent = "RV Information"; // Set subheading for RV form view
-    addRVBtn.style.display = "none"; // Hide add button in RV form view
+    // addRVBtn.style.display is already flex from above
+    updateRvFormNavButtons(); // Show/hide prev/next buttons based on current RV
+    prevRvBtn.style.display = "flex"; // Always show prev/next buttons in form view
+    nextRvBtn.style.display = "flex"; // Always show prev/next buttons in form view
   }
 }
 
@@ -652,10 +726,14 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
       selectedAreaFilters.includes(rv.area || "No Area")
     );
   } else {
-    if (
-      document.getElementById("filterNoArea") &&
-      document.getElementById("filterNoArea").checked
-    ) {
+    // If "All Areas" is not checked and no specific areas are checked,
+    // only show "No Area" if its checkbox is specifically checked.
+    // Otherwise, show nothing.
+    const noAreaCheckbox =
+      document.getElementById("filterNoArea") ||
+      document.getElementById("mapFilterNoArea") ||
+      document.getElementById("formFilterNoArea");
+    if (noAreaCheckbox && noAreaCheckbox.checked) {
       filteredByArea = rvsArray.filter(
         (rv) => (rv.area || "No Area") === "No Area"
       );
@@ -665,8 +743,9 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
   }
 
   // Apply color filtering
+  // If no color filters are selected, or all are selected, show all pins.
+  // Otherwise, only show pins matching selected colors.
   if (selectedColorFilters.length === 0 || selectedColorFilters.length === 3) {
-    // If nothing or all selected, show all
     return filteredByArea;
   }
 
@@ -697,33 +776,7 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
  * Renders the list of RVs in the myRVsView, applying sorting and filtering.
  */
 function renderRVs() {
-  let rvsToDisplay = [...rvs]; // Create a copy to avoid modifying original array
-
-  // 1. Get selected filters
-  const selectedAreaFilters = Array.from(
-    document.querySelectorAll(
-      '#areaFilterCheckboxes input[type="checkbox"]:checked'
-    )
-  ).map((cb) => cb.value);
-
-  const selectedColorFilters = Array.from(
-    document.querySelectorAll(
-      '#showColorFilterCheckboxes input[type="checkbox"]:checked'
-    )
-  ).map((cb) => cb.value);
-
-  // 2. Apply Filtering
-  rvsToDisplay = filterRVs(
-    rvsToDisplay,
-    selectedAreaFilters,
-    selectedColorFilters
-  );
-
-  // 3. Apply Sorting
-  const selectedSortOrder =
-    document.querySelector('.sort-options input[name="sortOrder"]:checked')
-      ?.value || "oldest"; // Default to 'oldest' if no radio is checked
-  rvsToDisplay = sortRVs(rvsToDisplay, selectedSortOrder);
+  let rvsToDisplay = getFilteredAndSortedRVs(); // Use the new helper function
 
   rvListContainer.innerHTML = ""; // Clear existing list
 
@@ -785,7 +838,7 @@ function renderRVs() {
 
 /**
  * Dynamically generates area filter checkboxes based on unique areas in RVs.
- * @param {'contact'|'map'} viewType - Indicates which view's filter checkboxes to generate.
+ * @param {'contact'|'map'|'form'} viewType - Indicates which view's filter checkboxes to generate.
  */
 function generateAreaFilterCheckboxes(viewType) {
   let targetDiv, filterAllId, filterNoAreaId;
@@ -798,35 +851,41 @@ function generateAreaFilterCheckboxes(viewType) {
     targetDiv = mapAreaFilterCheckboxesDiv;
     filterAllId = "mapFilterAllAreas";
     filterNoAreaId = "mapFilterNoArea";
+  } else if (viewType === "form") {
+    // Added for formView
+    targetDiv = document.getElementById("formAreaFilterCheckboxes");
+    filterAllId = "formFilterAllAreas";
+    filterNoAreaId = "formFilterNoArea";
   } else {
     return;
   }
 
-  // Store current checked state of the permanent checkboxes
-  const currentAllChecked =
-    targetDiv.querySelector(`#${filterAllId}`)?.checked || true;
-  const currentNoAreaChecked =
-    targetDiv.querySelector(`#${filterNoAreaId}`)?.checked || false;
+  // Get unique areas from current RVs (excluding "No Area" for dynamic generation)
+  const uniqueAreas = [
+    ...new Set(
+      rvs.map((rv) => rv.area).filter((area) => area && area !== "No Area")
+    ),
+  ].sort();
 
-  // Clear all existing children except the permanent ones
+  // Store current checked state of dynamic checkboxes before clearing
+  const currentDynamicChecked = Array.from(
+    targetDiv.querySelectorAll('input[type="checkbox"]:checked')
+  )
+    .filter((cb) => cb.value !== "all" && cb.value !== "No Area")
+    .map((cb) => cb.value);
+
+  // Clear all existing children
+  // We will re-add "All Areas" and "No Area" to ensure they are always present and in order
   Array.from(targetDiv.children).forEach((child) => {
-    if (
-      child.id !== filterAllId &&
-      child.id !== filterNoAreaId &&
-      child.htmlFor !== filterAllId &&
-      child.htmlFor !== filterNoAreaId
-    ) {
-      child.remove();
-    }
+    child.remove();
   });
 
-  // Ensure permanent checkboxes exist and are in the correct order
-  const recreateCheckbox = (id, value, text, checked) => {
+  const recreateCheckbox = (id, value, text, checkedState) => {
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.id = id;
     checkbox.value = value;
-    checkbox.checked = checked; // Set checked state here
+    checkbox.checked = checkedState;
 
     let label = document.createElement("label");
     label.htmlFor = id;
@@ -837,13 +896,31 @@ function generateAreaFilterCheckboxes(viewType) {
     return { checkbox, label };
   };
 
-  // Recreate "All Areas" and "No Area" to ensure they are present and correctly ordered
-  recreateCheckbox(filterAllId, "all", "All Areas", currentAllChecked);
-  recreateCheckbox(filterNoAreaId, "No Area", "No Area", currentNoAreaChecked);
+  // Recreate "All Areas" and "No Area" first to ensure their order
+  // Retrieve their last checked state from the DOM if they existed, otherwise default.
+  const prevAllAreasChecked =
+    document.getElementById(filterAllId)?.checked || true;
+  const prevNoAreaChecked =
+    document.getElementById(filterNoAreaId)?.checked || false;
 
-  // Re-attach event listeners to all checkboxes
+  recreateCheckbox(filterAllId, "all", "All Areas", prevAllAreasChecked);
+  recreateCheckbox(filterNoAreaId, "No Area", "No Area", prevNoAreaChecked);
+
+  // Append dynamic area checkboxes
+  uniqueAreas.forEach((area) => {
+    // Check if this specific area was previously checked
+    const wasChecked = currentDynamicChecked.includes(area);
+    recreateCheckbox(
+      `filter-${viewType}-${area.replace(/\s/g, "-")}`,
+      area,
+      area,
+      wasChecked
+    );
+  });
+
+  // Re-attach event listeners to all checkboxes in this group
   targetDiv.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-    checkbox.removeEventListener("change", handleFilterChange);
+    checkbox.removeEventListener("change", handleFilterChange); // Remove old listeners first
     checkbox.addEventListener("change", handleFilterChange);
   });
 }
@@ -864,7 +941,7 @@ function handleFilterChange(event) {
   const allCheckboxesInGroup = Array.from(
     filterGroup.querySelectorAll('input[type="checkbox"]')
   );
-  const filterAllAreasCheckboxInGroup =
+  const filterAllCheckboxesInGroup =
     filterGroup.querySelector('input[value="all"]');
   const filterNoAreaCheckboxInGroup = filterGroup.querySelector(
     'input[value="No Area"]'
@@ -886,16 +963,16 @@ function handleFilterChange(event) {
     }
   } else {
     if (changedCheckbox.checked) {
-      if (filterAllAreasCheckboxInGroup) {
-        filterAllAreasCheckboxInGroup.checked = false;
+      if (filterAllCheckboxesInGroup) {
+        filterAllCheckboxesInGroup.checked = false;
       }
     } else {
       const anyOtherChecked = allCheckboxesInGroup.some(
         (cb) => cb.checked && cb.value !== "all"
       );
       if (!anyOtherChecked) {
-        if (filterAllAreasCheckboxInGroup) {
-          filterAllAreasCheckboxInGroup.checked = true;
+        if (filterAllCheckboxesInGroup) {
+          filterAllCheckboxesInGroup.checked = true;
         } else if (filterNoAreaCheckboxInGroup) {
           // Fallback if no "All Areas"
           filterNoAreaCheckboxInGroup.checked = true;
@@ -929,7 +1006,8 @@ function clearRVForm() {
   rvLastContactedTimeInput.value = "";
   rvNoteInput.value = "";
   currentRVId = null;
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none";
+  currentRvIndex = -1; // Reset index for new RV
+  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none"; // Hide for new entry until a date is chosen
 
   // Autofill current date/time if adding a new RV
   const now = new Date();
@@ -939,7 +1017,11 @@ function clearRVForm() {
   rvLastContactedDateInput.value = dateString;
   rvLastContactedDayInput.value = getFormattedDay(dateString);
   rvLastContactedTimeInput.value = timeString;
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "inline-flex";
+  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "inline-flex"; // Show remove visit button for new entries
+
+  // Disable Previous/Next buttons for new entry
+  prevRvBtn.disabled = true;
+  nextRvBtn.disabled = true;
 }
 
 /**
@@ -947,10 +1029,13 @@ function clearRVForm() {
  * @param {string} rvId - The ID of the RV to edit.
  */
 function editRV(rvId) {
-  const rvToEdit = rvs.find((rv) => rv.id === rvId);
+  const rvsToDisplay = getFilteredAndSortedRVs(); // Get currently filtered/sorted list
+  const rvToEditIndex = rvsToDisplay.findIndex((rv) => rv.id === rvId);
 
-  if (rvToEdit) {
-    currentRVId = rvId;
+  if (rvToEditIndex !== -1) {
+    currentRvIndex = rvToEditIndex;
+    const rvToEdit = rvsToDisplay[currentRvIndex];
+    currentRVId = rvToEdit.id;
 
     rvNameInput.value = rvToEdit.name || "";
     rvAddressInput.value = rvToEdit.address || "";
@@ -973,6 +1058,7 @@ function editRV(rvId) {
         : "none";
 
     showView(rvFormView);
+    updateRvFormNavButtons(); // Update button states after loading RV
   } else {
     showMessage("RV not found.", "error");
     console.error("No such RV with ID:", rvId);
@@ -982,7 +1068,7 @@ function editRV(rvId) {
 /**
  * Saves a new or updates an existing Return Visit to local storage.
  */
-function saveRV() {
+async function saveRV() {
   const name = rvNameInput.value.trim();
   const address = rvAddressInput.value.trim();
   const city = rvCityInput.value.trim();
@@ -997,30 +1083,20 @@ function saveRV() {
 
   // Validation check for name
   if (!name) {
-    showConfirmationDialog(
-      "Contact cannot be saved without a Name. Do you want to proceed without a name?",
-      () => {
-        // User chose to proceed without a name, save the RV
-        proceedSaveRV(
-          name,
-          address,
-          city,
-          state,
-          email,
-          phone,
-          latitude,
-          longitude,
-          lastContactedDate,
-          lastContactedTime,
-          note
-        );
-      },
-      () => {
-        // User chose to go back, do nothing (stay on form)
-        showMessage("Saving cancelled.", "info");
-      }
-    );
-    return; // Stop here, wait for user's confirmation
+    // Await the user's decision from the confirmation dialog
+    const proceedAnyway = await new Promise((resolve) => {
+      showConfirmationDialog(
+        "A name has not been entered for this contact. It cannot be easily identified without one. Do you want to save it anyway?",
+        () => resolve(true), // User chose to proceed
+        () => resolve(false) // User chose to cancel
+      );
+    });
+
+    if (!proceedAnyway) {
+      // User chose not to save, so prevent the save operation
+      showMessage("Contact not saved. Please enter a name.", "info");
+      return;
+    }
   }
 
   // If a name is present, or user proceeded without one, save the RV
@@ -1086,16 +1162,19 @@ function proceedSaveRV(
     const index = rvs.findIndex((rv) => rv.id === currentRVId);
     if (index !== -1) {
       rvs[index] = rvData;
-      showMessage("RV Information updated successfully!", "success");
+      showMessage("RV Information updated automatically!", "success");
     }
   } else {
     rvs.push(rvData);
-    showMessage("RV Information added successfully!", "success");
+    showMessage("RV Information added automatically!", "success");
+    currentRVId = rvData.id; // Set currentRVId for newly added RV
+    currentRvIndex = rvs.length - 1; // Set index for newly added RV
   }
 
   saveDataToLocalStorage();
   renderRVs(); // Re-render the list
   updateMap(); // Update the map
+  updateRvFormNavButtons(); // Update button states after saving
 }
 
 /**
@@ -1144,20 +1223,8 @@ function removeVisit() {
 }
 
 /**
- * Formats a phone number string to (XXX) XXX-XXXX.
- * @param {string} phoneNumberString - The raw phone number string.
- * @returns {string} - The formatted phone number string.
+ * Geocoding Functions
  */
-function formatPhoneNumber(phoneNumberString) {
-  const cleaned = ("" + phoneNumberString).replace(/\D/g, ""); // Remove all non-digit characters
-  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-  if (match) {
-    return "(" + match[1] + ") " + match[2] + "-" + match[3];
-  }
-  return phoneNumberString;
-}
-
-// --- Geocoding/Reverse Geocoding Functions ---
 
 /**
  * Fetches coordinates for a given city and state using Nominatim (OpenStreetMap).
@@ -1371,6 +1438,20 @@ async function initMap() {
         return;
       }
     } else {
+      if (map) {
+        // Ensure map exists before calling setCenter/setZoom
+        // Update map center and zoom if already initialized
+        const defaultLat = parseFloat(settings.defaultLatitude);
+        const defaultLng = parseFloat(settings.defaultLongitude);
+        const center =
+          !isNaN(defaultLat) && !isNaN(defaultLng)
+            ? { lat: defaultLat, lng: defaultLng }
+            : { lat: 0, lng: 0 };
+        const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 10 : 1;
+        map.setCenter(center);
+        map.setZoom(zoom);
+        console.log("Google Map re-centered.");
+      }
       window.mapReady();
     }
   } else {
@@ -1543,7 +1624,6 @@ function updateMap() {
       const diffDays = Math.floor(
         (today.getTime() - visitDate.getTime()) / (1000 * 60 * 60 * 24)
       );
-
       if (!isNaN(diffDays) && diffDays >= 14) {
         pinColor = "red"; // Red for 14+ days ago
       }
@@ -1664,7 +1744,106 @@ function updateMap() {
       }
     }
   }
-  // If no pins, map stays at its initial center/zoom set during initialization.
+}
+
+/**
+ * Gets the currently filtered and sorted list of RVs.
+ * This function will be crucial for Previous/Next navigation.
+ * @returns {Array} - The filtered and sorted RVs.
+ */
+function getFilteredAndSortedRVs() {
+  let rvsToDisplay = [...rvs];
+
+  // Determine which filter group is active (myRVsView or rvFormView)
+  let areaFilterCheckboxesId = "";
+  let colorFilterCheckboxesId = "";
+  let sortOrderRadioName = "";
+
+  if (myRVsView.style.display === "block") {
+    areaFilterCheckboxesId = "areaFilterCheckboxes";
+    colorFilterCheckboxesId = "showColorFilterCheckboxes";
+    sortOrderRadioName = "sortOrder";
+  } else if (rvFormView.style.display === "block") {
+    areaFilterCheckboxesId = "formAreaFilterCheckboxes";
+    colorFilterCheckboxesId = "formShowColorFilterCheckboxes";
+    sortOrderRadioName = "formSortOrder";
+  } else if (mapView.style.display === "block") {
+    areaFilterCheckboxesId = "mapAreaFilterCheckboxes";
+    colorFilterCheckboxesId = "mapShowColorFilterCheckboxes";
+    sortOrderRadioName = "sortOrder"; // Map view uses the main list's sort order
+  } else {
+    // Default to main filters if no specific view is active or recognized
+    areaFilterCheckboxesId = "areaFilterCheckboxes";
+    colorFilterCheckboxesId = "showColorFilterCheckboxes";
+    sortOrderRadioName = "sortOrder";
+  }
+
+  // Get selected area filters
+  const selectedAreaFilters = Array.from(
+    document.querySelectorAll(
+      `#${areaFilterCheckboxesId} input[type="checkbox"]:checked`
+    )
+  ).map((cb) => cb.value);
+
+  // Get selected color filters
+  const selectedColorFilters = Array.from(
+    document.querySelectorAll(
+      `#${colorFilterCheckboxesId} input[type="checkbox"]:checked`
+    )
+  ).map((cb) => cb.value);
+
+  // Apply filtering
+  rvsToDisplay = filterRVs(
+    rvsToDisplay,
+    selectedAreaFilters,
+    selectedColorFilters
+  );
+
+  // Apply sorting
+  const selectedSortOrder =
+    document.querySelector(`input[name="${sortOrderRadioName}"]:checked`)
+      ?.value || "oldest"; // Default to 'oldest' if no radio is checked
+  rvsToDisplay = sortRVs(rvsToDisplay, selectedSortOrder);
+
+  return rvsToDisplay;
+}
+
+/**
+ * Updates the state of the Previous/Next buttons in the RV form.
+ */
+function updateRvFormNavButtons() {
+  const rvsToNavigate = getFilteredAndSortedRVs();
+  // Only enable/disable if there are RVs to navigate
+  if (rvsToNavigate.length > 0) {
+    prevRvBtn.disabled = currentRvIndex <= 0;
+    nextRvBtn.disabled = currentRvIndex >= rvsToNavigate.length - 1;
+  } else {
+    // If no RVs, disable both buttons
+    prevRvBtn.disabled = true;
+    nextRvBtn.disabled = true;
+  }
+}
+
+/**
+ * Navigates to the previous RV in the filtered/sorted list.
+ */
+function showPreviousRv() {
+  const rvsToNavigate = getFilteredAndSortedRVs();
+  if (currentRvIndex > 0) {
+    currentRvIndex--;
+    editRV(rvsToNavigate[currentRvIndex].id);
+  }
+}
+
+/**
+ * Navigates to the next RV in the filtered/sorted list.
+ */
+function showNextRv() {
+  const rvsToNavigate = getFilteredAndSortedRVs();
+  if (currentRvIndex < rvsToNavigate.length - 1) {
+    currentRvIndex++;
+    editRV(rvsToNavigate[currentRvIndex].id);
+  }
 }
 
 // --- Event Listeners ---
@@ -1720,7 +1899,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCityStateFromCoordinates("default")
   );
   defaultLongitudeInput.addEventListener("change", () =>
-    updateCityStateFromCoordinates("default")
+    updateCoordinatesFromCityState("default")
   );
 
   rvCityInput.addEventListener("change", () =>
@@ -1757,26 +1936,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   addVisitBtnForm.addEventListener("click", addVisit);
   removeVisitBtnForm.addEventListener("click", removeVisit);
 
-  // Sort and Filter Event Listeners
-  if (sortOldNewRadio) {
-    sortOldNewRadio.addEventListener("change", handleSortFilterChange);
-  }
-  if (sortNewOldRadio) {
-    sortNewOldRadio.addEventListener("change", handleSortFilterChange);
-  }
+  // Previous/Next RV navigation buttons
+  prevRvBtn.addEventListener("click", showPreviousRv);
+  nextRvBtn.addEventListener("click", showNextRv);
 
-  // Add change listeners for the new color filters
+  // Sort and Filter Event Listeners (for all relevant views)
   document
-    .querySelectorAll('#mapShowColorFilterCheckboxes input[type="checkbox"]')
-    .forEach((checkbox) => {
-      checkbox.addEventListener("change", handleSortFilterChange);
+    .querySelectorAll('.sort-options input[type="radio"]')
+    .forEach((radio) => {
+      radio.addEventListener("change", handleSortFilterChange);
     });
 
-  if (filterAllAreasCheckbox) {
-    filterAllAreasCheckbox.addEventListener("change", handleFilterChange);
-  }
-  if (filterNoAreaCheckbox) {
-    filterNoAreaCheckbox.addEventListener("change", handleFilterChange);
-  }
+  document
+    .querySelectorAll('.filter-options input[type="checkbox"]')
+    .forEach((checkbox) => {
+      checkbox.addEventListener("change", handleFilterChange);
+    });
+
+  // Initial generation of Area filters for contact view
   generateAreaFilterCheckboxes("contact");
 });

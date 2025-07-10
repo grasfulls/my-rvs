@@ -706,6 +706,8 @@ label[for="defaultLongitude"] {
     color: #555;
     margin-bottom: 0;
     flex-shrink: 0;
+    white-space: nowrap;
+    /* Keep label on one line */
 }
 
 .radio-group,
@@ -713,6 +715,8 @@ label[for="defaultLongitude"] {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    align-items: center;
+    /* Align items vertically */
     gap: 10px;
 }
 
@@ -728,6 +732,8 @@ label[for="defaultLongitude"] {
     font-size: 0.85em;
     color: #444;
     cursor: pointer;
+    white-space: nowrap;
+    /* Prevent label text from wrapping */
 }
 
 /* RV List Container (for displaying RV cards - content yet to be added) */
@@ -835,6 +841,59 @@ label[for="defaultLongitude"] {
     padding: 0 20px;
 }
 
+/* Previous/Next Buttons Container */
+.rv-form-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    position: sticky;
+    /* Make it float */
+    top: 35px;
+    /* Adjusted based on new header height */
+    z-index: 50;
+    background-color: #ffffff;
+    /* Ensure it covers content when floating */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Optional shadow for floating effect */
+}
+
+.form-nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #3f51b5;
+    /* Icon color */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-nav-btn:hover {
+    background-color: rgba(63, 81, 181, 0.1);
+    color: #2196F3;
+}
+
+.form-nav-btn:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    background: none;
+}
+
+.form-nav-btn svg {
+    fill: currentColor;
+    width: 24px;
+    height: 24px;
+}
+
+
 /* Wrapper for each form group to manage overall spacing (Name, Address, etc.) */
 .form-group-wrapper {
     margin-bottom: 10px;
@@ -858,7 +917,9 @@ label[for="defaultLongitude"] {
 .rv-form-fields .form-group input[type="date"],
 .rv-form-fields .form-group input[type="time"],
 .rv-form-fields .form-group textarea,
-.rv-form-fields .form-group input[type="email"] {
+.rv-form-fields .form-group input[type="email"],
+.rv-form-fields .form-group input[type="tel"] {
+    /* Added type="tel" */
     width: 100%;
     padding: 8px 10px;
     border: 1px solid #ddd;
@@ -922,6 +983,12 @@ label[for="defaultLongitude"] {
     font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group.coordinates-group-rv input:focus {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    outline: none;
 }
 
 .form-group.coordinates-group-rv #rvUseCurrentLocationBtn {
@@ -1034,7 +1101,7 @@ label[for="defaultLongitude"] {
 
 #mapContainer {
     width: 100%;
-    height: 400px;
+    height: 100%;
     background-color: #f0f0f0;
     border-radius: 8px;
     margin: 0 auto;

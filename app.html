@@ -14,12 +14,11 @@
         <div class="header-left-content">
           <h1 class="main-header-title">My RVs</h1>
           <span id="appSubheading" class="app-subheading"></span>
-          <!-- Add RV Button moved here, now always visible -->
+          <!-- Add RV Button now always visible in header -->
           <button id="addRVBtn" class="add-button">+</button>
         </div>
         <div class="header-right-icons">
-          <!-- Settings Button with SVG icon -->
-          <!-- This button remains here, as it's the only one left in header-right-icons -->
+          <!-- This div remains for potential future right-aligned icons -->
         </div>
       </header>
 
@@ -220,6 +219,70 @@
 
         <!-- RV Form View Section (Add/Edit Return Visit) -->
         <section id="rvFormView" class="view">
+          <!-- Sort and Filter Controls for RV Form View (newly added) -->
+          <div class="sort-filter-controls">
+            <div class="filter-options">
+              <label class="sort-filter-label">Sort by:</label>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  id="formSortOldNew"
+                  name="formSortOrder"
+                  value="oldest"
+                  checked
+                />
+                <label for="formSortOldNew">Oldest to Newest</label>
+                <input
+                  type="radio"
+                  id="formSortNewOld"
+                  name="formSortOrder"
+                  value="newest"
+                />
+                <label for="formSortNewOld">Newest to Oldest</label>
+              </div>
+            </div>
+            <div class="filter-options">
+              <label class="sort-filter-label">Show Filter:</label>
+              <div class="checkbox-group" id="formShowColorFilterCheckboxes">
+                <input
+                  type="checkbox"
+                  id="formFilterBluePins"
+                  value="blue"
+                  checked
+                />
+                <label for="formFilterBluePins">Blue</label>
+                <input
+                  type="checkbox"
+                  id="formFilterRedPins"
+                  value="red"
+                  checked
+                />
+                <label for="formFilterRedPins">Red</label>
+                <input
+                  type="checkbox"
+                  id="formFilterVioletPins"
+                  value="violet"
+                  checked
+                />
+                <label for="formFilterVioletPins">Violet</label>
+              </div>
+            </div>
+            <div class="filter-options">
+              <label class="sort-filter-label">Area Filter:</label>
+              <div class="checkbox-group" id="formAreaFilterCheckboxes">
+                <input
+                  type="checkbox"
+                  id="formFilterAllAreas"
+                  value="all"
+                  checked
+                />
+                <label for="formFilterAllAreas">All Areas</label>
+                <input type="checkbox" id="formFilterNoArea" value="No Area" />
+                <label for="formFilterNoArea">No Area</label>
+              </div>
+            </div>
+          </div>
+
           <div class="rv-form-fields">
             <div class="form-group-wrapper">
               <div class="form-group">
@@ -340,6 +403,24 @@
       </main>
 
       <footer class="app-footer">
+        <!-- Previous/Next Buttons for RV Form View (moved to footer) -->
+        <button
+          id="prevRvBtn"
+          class="form-nav-btn prev-btn"
+          title="Previous Return Visit"
+          style="display: none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="24px"
+            height="24px"
+          >
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+          </svg>
+        </button>
+
         <a id="myRVsLink" aria-label="My RVs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -378,7 +459,7 @@
             height="24px"
           >
             <path
-              d="M12 15.5c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-13.5c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm10 11h-2.09c-.33 1.09-.81 2.12-1.42 3.03l1.48 1.48c.59.59.59 1.54 0 2.12-.59.59-1.54.59-2.12 0l-1.48-1.48c-.91.61-1.94 1.09-3.03 1.42v2.09c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5v-2.09c-1.09-.33-2.12-.81-3.03-1.42l-1.48 1.48c-.59.59-1.54.59-2.12 0-.59-.59-.59-1.54 0-2.12l1.48-1.48c-.61-.91-1.09-1.94-1.42-3.03H2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h2.09c.33-1.09.81-2.12 1.42-3.03L4.03 4.03c-.59-.59-.59-1.54 0-2.12.59-.59 1.54-.59 2.12 0l1.48 1.48c.91-.61 1.94-1.09 3.03-1.42V2c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v2.09c1.09.33 2.12.81 3.03 1.42l1.48-1.48c.59-.59 1.54-.59 2.12 0 .59.59.59 1.54 0 2.12l-1.48 1.48c.61.91 1.09 1.94 1.42 3.03H22c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"
+              d="M12 15.5c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-13.5c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm10 11h-2.09c-.33 1.09-.81 2.12-1.42 3.03l1.48 1.48c.59.59.59 1.54 0 2.12-.59.59-1.54.59-2.12 0l-1.48-1.48c-.91.61-1.94 1.09-3.03 1.42v2.09c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5v-2.09c-1.09-.33-2.12-.81-3.03-1.42l-1.48 1.48c-.59.59-1.54.59-2.12 0-.59-.59-.59-1.54 0-2.12l1.48-1.48c.61.91 1.09 1.94 1.42 3.03H2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h2.09c.33-1.09.81-2.12 1.42-3.03L4.03 4.03c-.59-.59-.59-1.54 0-2.12.59-.59 1.54-.59 2.12 0l1.48 1.48c.91-.61 1.94-1.09 3.03-1.42V2c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v2.09c1.09.33 2.12.81 3.03 1.42l1.48-1.48c.59-.59 1.54-.59 2.12 0 .59.59.59 1.54 0 2.12l-1.48 1.48c.61.91 1.09 1.94 1.42 3.03H22c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"
             />
           </svg>
         </button>
@@ -403,6 +484,22 @@
             height="24px"
           >
             <path d="M12 7.5l6 6h-4v6.5H10V13.5H6l6-6zM5 4h14v2H5z" />
+          </svg>
+        </button>
+        <button
+          id="nextRvBtn"
+          class="form-nav-btn next-btn"
+          title="Next Return Visit"
+          style="display: none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="24px"
+            height="24px"
+          >
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
           </svg>
         </button>
       </footer>
