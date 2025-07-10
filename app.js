@@ -619,13 +619,14 @@ function getCurrentLocation(latInput, longInput) {
         latInput.value = position.coords.latitude.toFixed(6);
         longInput.value = position.coords.longitude.toFixed(6);
         showMessage("Location retrieved successfully!", "success");
-        // Also update city/state if this is the default settings form
+        // Update city/state based on new coordinates and then trigger save for the relevant form
         if (latInput === defaultLatitudeInput) {
           await updateCityStateFromCoordinates("default");
+          saveSettings(); // Save settings if it's the default form's button
         } else if (latInput === rvLatitudeInput) {
           await updateCityStateFromCoordinates("rv");
+          saveRV(); // Save the RV if it's the RV form's button
         }
-        saveSettings(); // Autosave after getting current location
       },
       (error) => {
         console.error("Error getting location:", error);
@@ -1230,36 +1231,125 @@ async function saveRV() {
     }
   });
 
+  // Construct the new RV data object based on current form values
+  const newRvData = {
+    id: currentRVId || generateUniqueId(),
+    name: name,
+    address: address,
+    city: city,
+    state: state,
+    area: area,
+    email: email,
+    phone: phone,
+    latitude: isNaN(latitude) ? null : latitude,
+    longitude: isNaN(longitude) ? null : longitude,
+    visits: visits,
+    createdAt: currentRVId
+      ? rvs.find((rv) => rv.id === currentRVId)?.createdAt
+      : new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  let oldRvData = null;
+  if (currentRVId) {
+    oldRvData = rvs.find((rv) => rv.id === currentRVId);
+  }
+
+  // Determine if there are actual changes to trigger a save/message
+  let hasChanged = false;
+  if (!oldRvData) {
+    // If it's a new RV, it's always a change if a name is entered
+    if (name) hasChanged = true;
+  } else {
+    // Compare basic fields
+    for (const field of [
+      "name",
+      "address",
+      "city",
+      "state",
+      "email",
+      "phone",
+      "area",
+    ]) {
+      if (newRvData[field] !== oldRvData[field]) {
+        hasChanged = true;
+        break;
+      }
+    }
+
+    // Special handling for latitude and longitude comparison
+    const oldLat = parseFloat(oldRvData.latitude);
+    const oldLon = parseFloat(oldRvData.longitude);
+    const newLat = parseFloat(newRvData.latitude);
+    const newLon = parseFloat(newRvData.longitude);
+
+    // Check if latitude has changed meaningfully
+    if (
+      isNaN(oldLat) !== isNaN(newLat) ||
+      (!isNaN(oldLat) &&
+        !isNaN(newLat) &&
+        oldLat.toFixed(6) !== newLat.toFixed(6))
+    ) {
+      hasChanged = true;
+    }
+    // Check if longitude has changed meaningfully
+    if (
+      isNaN(oldLon) !== isNaN(newLon) ||
+      (!isNaN(oldLon) &&
+        !isNaN(newLon) &&
+        oldLon.toFixed(6) !== newLon.toFixed(6))
+    ) {
+      hasChanged = true;
+    }
+    // Check visits separately (simple length/stringified comparison for now)
+    if (JSON.stringify(newRvData.visits) !== JSON.stringify(oldRvData.visits)) {
+      hasChanged = true;
+    }
+  }
+
   // --- Geocoding logic for RV addresses ---
   // Only attempt geocoding if latitude/longitude fields are currently empty/invalid
   // AND address/city/state are provided.
-  if ((isNaN(latitude) || isNaN(longitude)) && (address || city || state)) {
+  // Also, only geocode if the address/city/state fields have changed or it's a new RV without coordinates.
+  const addressChanged = oldRvData
+    ? newRvData.address !== oldRvData.address ||
+      newRvData.city !== oldRvData.city ||
+      newRvData.state !== oldRvData.state
+    : true;
+
+  if (
+    (isNaN(newRvData.latitude) || isNaN(newRvData.longitude)) &&
+    (newRvData.address || newRvData.city || newRvData.state) &&
+    addressChanged
+  ) {
     let query = "";
-    if (address && city && state) {
-      query = `${address}, ${city}, ${state}`;
-    } else if (city && state) {
-      query = `${city}, ${state}`;
+    if (newRvData.address && newRvData.city && newRvData.state) {
+      query = `${newRvData.address}, ${newRvData.city}, ${newRvData.state}`;
+    } else if (newRvData.city && newRvData.state) {
+      query = `${newRvData.city}, ${newRvData.state}`;
     }
 
     if (query) {
       console.log(`Attempting to geocode RV: ${query}`);
       const coords = await geocodeCityState(query);
       if (coords) {
-        latitude = coords.lat;
-        longitude = coords.lon;
+        newRvData.latitude = coords.lat;
+        newRvData.longitude = coords.lon;
         rvLatitudeInput.value = coords.lat.toFixed(6); // Update UI
         rvLongitudeInput.value = coords.lon.toFixed(6); // Update UI
         showMessage("RV location geocoded successfully!", "info");
+        hasChanged = true; // Mark as changed if geocoding was successful
       } else {
         // If geocoding fails, explicitly set lat/lon to null to prevent incorrect default assignment
-        latitude = null;
-        longitude = null;
+        newRvData.latitude = null;
+        newRvData.longitude = null;
         rvLatitudeInput.value = "";
         rvLongitudeInput.value = "";
         showMessage(
           "Could not geocode RV address/city/state. Pin will be violet if default location is set.",
           "warning"
         );
+        // Do NOT set hasChanged to true here, as it's a failure, not a data update.
       }
     }
   }
@@ -1269,45 +1359,32 @@ async function saveRV() {
   // It's removed from the general blur listener.
   // The logic for this is now handled in showView and addVisit functions.
 
-  const rvData = {
-    id: currentRVId || generateUniqueId(),
-    name: name,
-    address: address,
-    city: city,
-    state: state,
-    area: area, // Save Area
-    email: email,
-    phone: phone,
-    latitude: isNaN(latitude) ? null : latitude,
-    longitude: isNaN(longitude) ? null : longitude,
-    visits: visits, // Save the array of visits
-    createdAt: currentRVId
-      ? rvs.find((rv) => rv.id === currentRVId)?.createdAt
-      : new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  if (currentRVId) {
-    const index = rvs.findIndex((rv) => rv.id === currentRVId);
-    if (index !== -1) {
-      rvs[index] = rvData;
-      showMessage("RV Information updated automatically!", "success");
+  if (hasChanged) {
+    // Only save and show message if data actually changed
+    if (currentRVId) {
+      const index = rvs.findIndex((rv) => rv.id === currentRVId);
+      if (index !== -1) {
+        rvs[index] = newRvData;
+        showMessage("RV Information updated automatically!", "success");
+      }
+    } else {
+      rvs.push(newRvData);
+      showMessage("RV Information added automatically!", "success");
+      currentRVId = newRvData.id; // Set currentRVId for newly added RV
+      // Find the index of the newly added RV in the *unfiltered* rvs array
+      currentRvIndex = rvs.findIndex((rv) => rv.id === currentRVId);
     }
-  } else {
-    rvs.push(rvData);
-    showMessage("RV Information added automatically!", "success");
-    currentRVId = rvData.id; // Set currentRVId for newly added RV
-    // Find the index of the newly added RV in the *unfiltered* rvs array
-    currentRvIndex = rvs.findIndex((rv) => rv.id === currentRVId);
-  }
 
-  saveDataToLocalStorage();
-  renderRVs(); // Re-render the list
-  updateMap(); // Update the map
-  updateRvFormNavButtons(); // Update button states after saving
-  generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case a new area was added
-  generateAreaFilterCheckboxes("map");
-  generateAreaFilterCheckboxes("form");
+    saveDataToLocalStorage();
+    renderRVs(); // Re-render the list
+    updateMap(); // Update the map
+    updateRvFormNavButtons(); // Update button states after saving
+    generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case a new area was added
+    generateAreaFilterCheckboxes("map");
+    generateAreaFilterCheckboxes("form");
+  } else {
+    console.log("No significant changes detected, not saving RV.");
+  }
 }
 
 /**

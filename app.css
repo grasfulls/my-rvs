@@ -38,7 +38,8 @@ main#appContent {
 /* Styles for all "views" (sections that act as pages) */
 .view {
     display: none;
-    padding: 20px;
+    padding: 5px 20px 20px 20px;
+    /* Reduced top padding */
     width: 100%;
     flex-shrink: 0;
     flex-grow: 1;
@@ -667,11 +668,12 @@ label[for="defaultLongitude"] {
 /* Sort and Filter Controls Container */
 .sort-filter-controls {
     position: sticky;
-    top: 25px;
-    /* Adjusted to stick below the header */
+    top: 0px;
+    /* Adjusted to stick right below the header */
     background-color: #ffffff;
     z-index: 50;
-    padding: 5px 20px;
+    padding: 0px 20px 5px 20px;
+    /* Set top padding to 0, keep bottom at 5px */
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     display: flex;
@@ -681,6 +683,7 @@ label[for="defaultLongitude"] {
     /* Decreased gap */
     box-sizing: border-box;
     margin-top: 0px;
+    /* Ensure no top margin */
 }
 
 /* Specific styling for sort and filter options within the combined row */
@@ -1280,4 +1283,16 @@ label[for="defaultLongitude"] {
         margin-top: 15px;
         padding-top: 10px;
     }
+}
+
+/* Hide up and down arrows for number input fields */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    /* Firefox */
 }
