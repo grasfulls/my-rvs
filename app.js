@@ -1692,6 +1692,7 @@ function loadCss(url) {
  * Initializes the map based on user settings (Google Maps or Leaflet/OSM).
  */
 async function initMap() {
+  showMessage("Attempting to initialize map...", "info");
   const googleMapsApiKey =
     settings.googleMapsApiKey && settings.googleMapsApiKey.trim() !== "";
 
