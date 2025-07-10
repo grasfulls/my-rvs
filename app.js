@@ -1518,24 +1518,29 @@ function removeVisit(indexToRemove) {
 async function geocodeCityState(query) {
   if (!query) {
     console.log("Geocoding: Query is empty.");
+    showMessage("Geocoding failed: Query is empty.", "error"); // ADD THIS LINE
     return null;
   }
-  const encodedQuery = encodeURIComponent(`${query}, USA`); // Assume USA for better results
+  const encodedQuery = encodeURIComponent(`${query}, USA`);
   const url = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&limit=1`;
   console.log("Geocoding URL:", url);
   try {
     const response = await fetch(url);
     const data = await response.json();
     console.log("Geocoding response data:", data);
+
     if (data && data.length > 0) {
+      showMessage(`Geocoding successful for: ${query}`, "success"); // ADD THIS LINE
       return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    } else {
+      showMessage(`Geocoding found no results for: ${query}`, "warning"); // ADD THIS LINE
     }
   } catch (error) {
     console.error("Error geocoding:", error);
+    showMessage(`Geocoding network error: ${error.message}`, "error"); // ADD THIS LINE
   }
   return null;
 }
-
 /**
  * Fetches city and state for given coordinates using Nominatim (OpenStreetMap).
  * @param {number} lat - Latitude.
