@@ -2329,7 +2329,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       radio.addEventListener("change", handleSortFilterChange);
     });
 
-  // Main RV list area filter
+  // Main RV list area filter to force commit
   document
     .querySelectorAll('#myRVsView .filter-options input[type="checkbox"]')
     .forEach((checkbox) => {

@@ -6,6 +6,8 @@ html {
     box-sizing: border-box;
     /* Ensure smooth scrolling for anchors */
     scroll-behavior: smooth;
+    /* Prevent horizontal scrolling on the root element */
+    overflow-x: hidden;
 }
 
 *,
@@ -28,6 +30,8 @@ body {
     flex-direction: column;
     /* Stack app-container vertically */
     background-color: #f0f2f5;
+    /* Prevent horizontal scrolling on the body */
+    overflow-x: hidden;
 }
 
 .app-container {
@@ -48,6 +52,8 @@ body {
     /* No rounded corners on main container */
     overflow: hidden;
     /* Prevent internal scrollbars from breaking layout */
+    /* Prevent horizontal scrolling within the app container */
+    overflow-x: hidden;
 }
 
 /* --------------------------------------------------- */
@@ -64,6 +70,7 @@ body {
     /* Fixed position */
     top: 0;
     /* Stick to the top */
+    /* Use left: 0 and width: 100% then margin: auto for centering with max-width */
     left: 0;
     width: 100%;
     /* Full width of the viewport */
@@ -120,7 +127,9 @@ body {
 
 #addRVBtn {
     width: 20px;
+    /* Adjusted size to fit header */
     height: 20px;
+    /* Adjusted size to fit header */
     background: none;
     color: #4CAF50;
     border: 1px solid #4CAF50;
@@ -158,28 +167,35 @@ main#appContent {
     /* Takes all available space between header and footer */
     overflow-y: auto;
     /* Enable vertical scrolling for content */
+    /* Adjust padding to account for fixed header and footer */
     padding: 10px 20px;
-    /* Add padding for content inside the scrollable area */
+    /* General padding, adjust as needed */
     padding-top: calc(25px + 10px);
-    /* Account for fixed header height + top padding */
+    /* Header height + top padding */
     padding-bottom: calc(50px + 10px);
-    /* Account for fixed footer height + bottom padding */
+    /* Footer height + bottom padding */
     box-sizing: border-box;
     /* Include padding in height calculation */
     width: 100%;
     /* Ensure it takes full width */
+    /* Prevent horizontal scrolling within main content */
+    overflow-x: hidden;
 }
 
 /* Styles for all "views" (sections that act as pages) */
 .view {
     display: none;
     padding: 0;
-    /* Remove padding here, it's handled by main#appContent */
+    /* Padding is handled by main#appContent */
     width: 100%;
     /* Take full width of its parent (appContent) */
+    max-width: 100%;
+    /* Ensure views don't exceed parent width */
     box-sizing: border-box;
     flex-shrink: 0;
     /* Prevent views from shrinking */
+    /* Prevent horizontal scrolling within views */
+    overflow-x: hidden;
 }
 
 #settingsView {
@@ -318,6 +334,7 @@ main#appContent {
     /* Fixed position */
     bottom: 0;
     /* Stick to the bottom */
+    /* Use left: 0 and width: 100% then margin: auto for centering with max-width */
     left: 0;
     width: 100%;
     /* Full width of the viewport */
@@ -693,7 +710,7 @@ label[for="defaultLongitude"] {
 .sort-filter-controls {
     position: sticky;
     /* Sticky position for sort/filter controls */
-    top: 0px;
+    top: 25px;
     /* Stick right below the header (header is 25px tall) */
     background-color: #ffffff;
     z-index: 50;
@@ -711,6 +728,8 @@ label[for="defaultLongitude"] {
     /* Take full width of its parent (appContent) */
     box-sizing: border-box;
     /* Include padding in width/height */
+    /* Prevent horizontal scrolling within sort/filter controls */
+    overflow-x: hidden;
 }
 
 /* Specific styling for sort and filter options within the combined row */
@@ -929,6 +948,7 @@ label[for="defaultLongitude"] {
     width: 27px;
     height: 27px;
 }
+
 
 /* Wrapper for each form group to manage overall spacing (Name, Address, etc.) */
 .form-group-wrapper {
