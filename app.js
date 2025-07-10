@@ -1679,7 +1679,7 @@ function loadScript(url) {
 /**
  * Loads a CSS file dynamically.
  * @param {string} url - The URL of the stylesheet to load.
- * @returns {Promise<void>} A promise that resolves when the stylesheet is loaded.
+ * @returns {Promise<void>} A promise that resolves when the script is loaded.
  */
 function loadCss(url) {
   return new Promise((resolve, reject) => {
@@ -1782,8 +1782,19 @@ window.mapReady = function () {
   const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
 
   // --- ADDED/MODIFIED LINES FOR DEBUGGING ---
-  showMessage(`Google Map Init - Center: ${center.lat}, ${center.lng}`, "info"); // Note .lat, .lng for Google Maps
-  showMessage(`Google Map Init - Zoom: ${zoom}`, "info");
+  showMessage(
+    `Google Map Init - Settings Lat: ${settings.defaultLatitude}, Lng: ${settings.defaultLongitude}`,
+    "info"
+  );
+  showMessage(
+    `Google Map Init - Parsed Lat: ${defaultLat}, Lng: ${defaultLng}`,
+    "info"
+  );
+  showMessage(
+    `Google Map Init - Final Center: ${center.lat}, ${center.lng}`,
+    "info"
+  ); // Note .lat, .lng for Google Maps
+  showMessage(`Google Map Init - Final Zoom: ${zoom}`, "info");
   // --- END DEBUGGING LINES ---
 
   map = new google.maps.Map(document.getElementById("mapContainer"), {
@@ -1845,8 +1856,19 @@ async function initLeafletMap() {
   const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
 
   // --- ADDED/MODIFIED LINES FOR DEBUGGING ---
-  showMessage(`Leaflet Map Init - Center: ${center[0]}, ${center[1]}`, "info");
-  showMessage(`Leaflet Map Init - Zoom: ${zoom}`, "info");
+  showMessage(
+    `Leaflet Map Init - Settings Lat: ${settings.defaultLatitude}, Lng: ${settings.defaultLongitude}`,
+    "info"
+  );
+  showMessage(
+    `Leaflet Map Init - Parsed Lat: ${defaultLat}, Lng: ${defaultLng}`,
+    "info"
+  );
+  showMessage(
+    `Leaflet Map Init - Final Center: ${center[0]}, ${center[1]}`,
+    "info"
+  );
+  showMessage(`Leaflet Map Init - Final Zoom: ${zoom}`, "info");
   // --- END DEBUGGING LINES ---
 
   leafletMap = L.map("mapContainer").setView(center, zoom);
@@ -2241,7 +2263,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCityStateFromCoordinates("rv")
   );
   rvLongitudeInput.addEventListener("change", () =>
-    updateCityStateFromCoordinates("rv")
+    updateCoordinatesFromCityState("rv")
   );
 
   // My RVs View Buttons
