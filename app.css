@@ -126,16 +126,17 @@ body {
 }
 
 #addRVBtn {
-    width: 20px;
-    /* Adjusted size to fit header */
-    height: 20px;
-    /* Adjusted size to fit header */
+    width: 22px;
+    /* Adjusted size to fit header better */
+    height: 22px;
+    /* Adjusted size to fit header better */
     background: none;
     color: #4CAF50;
     border: 1px solid #4CAF50;
     border-radius: 50%;
     font-size: 1em;
-    line-height: 20px;
+    line-height: 22px;
+    /* Adjusted line-height to center '+' vertically */
     text-align: center;
     cursor: pointer;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
