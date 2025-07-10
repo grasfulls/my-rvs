@@ -1826,13 +1826,18 @@ async function initLeafletMap() {
   const defaultLat = parseFloat(settings.defaultLatitude);
   const defaultLng = parseFloat(settings.defaultLongitude);
 
-  console.log("Map centering on:", defaultLat, defaultLng); // Added console log
+  console.log("Map centering on:", defaultLat, defaultLng);
 
   const center =
     !isNaN(defaultLat) && !isNaN(defaultLng)
       ? [defaultLat, defaultLng]
       : [0, 0]; // Default to 0,0 if no valid settings coords
   const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
+
+  // --- ADDED/MODIFIED LINES FOR DEBUGGING ---
+  showMessage(`Leaflet Map Init - Center: ${center[0]}, ${center[1]}`, "info");
+  showMessage(`Leaflet Map Init - Zoom: ${zoom}`, "info");
+  // --- END DEBUGGING LINES ---
 
   leafletMap = L.map("mapContainer").setView(center, zoom);
 
