@@ -79,16 +79,6 @@ let mapInitialized = false; // Flag to prevent multiple map initializations
  * @param {string} message - The message to display.
  * @param {string} type - 'success', 'error', 'info', or 'warning'.
  */
-/**
- * Displays a custom message box instead of alert().
- * @param {string} message - The message to display.
- * @param {string} type - 'success', 'error', 'info', or 'warning'.
- */
-/**
- * Displays a custom message box instead of alert().
- * @param {string} message - The message to display.
- * @param {string} type - 'success', 'error', 'info', or 'warning'.
- */
 function showMessage(message, type = "info") {
   const messageBox = document.createElement("div");
   messageBox.className = `message-box ${type}`;
@@ -97,7 +87,7 @@ function showMessage(message, type = "info") {
   // Ensure the message box is appended to the body and styled correctly
   messageBox.style.cssText = `
       position: fixed;
-      top: 100px; /* THIS IS THE CHANGED LINE - messages will appear lower */
+      top: 100px; /* Adjusted to be lower */
       left: 50%;
       transform: translateX(-50%);
       padding: 15px 25px;
@@ -141,7 +131,7 @@ function showMessage(message, type = "info") {
   setTimeout(() => {
     messageBox.style.opacity = 0;
     messageBox.addEventListener("transitionend", () => messageBox.remove());
-  }, 8000); /* THIS IS THE CHANGED LINE - messages will stay for 8 seconds */
+  }, 8000); /* messages will stay for 8 seconds */
 }
 
 /**
@@ -1596,12 +1586,16 @@ async function updateCityStateFromCoordinates(type) {
     latInput = defaultLatitudeInput;
     longInput = defaultLongitudeInput;
     cityInput = defaultCityInput;
+    cityInput.value = ""; // Clear city/state inputs when updating from coords
     stateInput = defaultStateInput;
+    stateInput.value = ""; // Clear city/state inputs when updating from coords
   } else {
     latInput = rvLatitudeInput;
     longInput = rvLongitudeInput;
     cityInput = rvCityInput;
+    cityInput.value = ""; // Clear city/state inputs when updating from coords
     stateInput = rvStateInput;
+    stateInput.value = ""; // Clear city/state inputs when updating from coords
   }
 
   const lat = parseFloat(latInput.value);
@@ -1778,7 +1772,7 @@ window.mapReady = function () {
   const defaultLat = parseFloat(settings.defaultLatitude);
   const defaultLng = parseFloat(settings.defaultLongitude);
 
-  console.log("Map centering on:", defaultLat, defaultLng); // Added console log
+  console.log("Map centering on:", defaultLat, defaultLng);
 
   // Only set center if valid coordinates exist in settings
   const center =
@@ -1786,6 +1780,11 @@ window.mapReady = function () {
       ? { lat: defaultLat, lng: defaultLng }
       : { lat: 0, lng: 0 }; // Default to 0,0 if no valid settings coords
   const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
+
+  // --- ADDED/MODIFIED LINES FOR DEBUGGING ---
+  showMessage(`Google Map Init - Center: ${center.lat}, ${center.lng}`, "info"); // Note .lat, .lng for Google Maps
+  showMessage(`Google Map Init - Zoom: ${zoom}`, "info");
+  // --- END DEBUGGING LINES ---
 
   map = new google.maps.Map(document.getElementById("mapContainer"), {
     center: center,
@@ -2242,7 +2241,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCityStateFromCoordinates("rv")
   );
   rvLongitudeInput.addEventListener("change", () =>
-    updateCoordinatesFromCityState("rv")
+    updateCityStateFromCoordinates("rv")
   );
 
   // My RVs View Buttons
