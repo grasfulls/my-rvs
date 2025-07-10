@@ -564,7 +564,9 @@ async function saveSettings() {
     console.log(
       `Attempting to geocode City: ${defaultCity}, State: ${defaultState}`
     );
-    const coords = await geocodeCityState(defaultCity, defaultState);
+    const coords = await geocodeCityState(
+      `${defaultCity}, ${defaultState}, USA`
+    );
     if (coords) {
       defaultLatitude = coords.lat;
       defaultLongitude = coords.lon;
