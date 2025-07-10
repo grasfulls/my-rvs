@@ -84,6 +84,11 @@ let mapInitialized = false; // Flag to prevent multiple map initializations
  * @param {string} message - The message to display.
  * @param {string} type - 'success', 'error', 'info', or 'warning'.
  */
+/**
+ * Displays a custom message box instead of alert().
+ * @param {string} message - The message to display.
+ * @param {string} type - 'success', 'error', 'info', or 'warning'.
+ */
 function showMessage(message, type = "info") {
   const messageBox = document.createElement("div");
   messageBox.className = `message-box ${type}`;
@@ -92,7 +97,7 @@ function showMessage(message, type = "info") {
   // Ensure the message box is appended to the body and styled correctly
   messageBox.style.cssText = `
       position: fixed;
-      top: 100px; /* THIS IS THE CHANGED LINE */
+      top: 100px; /* THIS IS THE CHANGED LINE - messages will appear lower */
       left: 50%;
       transform: translateX(-50%);
       padding: 15px 25px;
@@ -136,7 +141,7 @@ function showMessage(message, type = "info") {
   setTimeout(() => {
     messageBox.style.opacity = 0;
     messageBox.addEventListener("transitionend", () => messageBox.remove());
-  }, 8000); /* THIS IS THE CHANGED LINE */
+  }, 8000); /* THIS IS THE CHANGED LINE - messages will stay for 8 seconds */
 }
 
 /**
