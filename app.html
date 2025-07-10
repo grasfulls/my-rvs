@@ -137,17 +137,9 @@
             </div>
             <!-- Removed Show Filter for colors from My RVs View -->
             <div class="filter-options">
-              <label class="sort-filter-label">Area Filter:</label>
+              <label class="sort-filter-label">Area Filters:</label>
               <div class="checkbox-group" id="areaFilterCheckboxes">
-                <input
-                  type="checkbox"
-                  id="filterAllAreas"
-                  value="all"
-                  checked
-                />
-                <label for="filterAllAreas">All Areas</label>
-                <input type="checkbox" id="filterNoArea" value="No Area" />
-                <label for="filterNoArea">No Area</label>
+                <!-- Area checkboxes will be dynamically generated here by JS -->
               </div>
             </div>
           </div>
@@ -188,17 +180,9 @@
               </div>
             </div>
             <div class="filter-options">
-              <label class="sort-filter-label">Area Filter:</label>
+              <label class="sort-filter-label">Area Filters:</label>
               <div class="checkbox-group" id="mapAreaFilterCheckboxes">
-                <input
-                  type="checkbox"
-                  id="mapFilterAllAreas"
-                  value="all"
-                  checked
-                />
-                <label for="mapFilterAllAreas">All Areas</label>
-                <input type="checkbox" id="mapFilterNoArea" value="No Area" />
-                <label for="mapFilterNoArea">No Area</label>
+                <!-- Area checkboxes will be dynamically generated here by JS -->
               </div>
             </div>
           </div>
@@ -241,44 +225,11 @@
                 <label for="formSortNewOld">Newest to Oldest</label>
               </div>
             </div>
+            <!-- Removed Show Filter for colors from RV Form View -->
             <div class="filter-options">
-              <label class="sort-filter-label">Show Filter:</label>
-              <div class="checkbox-group" id="formShowColorFilterCheckboxes">
-                <input
-                  type="checkbox"
-                  id="formFilterBluePins"
-                  value="blue"
-                  checked
-                />
-                <label for="formFilterBluePins">Blue</label>
-                <input
-                  type="checkbox"
-                  id="formFilterRedPins"
-                  value="red"
-                  checked
-                />
-                <label for="formFilterRedPins">Red</label>
-                <input
-                  type="checkbox"
-                  id="formFilterVioletPins"
-                  value="violet"
-                  checked
-                />
-                <label for="formFilterVioletPins">Violet</label>
-              </div>
-            </div>
-            <div class="filter-options">
-              <label class="sort-filter-label">Area Filter:</label>
+              <label class="sort-filter-label">Area Filters:</label>
               <div class="checkbox-group" id="formAreaFilterCheckboxes">
-                <input
-                  type="checkbox"
-                  id="formFilterAllAreas"
-                  value="all"
-                  checked
-                />
-                <label for="formFilterAllAreas">All Areas</label>
-                <input type="checkbox" id="formFilterNoArea" value="No Area" />
-                <label for="formFilterNoArea">No Area</label>
+                <!-- Area checkboxes will be dynamically generated here by JS -->
               </div>
             </div>
           </div>
@@ -286,7 +237,43 @@
           <div class="rv-form-fields">
             <div class="form-group-wrapper">
               <div class="form-group">
-                <label for="rvName">Name:</label>
+                <label for="rvName" id="rvNameLabel"
+                  >Name:
+                  <button
+                    id="prevRvBtn"
+                    class="form-nav-btn prev-btn"
+                    title="Previous Return Visit"
+                    style="display: none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      width="24px"
+                      height="24px"
+                    >
+                      <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                    </svg>
+                  </button>
+                  <button
+                    id="nextRvBtn"
+                    class="form-nav-btn next-btn"
+                    title="Next Return Visit"
+                    style="display: none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      width="24px"
+                      height="24px"
+                    >
+                      <path
+                        d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
+                      />
+                    </svg>
+                  </button>
+                </label>
                 <input type="text" id="rvName" placeholder="e.g., John Smith" />
               </div>
               <div class="form-group">
@@ -327,6 +314,14 @@
                   maxlength="14"
                 />
               </div>
+              <div class="form-group">
+                <label for="rvArea">Area:</label>
+                <input
+                  type="text"
+                  id="rvArea"
+                  placeholder="e.g., North District"
+                />
+              </div>
             </div>
 
             <label class="coordinates-main-label"> Or Coordinates: </label>
@@ -365,37 +360,16 @@
               </button>
             </div>
 
+            <!-- Visits Section -->
             <div class="form-group-wrapper">
-              <div class="form-group contacted-group">
-                <label for="rvLastContactedDate">Contacted:</label>
-                <input type="date" id="rvLastContactedDate" />
-                <input
-                  type="text"
-                  id="rvLastContactedDay"
-                  placeholder="Day"
-                  readonly
-                />
-                <input type="time" id="rvLastContactedTime" />
+              <div class="visits-header">
+                <label>Visits:</label>
                 <button class="add-visit-btn icon-button" title="Add Visit">
                   +
                 </button>
-                <button
-                  class="remove-visit-btn icon-button"
-                  title="Remove Visit"
-                >
-                  -
-                </button>
               </div>
-            </div>
-
-            <div class="form-group-wrapper">
-              <div class="form-group">
-                <label for="rvNote">Note:</label>
-                <textarea
-                  id="rvNote"
-                  rows="5"
-                  placeholder="Details of the visit, topic, etc."
-                ></textarea>
+              <div id="rvVisitsContainer" class="visits-container">
+                <!-- Dynamic visit entries will be added here by JS -->
               </div>
             </div>
           </div>
@@ -403,24 +377,6 @@
       </main>
 
       <footer class="app-footer">
-        <!-- Previous/Next Buttons for RV Form View (moved to footer) -->
-        <button
-          id="prevRvBtn"
-          class="form-nav-btn prev-btn"
-          title="Previous Return Visit"
-          style="display: none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            width="24px"
-            height="24px"
-          >
-            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-          </svg>
-        </button>
-
         <a id="myRVsLink" aria-label="My RVs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -484,22 +440,6 @@
             height="24px"
           >
             <path d="M12 7.5l6 6h-4v6.5H10V13.5H6l6-6zM5 4h14v2H5z" />
-          </svg>
-        </button>
-        <button
-          id="nextRvBtn"
-          class="form-nav-btn next-btn"
-          title="Next Return Visit"
-          style="display: none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            width="24px"
-            height="24px"
-          >
-            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
           </svg>
         </button>
       </footer>

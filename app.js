@@ -36,15 +36,8 @@ const rvLongitudeInput = document.getElementById("rvLongitude");
 const rvUseCurrentLocationBtn = document.getElementById(
   "rvUseCurrentLocationBtn"
 );
-const rvLastContactedDateInput = document.getElementById("rvLastContactedDate");
-const rvLastContactedDayInput = document.getElementById("rvLastContactedDay");
-const rvLastContactedTimeInput = document.getElementById("rvLastContactedTime");
-const addVisitBtnForm = document.querySelector("#rvFormView .add-visit-btn");
-const removeVisitBtnForm = document.querySelector(
-  "#rvFormView .remove-visit-btn"
-);
-const rvNoteInput = document.getElementById("rvNote");
 const rvPhoneInput = document.getElementById("rvPhone"); // Added phone input reference
+const rvAreaInput = document.getElementById("rvArea"); // New Area input
 
 const rvListContainer = document.querySelector(".rv-list");
 const sortOldNewRadio = document.getElementById("sortOldNew");
@@ -55,8 +48,23 @@ const areaFilterCheckboxesDiv = document.getElementById("areaFilterCheckboxes");
 const mapAreaFilterCheckboxesDiv = document.getElementById(
   "mapAreaFilterCheckboxes"
 );
+// New: RV Form specific filter/sort elements (for their own controls)
+const formAreaFilterCheckboxesDiv = document.getElementById(
+  "formAreaFilterCheckboxes"
+);
+const formShowColorFilterCheckboxesDiv = document.getElementById(
+  "formShowColorFilterCheckboxes"
+); // This will be removed
+const formSortOldNewRadio = document.getElementById("formSortOldNew");
+const formSortNewOldRadio = document.getElementById("formSortNewOld");
 
-// Previous/Next RV Navigation Elements
+// New: Visits container for dynamic visit entries
+const rvVisitsContainer = document.getElementById("rvVisitsContainer");
+const addVisitBtnHeader = document.querySelector(
+  ".visits-header .add-visit-btn"
+); // The plus button for adding visits
+
+// Previous/Next RV Navigation Elements (moved to be children of rvName label)
 const prevRvBtn = document.getElementById("prevRvBtn");
 const nextRvBtn = document.getElementById("nextRvBtn");
 
@@ -346,14 +354,14 @@ function showView(viewToShow) {
   // If trying to navigate away from RV form and name is empty
   if (
     currentActiveView === rvFormView &&
-    viewToShow !== rvFormView &&
+    viewToShow !== rvFormView && // Only if navigating to a *different* view
     rvNameInput.value.trim() === ""
   ) {
     showConfirmationDialog(
-      "Contact cannot be saved without a Name. Do you want to proceed without saving this contact?",
+      "No name has been entered, if you proceed this contact will not be created.",
       () => {
         // User confirmed to proceed without saving this specific contact
-        clearRVForm(); // Clear the form without saving
+        clearRVForm(false); // Clear the form without saving, pass false to not autofill current date/time
         // Now proceed to the originally intended view
         proceedToShowView(viewToShow);
       },
@@ -418,16 +426,17 @@ function proceedToShowView(viewToShow) {
 
   if (viewToShow === settingsView) {
     appSubheading.textContent = "Settings";
-    addRVBtn.style.display = "none"; // Hide add button in settings view
+    // addRVBtn.style.display is already flex from above (now visible in all views)
     settingsBtn.classList.add("active"); // Add active class to settings button
   } else if (viewToShow === myRVsView) {
     appSubheading.textContent = "Contact Info";
     // addRVBtn.style.display is already flex from above
     generateAreaFilterCheckboxes("contact"); // Regenerate filter options for contacts view
     myRVsLink.classList.add("active"); // Add active class to My RVs link
+    renderRVs(); // Re-render RVs when returning to this view
   } else if (viewToShow === mapView) {
     appSubheading.textContent = "Map";
-    addRVBtn.style.display = "none"; // Hide add button in map view
+    // addRVBtn.style.display is already flex from above (now visible in all views)
     loadDataFromLocalStorage(); // Ensure settings are fresh before initializing map
     initMap(); // Initialize map when map view is shown
     generateAreaFilterCheckboxes("map"); // Regenerate filter options for map view
@@ -435,9 +444,10 @@ function proceedToShowView(viewToShow) {
   } else if (viewToShow === rvFormView) {
     appSubheading.textContent = "RV Information"; // Set subheading for RV form view
     // addRVBtn.style.display is already flex from above
-    updateRvFormNavButtons(); // Show/hide prev/next buttons based on current RV
-    prevRvBtn.style.display = "flex"; // Always show prev/next buttons in form view
-    nextRvBtn.style.display = "flex"; // Always show prev/next buttons in form view
+    // Previous/Next buttons are now part of the RV form itself, controlled by updateRvFormNavButtons
+    prevRvBtn.style.display = "flex";
+    nextRvBtn.style.display = "flex";
+    generateAreaFilterCheckboxes("form"); // Regenerate filter options for RV form view
   }
 }
 
@@ -460,6 +470,41 @@ function loadDataFromLocalStorage() {
     const storedRVs = localStorage.getItem("myRVs");
     if (storedRVs) {
       rvs = JSON.parse(storedRVs);
+      // Ensure each RV has a 'visits' array for backward compatibility if needed
+      rvs.forEach((rv) => {
+        if (!rv.visits) {
+          // If old data format, convert lastContacted to a single-entry visits array
+          if (rv.lastContacted && rv.lastContacted.date) {
+            rv.visits = [
+              {
+                date: rv.lastContacted.date,
+                time: rv.lastContacted.time || "00:00",
+                note: rv.note || "", // Use existing note if available
+                timestamp:
+                  rv.lastContacted.timestamp ||
+                  new Date(
+                    `${rv.lastContacted.date}T${
+                      rv.lastContacted.time || "00:00"
+                    }`
+                  ).toISOString(),
+              },
+            ];
+          } else {
+            rv.visits = [];
+          }
+        }
+        // Ensure 'area' field exists, default to "No Area"
+        if (
+          typeof rv.area === "undefined" ||
+          rv.area === null ||
+          rv.area.trim() === ""
+        ) {
+          rv.area = "No Area";
+        }
+        // Remove old 'lastContacted' and 'note' properties if 'visits' is present
+        delete rv.lastContacted;
+        delete rv.note;
+      });
       console.log("RVs loaded from local storage:", rvs);
     } else {
       rvs = []; // Initialize empty array if nothing found
@@ -662,6 +707,38 @@ function importData() {
               ) {
                 importedRv.id = generateUniqueId();
               }
+              // Ensure 'visits' array is correctly formatted for imported RVs
+              if (!importedRv.visits) {
+                if (importedRv.lastContacted && importedRv.lastContacted.date) {
+                  importedRv.visits = [
+                    {
+                      date: importedRv.lastContacted.date,
+                      time: importedRv.lastContacted.time || "00:00",
+                      note: importedRv.note || "",
+                      timestamp:
+                        importedRv.lastContacted.timestamp ||
+                        new Date(
+                          `${importedRv.lastContacted.date}T${
+                            importedRv.lastContacted.time || "00:00"
+                          }`
+                        ).toISOString(),
+                    },
+                  ];
+                } else {
+                  importedRv.visits = [];
+                }
+              }
+              // Ensure 'area' field exists and is not empty for imported RVs
+              if (
+                typeof importedRv.area === "undefined" ||
+                importedRv.area === null ||
+                importedRv.area.trim() === ""
+              ) {
+                importedRv.area = "No Area";
+              }
+              // Clean up old properties if they exist
+              delete importedRv.lastContacted;
+              delete importedRv.note;
             });
             rvs = importedData.rvs;
             renderRVs(); // Update UI
@@ -682,23 +759,24 @@ function importData() {
 // --- My RVs List View Functions ---
 
 /**
- * Sorts the RVs based on the selected sort order.
+ * Sorts the RVs based on the selected sort order, using the most recent visit.
  * @param {Array} rvsArray - The array of RVs to sort.
  * @param {string} sortOrder - 'oldest' or 'newest'.
  * @returns {Array} - The sorted array.
  */
 function sortRVs(rvsArray, sortOrder) {
-  // Filter out RVs without a lastContacted date for sorting purposes
-  const rvsWithDate = rvsArray.filter(
-    (rv) => rv.lastContacted && rv.lastContacted.date
+  // Filter out RVs without any visits for sorting purposes
+  const rvsWithVisits = rvsArray.filter(
+    (rv) => rv.visits && rv.visits.length > 0
   );
-  const rvsWithoutDate = rvsArray.filter(
-    (rv) => !rv.lastContacted || !rv.lastContacted.date
+  const rvsWithoutVisits = rvsArray.filter(
+    (rv) => !rv.visits || rv.visits.length === 0
   );
 
-  rvsWithDate.sort((a, b) => {
-    const dateA = new Date(a.lastContacted.date);
-    const dateB = new Date(b.lastContacted.date);
+  rvsWithVisits.sort((a, b) => {
+    // Get the timestamp of the most recent visit for each RV
+    const dateA = new Date(a.visits[0].timestamp);
+    const dateB = new Date(b.visits[0].timestamp);
     if (sortOrder === "oldest") {
       return dateA.getTime() - dateB.getTime();
     } else {
@@ -706,8 +784,8 @@ function sortRVs(rvsArray, sortOrder) {
     }
   });
 
-  // Combine sorted RVs with those without a date (place them at the end)
-  return rvsWithDate.concat(rvsWithoutDate);
+  // Combine sorted RVs with those without visits (place them at the end)
+  return rvsWithVisits.concat(rvsWithoutVisits);
 }
 
 /**
@@ -754,11 +832,14 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
     let isGeolocated =
       !isNaN(parseFloat(rv.latitude)) && !isNaN(parseFloat(rv.longitude));
 
+    const mostRecentVisit =
+      rv.visits && rv.visits.length > 0 ? rv.visits[0] : null;
+
     if (!isGeolocated) {
       pinColor = "violet"; // Violet for non-geolocated
-    } else {
+    } else if (mostRecentVisit) {
       const today = new Date();
-      const visitDate = new Date(rv.lastContacted?.date);
+      const visitDate = new Date(mostRecentVisit.date);
       today.setHours(0, 0, 0, 0);
       visitDate.setHours(0, 0, 0, 0);
       const diffDays = Math.floor(
@@ -793,8 +874,13 @@ function renderRVs() {
 
     const displayName = rv.name || rv.address || "Unnamed RV";
 
-    const lastVisitedDate = rv.lastContacted?.date || "N/A";
+    const mostRecentVisit =
+      rv.visits && rv.visits.length > 0 ? rv.visits[0] : null;
+    const lastVisitedDate = mostRecentVisit?.date || "N/A";
     const daysSinceLastVisited = getDaysSince(lastVisitedDate);
+    const isRedPin =
+      !isNaN(parseInt(daysSinceLastVisited)) &&
+      parseInt(daysSinceLastVisited) >= 14;
 
     rvCard.innerHTML = `
       <div class="rv-card-header">
@@ -809,10 +895,14 @@ function renderRVs() {
       </div>
       <p>${rv.address || ""}</p>
       <p>${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
-      <p class="last-visited-info">Days since last visited: ${daysSinceLastVisited}</p>
+      <p class="last-visited-info ${
+        isRedPin ? "red-text" : ""
+      }">Days since last visited: ${daysSinceLastVisited}</p>
       ${
-        rv.area ? `<div class="area-display">${rv.area}</div>` : ""
-      } <!-- Conditionally display area -->
+        rv.area && rv.area !== "No Area"
+          ? `<div class="area-display">${rv.area}</div>`
+          : ""
+      } <!-- Conditionally display area, hide if "No Area" -->
     `;
     rvListContainer.appendChild(rvCard);
 
@@ -852,8 +942,7 @@ function generateAreaFilterCheckboxes(viewType) {
     filterAllId = "mapFilterAllAreas";
     filterNoAreaId = "mapFilterNoArea";
   } else if (viewType === "form") {
-    // Added for formView
-    targetDiv = document.getElementById("formAreaFilterCheckboxes");
+    targetDiv = formAreaFilterCheckboxesDiv;
     filterAllId = "formFilterAllAreas";
     filterNoAreaId = "formFilterNoArea";
   } else {
@@ -861,11 +950,11 @@ function generateAreaFilterCheckboxes(viewType) {
   }
 
   // Get unique areas from current RVs (excluding "No Area" for dynamic generation)
-  const uniqueAreas = [
+  let uniqueAreas = [
     ...new Set(
       rvs.map((rv) => rv.area).filter((area) => area && area !== "No Area")
     ),
-  ].sort();
+  ].sort(); // Sort alphabetically
 
   // Store current checked state of dynamic checkboxes before clearing
   const currentDynamicChecked = Array.from(
@@ -896,13 +985,13 @@ function generateAreaFilterCheckboxes(viewType) {
     return { checkbox, label };
   };
 
-  // Recreate "All Areas" and "No Area" first to ensure their order
   // Retrieve their last checked state from the DOM if they existed, otherwise default.
   const prevAllAreasChecked =
     document.getElementById(filterAllId)?.checked || true;
   const prevNoAreaChecked =
     document.getElementById(filterNoAreaId)?.checked || false;
 
+  // Recreate "All Areas" and "No Area" first to ensure their order
   recreateCheckbox(filterAllId, "all", "All Areas", prevAllAreasChecked);
   recreateCheckbox(filterNoAreaId, "No Area", "No Area", prevNoAreaChecked);
 
@@ -990,34 +1079,86 @@ function handleFilterChange(event) {
 // --- RV Form View Functions (Add/Edit) ---
 
 /**
- * Clears the RV form fields and populates with defaults if adding a new RV.
+ * Renders the visit entries in the RV form.
+ * @param {Array} visits - The array of visit objects for the current RV.
  */
-function clearRVForm() {
+function renderVisitsInForm(visits) {
+  rvVisitsContainer.innerHTML = ""; // Clear existing visits
+
+  if (!visits || visits.length === 0) {
+    // No visits to display
+    return;
+  }
+
+  visits.forEach((visit, index) => {
+    const visitEntryDiv = document.createElement("div");
+    visitEntryDiv.className = "visit-entry";
+    visitEntryDiv.dataset.index = index; // Store index for easy reference
+
+    const formattedDay = getFormattedDay(visit.date);
+
+    visitEntryDiv.innerHTML = `
+      <div class="visit-entry-header">
+        <input type="date" value="${
+          visit.date || ""
+        }" class="visit-date-input" />
+        <input type="text" value="${formattedDay}" class="visit-day-input" readonly />
+        <input type="time" value="${
+          visit.time || ""
+        }" class="visit-time-input" />
+        <button class="remove-visit-btn icon-button" title="Remove Visit">
+          -
+        </button>
+      </div>
+      <textarea class="visit-note-input" rows="3" placeholder="Details of the visit, topic, etc.">${
+        visit.note || ""
+      }</textarea>
+    `;
+    rvVisitsContainer.appendChild(visitEntryDiv);
+
+    // Add event listeners to the newly created inputs and buttons
+    const dateInput = visitEntryDiv.querySelector(".visit-date-input");
+    const dayInput = visitEntryDiv.querySelector(".visit-day-input");
+    const timeInput = visitEntryDiv.querySelector(".visit-time-input");
+    const noteInput = visitEntryDiv.querySelector(".visit-note-input");
+    const removeBtn = visitEntryDiv.querySelector(".remove-visit-btn");
+
+    dateInput.addEventListener("change", (e) => {
+      dayInput.value = getFormattedDay(e.target.value);
+      saveRV(); // Autosave on change
+    });
+    timeInput.addEventListener("change", saveRV);
+    noteInput.addEventListener("blur", saveRV); // Use blur for note autosave
+    removeBtn.addEventListener("click", () => removeVisit(index)); // Pass the index to remove
+  });
+}
+
+/**
+ * Clears the RV form fields.
+ * @param {boolean} autofillDefaults - Whether to autofill default values (city, state, area, initial visit).
+ */
+function clearRVForm(autofillDefaults = false) {
+  // Changed default to false
   rvNameInput.value = "";
   rvAddressInput.value = "";
-  rvCityInput.value = settings.defaultCity || ""; // Autofill from settings
-  rvStateInput.value = settings.defaultState || ""; // Autofill from settings
+  rvCityInput.value = "";
+  rvStateInput.value = "";
   rvEmailInput.value = "";
-  rvPhoneInput.value = ""; // Clear phone field
+  rvPhoneInput.value = "";
+  rvAreaInput.value = "";
   rvLatitudeInput.value = "";
   rvLongitudeInput.value = "";
-  rvLastContactedDateInput.value = "";
-  rvLastContactedDayInput.value = "";
-  rvLastContactedTimeInput.value = "";
-  rvNoteInput.value = "";
   currentRVId = null;
   currentRvIndex = -1; // Reset index for new RV
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none"; // Hide for new entry until a date is chosen
 
-  // Autofill current date/time if adding a new RV
-  const now = new Date();
-  const dateString = now.toISOString().split("T")[0]; //YYYY-MM-DD
-  const timeString = now.toTimeString().split(" ")[0].substring(0, 5); // HH:MM
+  rvVisitsContainer.innerHTML = ""; // Clear all existing visit entries
 
-  rvLastContactedDateInput.value = dateString;
-  rvLastContactedDayInput.value = getFormattedDay(dateString);
-  rvLastContactedTimeInput.value = timeString;
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "inline-flex"; // Show remove visit button for new entries
+  if (autofillDefaults) {
+    rvCityInput.value = settings.defaultCity || "";
+    rvStateInput.value = settings.defaultState || "";
+    rvAreaInput.value = "No Area";
+    addVisit(true); // Add a new, empty visit entry with current date/time
+  }
 
   // Disable Previous/Next buttons for new entry
   prevRvBtn.disabled = true;
@@ -1043,19 +1184,12 @@ function editRV(rvId) {
     rvStateInput.value = rvToEdit.state || "";
     rvEmailInput.value = rvToEdit.email || "";
     rvPhoneInput.value = rvToEdit.phone || ""; // Populate phone field
+    rvAreaInput.value = rvToEdit.area || "No Area"; // Populate Area field
     rvLatitudeInput.value = rvToEdit.latitude || "";
     rvLongitudeInput.value = rvToEdit.longitude || "";
-    rvLastContactedDateInput.value = rvToEdit.lastContacted?.date || "";
-    rvLastContactedDayInput.value = getFormattedDay(
-      rvToEdit.lastContacted?.date
-    );
-    rvLastContactedTimeInput.value = rvToEdit.lastContacted?.time || "";
-    rvNoteInput.value = rvToEdit.note || "";
 
-    if (removeVisitBtnForm)
-      removeVisitBtnForm.style.display = rvToEdit.lastContacted?.date
-        ? "inline-flex"
-        : "none";
+    // Render all visits for this RV
+    renderVisitsInForm(rvToEdit.visits);
 
     showView(rvFormView);
     updateRvFormNavButtons(); // Update button states after loading RV
@@ -1071,87 +1205,82 @@ function editRV(rvId) {
 async function saveRV() {
   const name = rvNameInput.value.trim();
   const address = rvAddressInput.value.trim();
-  const city = rvCityInput.value.trim();
-  const state = rvStateInput.value.trim();
+  let city = rvCityInput.value.trim(); // Use let for potential geocoded update
+  let state = rvStateInput.value.trim(); // Use let for potential geocoded update
+  let latitude = parseFloat(rvLatitudeInput.value); // Use let for potential geocoded update
+  let longitude = parseFloat(rvLongitudeInput.value); // Use let for potential geocoded update
   const email = rvEmailInput.value.trim();
-  const phone = rvPhoneInput.value.trim(); // Get phone number
-  const latitude = parseFloat(rvLatitudeInput.value);
-  const longitude = parseFloat(rvLongitudeInput.value);
-  const lastContactedDate = rvLastContactedDateInput.value;
-  const lastContactedTime = rvLastContactedTimeInput.value;
-  const note = rvNoteInput.value.trim();
+  const phone = rvPhoneInput.value.trim();
+  const area = rvAreaInput.value.trim() || "No Area"; // Get Area
 
-  // Validation check for name
-  if (!name) {
-    // Await the user's decision from the confirmation dialog
-    const proceedAnyway = await new Promise((resolve) => {
-      showConfirmationDialog(
-        "A name has not been entered for this contact. It cannot be easily identified without one. Do you want to save it anyway?",
-        () => resolve(true), // User chose to proceed
-        () => resolve(false) // User chose to cancel
-      );
-    });
+  // Collect all visit data from the dynamic fields
+  const visits = [];
+  document.querySelectorAll(".visit-entry").forEach((entryDiv) => {
+    const date = entryDiv.querySelector(".visit-date-input").value;
+    const time = entryDiv.querySelector(".visit-time-input").value;
+    const note = entryDiv.querySelector(".visit-note-input").value;
+    if (date) {
+      // Only save visits that have a date
+      visits.push({
+        date: date,
+        time: time,
+        note: note,
+        timestamp: new Date(`${date}T${time || "00:00"}`).toISOString(),
+      });
+    }
+  });
 
-    if (!proceedAnyway) {
-      // User chose not to save, so prevent the save operation
-      showMessage("Contact not saved. Please enter a name.", "info");
-      return;
+  // --- Geocoding logic for RV addresses ---
+  // Only attempt geocoding if latitude/longitude fields are currently empty/invalid
+  // AND address/city/state are provided.
+  if ((isNaN(latitude) || isNaN(longitude)) && (address || city || state)) {
+    let query = "";
+    if (address && city && state) {
+      query = `${address}, ${city}, ${state}`;
+    } else if (city && state) {
+      query = `${city}, ${state}`;
+    }
+
+    if (query) {
+      console.log(`Attempting to geocode RV: ${query}`);
+      const coords = await geocodeCityState(query);
+      if (coords) {
+        latitude = coords.lat;
+        longitude = coords.lon;
+        rvLatitudeInput.value = coords.lat.toFixed(6); // Update UI
+        rvLongitudeInput.value = coords.lon.toFixed(6); // Update UI
+        showMessage("RV location geocoded successfully!", "info");
+      } else {
+        // If geocoding fails, explicitly set lat/lon to null to prevent incorrect default assignment
+        latitude = null;
+        longitude = null;
+        rvLatitudeInput.value = "";
+        rvLongitudeInput.value = "";
+        showMessage(
+          "Could not geocode RV address/city/state. Pin will be violet if default location is set.",
+          "warning"
+        );
+      }
     }
   }
 
-  // If a name is present, or user proceeded without one, save the RV
-  proceedSaveRV(
-    name,
-    address,
-    city,
-    state,
-    email,
-    phone,
-    latitude,
-    longitude,
-    lastContactedDate,
-    lastContactedTime,
-    note
-  );
-}
+  // If name is empty, show confirmation dialog
+  // This check is now only done when navigating away or adding a new visit
+  // It's removed from the general blur listener.
+  // The logic for this is now handled in showView and addVisit functions.
 
-/**
- * Helper function to actually save the RV data after validation.
- */
-function proceedSaveRV(
-  name,
-  address,
-  city,
-  state,
-  email,
-  phone,
-  latitude,
-  longitude,
-  lastContactedDate,
-  lastContactedTime,
-  note
-) {
   const rvData = {
     id: currentRVId || generateUniqueId(),
     name: name,
     address: address,
     city: city,
     state: state,
-    area: "No Area", // Always "No Area"
+    area: area, // Save Area
     email: email,
-    phone: phone, // Save phone number
+    phone: phone,
     latitude: isNaN(latitude) ? null : latitude,
     longitude: isNaN(longitude) ? null : longitude,
-    lastContacted: lastContactedDate
-      ? {
-          date: lastContactedDate,
-          time: lastContactedTime,
-          timestamp: new Date(
-            `${lastContactedDate}T${lastContactedTime || "00:00"}`
-          ).toISOString(),
-        }
-      : null,
-    note: note,
+    visits: visits, // Save the array of visits
     createdAt: currentRVId
       ? rvs.find((rv) => rv.id === currentRVId)?.createdAt
       : new Date().toISOString(),
@@ -1168,13 +1297,17 @@ function proceedSaveRV(
     rvs.push(rvData);
     showMessage("RV Information added automatically!", "success");
     currentRVId = rvData.id; // Set currentRVId for newly added RV
-    currentRvIndex = rvs.length - 1; // Set index for newly added RV
+    // Find the index of the newly added RV in the *unfiltered* rvs array
+    currentRvIndex = rvs.findIndex((rv) => rv.id === currentRVId);
   }
 
   saveDataToLocalStorage();
   renderRVs(); // Re-render the list
   updateMap(); // Update the map
   updateRvFormNavButtons(); // Update button states after saving
+  generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case a new area was added
+  generateAreaFilterCheckboxes("map");
+  generateAreaFilterCheckboxes("form");
 }
 
 /**
@@ -1189,37 +1322,109 @@ function deleteRV(rvId) {
     renderRVs(); // Re-render the list
     updateMap(); // Update the map
     showMessage("Return Visit deleted successfully!", "success");
+    // If the deleted RV was the current one being edited, clear the form
+    if (currentRVId === rvId) {
+      clearRVForm(); // Clear the form completely
+      showView(myRVsView); // Navigate back to list view
+    }
+    generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case an area was removed
+    generateAreaFilterCheckboxes("map");
+    generateAreaFilterCheckboxes("form");
   } else {
     showMessage("RV not found for deletion.", "error");
   }
 }
 
 /**
- * Adds a new visit entry (currently just updates lastContacted fields).
+ * Adds a new visit entry (at the top/most recent).
+ * @param {boolean} isInitialAdd - True if called during clearRVForm for initial entry.
  */
-function addVisit() {
+function addVisit(isInitialAdd = false) {
   const now = new Date();
   const dateString = now.toISOString().split("T")[0]; //YYYY-MM-DD
   const timeString = now.toTimeString().split(" ")[0].substring(0, 5); // HH:MM
 
-  rvLastContactedDateInput.value = dateString;
-  rvLastContactedDayInput.value = getFormattedDay(dateString);
-  rvLastContactedTimeInput.value = timeString;
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "inline-flex";
-  showMessage("Current date/time added to 'Visited' fields.", "info");
-  saveRV(); // Autosave after adding visit
+  const newVisit = {
+    date: dateString,
+    time: timeString,
+    note: "",
+    timestamp: now.toISOString(),
+  };
+
+  // Check for empty name *before* adding visit if not an initial autofill
+  if (!isInitialAdd && rvNameInput.value.trim() === "") {
+    showConfirmationDialog(
+      "No name has been entered for this contact. It cannot be easily identified without one. Do you want to proceed without saving this contact?",
+      () => {
+        // User chose to proceed without saving current (empty name) RV
+        // Add the new visit to a *new* RV (which will be blank until name is entered)
+        clearRVForm(false); // Clear current form, don't autofill
+        // Now, add the new visit to this newly cleared form
+        renderVisitsInForm([newVisit]);
+        showMessage("New visit entry added to a new, unsaved contact.", "info");
+      },
+      () => {
+        // User chose to cancel, do nothing, stay on current form
+      }
+    );
+    return; // Stop further execution
+  }
+
+  // If adding to an existing RV, find it and add the visit
+  if (currentRVId) {
+    const rv = rvs.find((r) => r.id === currentRVId);
+    if (rv) {
+      if (!rv.visits) rv.visits = [];
+      rv.visits.unshift(newVisit); // Add to the beginning for most recent
+      renderVisitsInForm(rv.visits); // Re-render the visits section
+      saveRV(); // Autosave after adding visit
+      if (!isInitialAdd) showMessage("New visit entry added.", "info");
+    }
+  } else {
+    // If it's a new RV being created (currentRVId is null),
+    // and this is the initial autofill from clearRVForm(true)
+    if (isInitialAdd) {
+      renderVisitsInForm([newVisit]);
+    } else {
+      // This case should ideally not be hit if the name check above works.
+      // But as a fallback, if currentRVId is null and it's not an initial add,
+      // it means an "Add Visit" was clicked on a blank new form.
+      // We'll treat it as creating a new RV with just this visit,
+      // and the "no name" dialog would have already handled the saving part.
+      // So, just render the visit.
+      renderVisitsInForm([newVisit]);
+      showMessage("New visit entry added to a new contact.", "info");
+    }
+  }
 }
 
 /**
- * Removes the last visit entry (currently just clears lastContacted fields).
+ * Removes a specific visit entry by its index.
+ * @param {number} indexToRemove - The index of the visit to remove in the current RV's visits array.
  */
-function removeVisit() {
-  rvLastContactedDateInput.value = "";
-  rvLastContactedDayInput.value = "";
-  rvLastContactedTimeInput.value = "";
-  if (removeVisitBtnForm) removeVisitBtnForm.style.display = "none";
-  showMessage("Visited date/time cleared.", "info");
-  saveRV(); // Autosave after removing visit
+function removeVisit(indexToRemove) {
+  if (currentRVId) {
+    const rv = rvs.find((r) => r.id === currentRVId);
+    if (rv && rv.visits && rv.visits.length > 0) {
+      // Ensure there are visits to remove
+      showConfirmationDialog(
+        "Are you sure you want to delete this visit entry?",
+        () => {
+          rv.visits.splice(indexToRemove, 1); // Remove the visit
+          renderVisitsInForm(rv.visits); // Re-render the visits section
+          saveRV(); // Autosave after removing visit
+          showMessage("Visit entry deleted.", "success");
+        }
+      );
+    } else {
+      showMessage("No visit entry to delete.", "info");
+    }
+  } else {
+    // If no current RV, and user tries to remove a visit from a new, unsaved form
+    // just clear the displayed visits.
+    rvVisitsContainer.innerHTML = "";
+    showMessage("Visit entry cleared from new contact.", "info");
+  }
 }
 
 /**
@@ -1227,18 +1432,17 @@ function removeVisit() {
  */
 
 /**
- * Fetches coordinates for a given city and state using Nominatim (OpenStreetMap).
- * @param {string} city - The city name.
- * @param {string} state - The state abbreviation.
+ * Fetches coordinates for a given address/city/state using Nominatim (OpenStreetMap).
+ * @param {string} query - The address, city, state, or combination to geocode.
  * @returns {Promise<{lat: number, lon: number}|null>} - Latitude and longitude or null if not found.
  */
-async function geocodeCityState(city, state) {
-  if (!city || !state) {
-    console.log("Geocoding: City or State is empty.");
+async function geocodeCityState(query) {
+  if (!query) {
+    console.log("Geocoding: Query is empty.");
     return null;
   }
-  const query = encodeURIComponent(`${city}, ${state}, USA`);
-  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`;
+  const encodedQuery = encodeURIComponent(`${query}, USA`); // Assume USA for better results
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&limit=1`;
   console.log("Geocoding URL:", url);
   try {
     const response = await fetch(url);
@@ -1248,7 +1452,7 @@ async function geocodeCityState(city, state) {
       return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
     }
   } catch (error) {
-    console.error("Error geocoding city/state:", error);
+    console.error("Error geocoding:", error);
   }
   return null;
 }
@@ -1348,7 +1552,7 @@ async function updateCoordinatesFromCityState(type) {
   const state = stateInput.value.trim();
 
   if (city && state) {
-    const result = await geocodeCityState(city, state);
+    const result = await geocodeCityState(`${city}, ${state}`);
     if (result) {
       latInput.value = result.lat.toFixed(6);
       longInput.value = result.lon.toFixed(6);
@@ -1591,7 +1795,10 @@ function updateMap() {
 
   const usedCoords = {};
 
-  rvs.forEach((rv) => {
+  // Get filtered RVs for map display
+  const rvsToDisplayOnMap = getFilteredAndSortedRVs();
+
+  rvsToDisplayOnMap.forEach((rv) => {
     let lat = parseFloat(rv.latitude);
     let lon = parseFloat(rv.longitude);
     let isGeolocated = !isNaN(lat) && !isNaN(lon);
@@ -1600,6 +1807,9 @@ function updateMap() {
     let markerLat = lat;
     let markerLon = lon;
     let markerTitle = rv.name || rv.address || "Unnamed RV";
+
+    const mostRecentVisit =
+      rv.visits && rv.visits.length > 0 ? rv.visits[0] : null;
 
     if (!isGeolocated) {
       // If not geolocated, use default settings coordinates and violet color
@@ -1615,10 +1825,11 @@ function updateMap() {
         // Skip adding marker if no specific or default coordinates are available
         return;
       }
-    } else {
+    } else if (mostRecentVisit) {
+      // Only check for red pin if geolocated and has visits
       // Check for red pin condition (14+ days ago)
       const today = new Date();
-      const visitDate = new Date(rv.lastContacted?.date);
+      const visitDate = new Date(mostRecentVisit.date);
       today.setHours(0, 0, 0, 0);
       visitDate.setHours(0, 0, 0, 0);
       const diffDays = Math.floor(
@@ -1629,15 +1840,13 @@ function updateMap() {
       }
     }
 
-    // Apply color filter logic
+    // Apply color filter logic (already handled by getFilteredAndSortedRVs, but double-check for robustness)
     const selectedColorFilters = Array.from(
       document.querySelectorAll(
         `#mapShowColorFilterCheckboxes input[type="checkbox"]:checked`
       )
     ).map((cb) => cb.value);
 
-    // If no color filters are selected, or all are selected, show all pins.
-    // Otherwise, only show pins matching selected colors.
     if (
       selectedColorFilters.length > 0 &&
       selectedColorFilters.length < 3 &&
@@ -1648,11 +1857,31 @@ function updateMap() {
 
     const coordKey = `${markerLat},${markerLon}`;
     if (usedCoords[coordKey]) {
+      // Offset duplicate coordinates slightly
       const offset = 0.0001 * usedCoords[coordKey];
       markerLat += offset;
       markerLon += offset;
     }
     usedCoords[coordKey] = (usedCoords[coordKey] || 0) + 1;
+
+    // Build common info window/popup content
+    const commonContent = `
+      <div style="padding: 5px; font-family: Arial, sans-serif;">
+        <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
+          rv.name || "Unnamed RV"
+        }</h4>
+        <p style="margin-bottom: 3px;">${rv.address || ""}${
+      rv.address && (rv.city || rv.state) ? ", " : ""
+    }${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
+        ${
+          isGeolocated
+            ? `<p style="font-size: 0.8em; color: #666;">Lat: ${lat.toFixed(
+                5
+              )}, Lon: ${lon.toFixed(5)}</p>`
+            : ""
+        }
+      </div>
+    `;
 
     if (mapProvider === "google") {
       const svgIcon = {
@@ -1673,21 +1902,12 @@ function updateMap() {
 
       marker.rvId = rv.id;
 
-      const infoWindowContent = `
-        <div style="padding: 10px; font-family: Arial, sans-serif;">
-          <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
-            rv.name || "Unnamed RV"
-          }</h4>
-          <p style="margin-bottom: 3px;">${rv.address || ""}${
-        rv.address && (rv.city || rv.state) ? ", " : ""
-      }${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
-        </div>
-      `;
       const infoWindow = new google.maps.InfoWindow({
-        content: infoWindowContent,
+        content: commonContent, // Use commonContent
       });
 
-      marker.addListener("mouseover", () => infoWindow.open(activeMap, marker)); // Use activeMap here
+      // Add mouseover and mouseout listeners for info window
+      marker.addListener("mouseover", () => infoWindow.open(activeMap, marker));
       marker.addListener("mouseout", () => infoWindow.close());
       marker.addListener("click", () => editRV(marker.rvId));
 
@@ -1713,17 +1933,19 @@ function updateMap() {
 
       marker.rvId = rv.id;
 
-      const popupContent = `
-        <div style="padding: 5px; font-family: Arial, sans-serif;">
-          <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
-            rv.name || "Unnamed RV"
-          }</h4>
-          <p style="margin-bottom: 3px;">${rv.address || ""}${
-        rv.address && (rv.city || rv.state) ? ", " : ""
-      }${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
-        </div>
-      `;
-      marker.bindPopup(popupContent);
+      // Bind popup and open/close on mouseover/mouseout
+      marker.bindPopup(commonContent, {
+        // Use commonContent
+        closeButton: false, // Don't show a close button
+        autoClose: false, // Don't auto-close on map click
+      });
+
+      marker.on("mouseover", function () {
+        this.openPopup();
+      });
+      marker.on("mouseout", function () {
+        this.closePopup();
+      });
       marker.on("click", () => editRV(marker.rvId));
 
       markers.push(marker);
@@ -1761,11 +1983,12 @@ function getFilteredAndSortedRVs() {
 
   if (myRVsView.style.display === "block") {
     areaFilterCheckboxesId = "areaFilterCheckboxes";
-    colorFilterCheckboxesId = "showColorFilterCheckboxes";
+    colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // My RVs view doesn't have color filter, but map does
     sortOrderRadioName = "sortOrder";
   } else if (rvFormView.style.display === "block") {
     areaFilterCheckboxesId = "formAreaFilterCheckboxes";
-    colorFilterCheckboxesId = "formShowColorFilterCheckboxes";
+    // Removed color filter from form view, so use an empty array for filtering
+    colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // Fallback to map's color filter for consistency in filterRVs
     sortOrderRadioName = "formSortOrder";
   } else if (mapView.style.display === "block") {
     areaFilterCheckboxesId = "mapAreaFilterCheckboxes";
@@ -1774,7 +1997,7 @@ function getFilteredAndSortedRVs() {
   } else {
     // Default to main filters if no specific view is active or recognized
     areaFilterCheckboxesId = "areaFilterCheckboxes";
-    colorFilterCheckboxesId = "showColorFilterCheckboxes";
+    colorFilterCheckboxesId = "mapShowColorFilterCheckboxes";
     sortOrderRadioName = "sortOrder";
   }
 
@@ -1785,12 +2008,16 @@ function getFilteredAndSortedRVs() {
     )
   ).map((cb) => cb.value);
 
-  // Get selected color filters
-  const selectedColorFilters = Array.from(
-    document.querySelectorAll(
-      `#${colorFilterCheckboxesId} input[type="checkbox"]:checked`
-    )
-  ).map((cb) => cb.value);
+  // Get selected color filters (only applicable for map and form views)
+  let selectedColorFilters = [];
+  if (document.getElementById(colorFilterCheckboxesId)) {
+    // Check if the element exists
+    selectedColorFilters = Array.from(
+      document.querySelectorAll(
+        `#${colorFilterCheckboxesId} input[type="checkbox"]:checked`
+      )
+    ).map((cb) => cb.value);
+  }
 
   // Apply filtering
   rvsToDisplay = filterRVs(
@@ -1822,6 +2049,9 @@ function updateRvFormNavButtons() {
     prevRvBtn.disabled = true;
     nextRvBtn.disabled = true;
   }
+  // Ensure buttons are visible in RV form view
+  prevRvBtn.style.display = "flex";
+  nextRvBtn.style.display = "flex";
 }
 
 /**
@@ -1899,7 +2129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCityStateFromCoordinates("default")
   );
   defaultLongitudeInput.addEventListener("change", () =>
-    updateCoordinatesFromCityState("default")
+    updateCityStateFromCoordinates("default")
   );
 
   rvCityInput.addEventListener("change", () =>
@@ -1917,13 +2147,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // My RVs View Buttons
   addRVBtn.addEventListener("click", () => {
-    clearRVForm(); // Now also populates with defaults
-    showView(rvFormView);
+    // If settings are incomplete, show warning, otherwise proceed to add RV
+    if (!areSettingsComplete()) {
+      showConfirmationDialog(
+        "Before adding a new RV, please complete your default City/State or Coordinates in Settings. Do you want to proceed to Settings?",
+        () => {
+          showView(settingsView);
+        },
+        () => {
+          // User chose to go back, stay on current view
+        }
+      );
+    } else {
+      clearRVForm(false); // Do not autofill immediately
+      showView(rvFormView);
+    }
+  });
+
+  // RV Form Autofill on Name Entry:
+  rvNameInput.addEventListener("input", () => {
+    // Only autofill if it's a new RV (currentRVId is null) and the form is currently empty
+    if (!currentRVId && rvNameInput.value.trim().length === 1) {
+      // Trigger on first character
+      clearRVForm(true); // Now autofill with defaults and initial visit
+    }
   });
 
   // RV Form Autosave: Add blur listeners to all relevant inputs for autosave
   document
-    .querySelectorAll("#rvFormView input, #rvFormView textarea")
+    .querySelectorAll("#rvFormView input:not([readonly]), #rvFormView textarea") // Exclude readonly inputs
     .forEach((input) => {
       input.addEventListener("blur", saveRV);
     });
@@ -1933,26 +2185,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.target.value = formatPhoneNumber(e.target.value);
   });
 
-  addVisitBtnForm.addEventListener("click", addVisit);
-  removeVisitBtnForm.addEventListener("click", removeVisit);
+  // Area input autosave
+  rvAreaInput.addEventListener("blur", saveRV);
+
+  addVisitBtnHeader.addEventListener("click", () => addVisit()); // Add new visit
 
   // Previous/Next RV navigation buttons
   prevRvBtn.addEventListener("click", showPreviousRv);
   nextRvBtn.addEventListener("click", showNextRv);
 
   // Sort and Filter Event Listeners (for all relevant views)
+  // Main RV list sort
   document
-    .querySelectorAll('.sort-options input[type="radio"]')
+    .querySelectorAll('#myRVsView .sort-options input[type="radio"]')
+    .forEach((radio) => {
+      radio.addEventListener("change", handleSortFilterChange);
+    });
+  // RV Form view sort
+  document
+    .querySelectorAll('#rvFormView .sort-options input[type="radio"]')
     .forEach((radio) => {
       radio.addEventListener("change", handleSortFilterChange);
     });
 
+  // Main RV list area filter
   document
-    .querySelectorAll('.filter-options input[type="checkbox"]')
+    .querySelectorAll('#myRVsView .filter-options input[type="checkbox"]')
+    .forEach((checkbox) => {
+      checkbox.addEventListener("change", handleFilterChange);
+    });
+  // Map view filters (color and area)
+  document
+    .querySelectorAll('#mapView .filter-options input[type="checkbox"]')
+    .forEach((checkbox) => {
+      checkbox.addEventListener("change", handleFilterChange);
+    });
+  // RV Form view filters (color and area)
+  document
+    .querySelectorAll('#rvFormView .filter-options input[type="checkbox"]')
     .forEach((checkbox) => {
       checkbox.addEventListener("change", handleFilterChange);
     });
 
-  // Initial generation of Area filters for contact view
+  // Initial generation of Area filters for all views
   generateAreaFilterCheckboxes("contact");
+  generateAreaFilterCheckboxes("map");
+  generateAreaFilterCheckboxes("form");
 });
