@@ -564,7 +564,9 @@ async function saveSettings() {
     console.log(
       `Attempting to geocode City: ${defaultCity}, State: ${defaultState}`
     );
-    const coords = await geocodeCityState(defaultCity, defaultState);
+    const coords = await geocodeCityState(
+      `${defaultCity}, ${defaultState}, USA`
+    );
     if (coords) {
       defaultLatitude = coords.lat;
       defaultLongitude = coords.lon;
@@ -1728,7 +1730,7 @@ async function initMap() {
           !isNaN(defaultLat) && !isNaN(defaultLng)
             ? { lat: defaultLat, lng: defaultLng }
             : { lat: 0, lng: 0 };
-        const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 10 : 1;
+        const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1;
         map.setCenter(center);
         map.setZoom(zoom);
         console.log("Google Map re-centered.");
@@ -1767,7 +1769,7 @@ window.mapReady = function () {
     !isNaN(defaultLat) && !isNaN(defaultLng)
       ? { lat: defaultLat, lng: defaultLng }
       : { lat: 0, lng: 0 }; // Default to 0,0 if no valid settings coords
-  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 10 : 1; // Zoom out if no specific location
+  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
 
   map = new google.maps.Map(document.getElementById("mapContainer"), {
     center: center,
@@ -1825,7 +1827,7 @@ async function initLeafletMap() {
     !isNaN(defaultLat) && !isNaN(defaultLng)
       ? [defaultLat, defaultLng]
       : [0, 0]; // Default to 0,0 if no valid settings coords
-  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 10 : 1; // Zoom out if no specific location
+  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
 
   leafletMap = L.map("mapContainer").setView(center, zoom);
 
