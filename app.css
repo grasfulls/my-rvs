@@ -43,12 +43,10 @@ body {
 }
 
 input#rvName {
-    background-color: rgba(0, 255, 0, 0.1);
     pointer-events: auto;
     position: relative;
     z-index: 2;
     isolation: isolate;
-    /* NEW LINE */
 }
 
 /* --------------------------------------------------- */
@@ -65,22 +63,16 @@ input#rvName {
     top: 0;
     left: 0;
     width: 100%;
-    /* Full width of the viewport */
     max-width: 800px;
-    /* Match app-container max-width */
     height: 25px;
     flex-shrink: 0;
-    /* Prevent header from shrinking */
     z-index: 100;
-    /* Ensure it stays on top */
     margin-left: auto;
     /* Center fixed header */
     margin-right: auto;
     /* Center fixed header */
     box-sizing: border-box;
-    /* Include padding in width/height */
     border-radius: 0;
-    /* No rounded corners */
 }
 
 .header-left-content {
@@ -163,7 +155,7 @@ main#appContent {
     /* The 10px is the general padding for content inside main#appContent */
     padding: 10px 20px;
     /* General padding, adjust as needed */
-    padding-top: calc(25px + 10px);
+    padding-top: 35px;
     /* Header height + desired top padding for content */
     padding-bottom: calc(50px + 10px);
     /* Footer height + desired bottom padding for content */
@@ -704,9 +696,7 @@ label[for="defaultLongitude"] {
 .sort-filter-controls {
     position: sticky;
     top: 0px;
-    /* background-color: #ffffff; */
     background-color: rgba(255, 0, 0, 0.1);
-        /* Soft red tint for visual trace */
     z-index: 1;
     /* Ensure it's above content but below header/footer */
     padding: 0px 20px 5px 20px;
@@ -901,7 +891,7 @@ label[for="defaultLongitude"] {
 .form-group label#rvNameLabel {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     font-weight: bold;
     color: #555;
     font-size: 1em;
@@ -915,6 +905,7 @@ label[for="defaultLongitude"] {
     width: 25px;
     height: 25px;
     border-radius: 50%;
+    margin-left: auto;
     color: #3f51b5;
     transition: background-color 0.2s ease, color 0.2s ease;
     display: flex;
@@ -959,6 +950,10 @@ label[for="defaultLongitude"] {
     margin-bottom: 10px;
     box-sizing: border-box;
     flex-wrap: wrap;
+}
+
+.form-group#rvNameGroup {
+    margin-bottom: 20px;
 }
 
 /* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
@@ -1044,6 +1039,15 @@ label[for="defaultLongitude"] {
     width: auto;
     flex-shrink: 0;
     padding: 6px 12px;
+}
+
+input#rvName {
+    position: relative;
+    z-index: 2;
+    isolation: isolate;
+    pointer-events: auto;
+    flex-grow: 1;
+    max-width: 300px;
 }
 
 /* Visits Section Styling */
