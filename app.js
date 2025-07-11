@@ -2103,15 +2103,18 @@ function getFilteredAndSortedRVs() {
   let sortOrderRadioName = "";
 
   if (myRVsView.style.display === "block") {
+    document.getElementById("rvNavHeaderBtns").style.display = "none";
     areaFilterCheckboxesId = "areaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // My RVs view doesn't have color filter, but map does
     sortOrderRadioName = "sortOrder";
   } else if (rvFormView.style.display === "block") {
+    document.getElementById("rvNavHeaderBtns").style.display = "flex";
     areaFilterCheckboxesId = "formAreaFilterCheckboxes";
     // Removed color filter from form view, so use an empty array for filtering
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // Fallback to map's color filter for consistency in filterRVs
     sortOrderRadioName = "formSortOrder";
   } else if (mapView.style.display === "block") {
+    document.getElementById("rvNavHeaderBtns").style.display = "none";
     areaFilterCheckboxesId = "mapAreaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes";
     sortOrderRadioName = "sortOrder"; // Map view uses the main list's sort order
