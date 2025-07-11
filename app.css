@@ -168,13 +168,14 @@ main#appContent {
     /* Takes all available space between header and footer */
     overflow-y: auto;
     /* Enable vertical scrolling for content */
-    /* Adjust padding to account for fixed header and footer */
+    /* Add padding to account for fixed header and footer */
+    /* The 10px is the general padding for content inside main#appContent */
     padding: 10px 20px;
     /* General padding, adjust as needed */
     padding-top: calc(25px + 10px);
-    /* Header height + top padding */
+    /* Header height + desired top padding for content */
     padding-bottom: calc(50px + 10px);
-    /* Footer height + bottom padding */
+    /* Footer height + desired bottom padding for content */
     box-sizing: border-box;
     /* Include padding in height calculation */
     width: 100%;
@@ -186,8 +187,10 @@ main#appContent {
 /* Styles for all "views" (sections that act as pages) */
 .view {
     display: none;
+    /* Padding is now handled by main#appContent for overall spacing */
+    /* Individual elements within views can have their own margins/paddings */
     padding: 0;
-    /* Padding is handled by main#appContent */
+    /* Remove padding here, it's handled by main#appContent */
     width: 100%;
     /* Take full width of its parent (appContent) */
     max-width: 100%;
