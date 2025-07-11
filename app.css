@@ -887,7 +887,7 @@ label[for="defaultLongitude"] {
 }
 
 /* Previous/Next Buttons Container */
-/* Moved these buttons into the label of rvName for inline display */
+/* Navigation buttons now placed beside the Name field (outside label) */
 .form-group label#rvNameLabel {
     display: flex;
     align-items: center;
@@ -1039,6 +1039,17 @@ label[for="defaultLongitude"] {
     width: auto;
     flex-shrink: 0;
     padding: 6px 12px;
+}
+
+.name-with-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.name-with-nav input {
+    flex-grow: 1;
 }
 
 input#rvName {
