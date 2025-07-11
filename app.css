@@ -47,6 +47,13 @@ input#rvName {
     /* Soft green for visibility */
 }
 
+input#rvName {
+    pointer-events: auto;
+    position: relative;
+    z-index: 2;
+    /* Raises it just above nearby elements */
+}
+
 /* --------------------------------------------------- */
 /* Section 2: Header Styling (Fixed) */
 /* --------------------------------------------------- */
@@ -59,8 +66,6 @@ input#rvName {
     align-items: center;
     position: fixed;
     top: 0;
-    /* Stick to the top */
-    /* Use left: 0 and width: 100% then margin: auto for centering with max-width */
     left: 0;
     width: 100%;
     /* Full width of the viewport */
