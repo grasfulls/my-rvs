@@ -943,28 +943,7 @@ label[for="defaultLongitude"] {
 
 
 /* Wrapper for each form group to manage overall spacing (Name, Address, etc.) */
-.form-group-wrapper {
-    margin-bottom: 10px;
-}
-
 /* Style for individual form-group divs (label + input/elements) */
-.rv-form-fields .form-group {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 3px;
-    align-items: flex-start;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    flex-wrap: wrap;
-}
-
-.form-group#rvNameGroup {
-    margin-top: 80px;
-    /* Temp spacing to ensure no interference */
-    margin-bottom: 20px;
-}
-
 /* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
 .rv-form-fields .form-group input[type="text"],
 .rv-form-fields .form-group input[type="number"],
@@ -1365,4 +1344,11 @@ input[type="number"] {
     margin-top: 80px;
     padding: 12px;
     border: 2px dashed red;
+}
+.rv-form-fields input[type="text"],
+.rv-form-fields input[type="email"],
+.rv-form-fields input[type="tel"],
+.rv-form-fields input[type="number"] {
+    width: 220px;
+    /* adjust as needed for best fit */
 }
