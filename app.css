@@ -48,10 +48,10 @@ input#rvName {
 }
 
 input#rvName {
+    background-color: rgba(0, 255, 0, 0.1);
     pointer-events: auto;
     position: relative;
     z-index: 2;
-    /* Raises it just above nearby elements */
 }
 
 /* --------------------------------------------------- */
