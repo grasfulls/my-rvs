@@ -1360,3 +1360,9 @@ input[type="number"] {
     border: 2px solid purple;
     padding: 30px;
 }
+.form-group#rvNameGroup {
+    background-color: lightblue;
+    margin-top: 80px;
+    padding: 12px;
+    border: 2px dashed red;
+}
