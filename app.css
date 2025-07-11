@@ -714,7 +714,7 @@ label[for="defaultLongitude"] {
 .sort-filter-controls {
     position: sticky;
     /* Sticky position for sort/filter controls */
-    top: 25px;
+    top: 0px;
     /* Stick right below the header (header is 25px tall) */
     background-color: #ffffff;
     z-index: 50;
