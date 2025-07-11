@@ -1,37 +1,23 @@
 /* --------------------------------------------------- */
 /* Section 1: Global Styles & Basic Layout (HTML, Body, Main Content) */
 /* --------------------------------------------------- */
-html {
-    /* Apply box-sizing globally for consistent layout behavior */
+html,
+body {
     box-sizing: border-box;
-    /* Ensure smooth scrolling for anchors */
     scroll-behavior: smooth;
-    /* Prevent horizontal scrolling on the root element */
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    font-family: Arial, sans-serif;
+    height: 100vh;
 }
 
 *,
 *::before,
 *::after {
-    /* Inherit box-sizing for all elements */
     box-sizing: inherit;
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    /* Make body take full viewport height */
-    overflow: hidden;
-    /* Prevent body from scrolling, manage scrolling within app-container */
-    font-family: Arial, sans-serif;
-    display: flex;
-    /* Use flexbox for main app layout */
-    flex-direction: column;
-    /* Stack app-container vertically */
-    background-color: #f0f2f5;
-    /* Prevent horizontal scrolling on the body */
-    overflow-x: hidden;
 }
 
 .app-container {
@@ -54,6 +40,11 @@ body {
     /* Prevent internal scrollbars from breaking layout */
     /* Prevent horizontal scrolling within the app container */
     overflow-x: hidden;
+}
+
+input#rvName {
+    background-color: rgba(0, 255, 0, 0.1);
+    /* Soft green for visibility */
 }
 
 /* --------------------------------------------------- */
@@ -716,8 +707,10 @@ label[for="defaultLongitude"] {
     /* Sticky position for sort/filter controls */
     top: 0px;
     /* Stick right below the header (header is 25px tall) */
-    background-color: #ffffff;
-    z-index: 50;
+    /* background-color: #ffffff; */
+    background-color: rgba(255, 0, 0, 0.1);
+        /* Soft red tint for visual trace 
+    z-index: 10;
     /* Ensure it's above content but below header/footer */
     padding: 0px 20px 5px 20px;
     border-bottom: 1px solid #eee;
