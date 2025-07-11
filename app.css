@@ -143,6 +143,13 @@ input#rvName {
     box-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.2);
 }
 
+.header-nav-btns {
+    display: flex;
+    gap: 10px;
+    margin-left: 12px;
+    align-items: center;
+}
+
 /* --------------------------------------------------- */
 /* Section 3: Main Content Area (Scrollable) */
 /* --------------------------------------------------- */
@@ -953,6 +960,8 @@ label[for="defaultLongitude"] {
 }
 
 .form-group#rvNameGroup {
+    margin-top: 80px;
+    /* Temp spacing to ensure no interference */
     margin-bottom: 20px;
 }
 
