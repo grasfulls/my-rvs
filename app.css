@@ -58,7 +58,6 @@ input#rvName {
     justify-content: space-between;
     align-items: center;
     position: fixed;
-    /* Fixed position */
     top: 0;
     /* Stick to the top */
     /* Use left: 0 and width: 100% then margin: auto for centering with max-width */
@@ -68,7 +67,6 @@ input#rvName {
     max-width: 800px;
     /* Match app-container max-width */
     height: 25px;
-    /* Fixed height for header */
     flex-shrink: 0;
     /* Prevent header from shrinking */
     z-index: 100;
@@ -701,16 +699,13 @@ label[for="defaultLongitude"] {
     height: auto;
 }
 
-/* Sort and Filter Controls Container */
 .sort-filter-controls {
     position: sticky;
-    /* Sticky position for sort/filter controls */
     top: 0px;
-    /* Stick right below the header (header is 25px tall) */
     /* background-color: #ffffff; */
     background-color: rgba(255, 0, 0, 0.1);
         /* Soft red tint for visual trace */
-    z-index: 10;
+    z-index: 1;
     /* Ensure it's above content but below header/footer */
     padding: 0px 20px 5px 20px;
     border-bottom: 1px solid #eee;
