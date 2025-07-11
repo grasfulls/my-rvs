@@ -443,8 +443,7 @@ function proceedToShowView(viewToShow) {
     mapLink.classList.add("active"); // Add active class to Map link
   } else if (viewToShow === rvFormView) {
     appSubheading.textContent = "RV Information"; // Set subheading for RV form view
-    // addRVBtn.style.display is already flex from above
-    // Previous/Next buttons are now part of the RV form itself, controlled by updateRvFormNavButtons
+    getFilteredAndSortedRVs(); // Show header nav buttons and run layout logic
     prevRvBtn.style.display = "flex";
     nextRvBtn.style.display = "flex";
     generateAreaFilterCheckboxes("form"); // Regenerate filter options for RV form view
