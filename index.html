@@ -480,28 +480,27 @@
     <script type="module" src="app.js"></script>
     <!-- Unlock RV Name input for mobile Chrome/iOS -->
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
+      window.addEventListener("load", () => {
         const nameInput = document.getElementById("rvName");
         if (nameInput) {
           nameInput.removeAttribute("readonly");
           nameInput.removeAttribute("disabled");
+
           nameInput.style.pointerEvents = "auto";
           nameInput.style.opacity = "1";
-          nameInput.style.zIndex = "10";
-          nameInput.style.position = "relative";
           nameInput.style.display = "block";
+          nameInput.style.visibility = "visible";
+          nameInput.style.zIndex = "999";
 
-          // Improve typing consistency on Chrome/iOS
-          nameInput.setAttribute("inputmode", "text");
-          nameInput.setAttribute("autocapitalize", "words");
           nameInput.setAttribute("autocomplete", "on");
+          nameInput.setAttribute("inputmode", "text");
           nameInput.setAttribute("autocorrect", "on");
+          nameInput.setAttribute("autocapitalize", "words");
 
-          // Reinforce clean focus
+          // Ensure browser fully registers the field
           setTimeout(() => {
-            nameInput.blur();
             nameInput.focus();
-          }, 100);
+          }, 300);
         }
       });
     </script>
