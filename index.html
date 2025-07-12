@@ -478,5 +478,20 @@
     </div>
     <!-- Link to the JavaScript file -->
     <script type="module" src="app.js"></script>
+    <!-- Unlocks RV Name input for mobile typing -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const nameInput = document.getElementById("rvName");
+        if (nameInput) {
+          nameInput.removeAttribute("readonly");
+          nameInput.removeAttribute("disabled");
+          nameInput.style.pointerEvents = "auto";
+          nameInput.style.opacity = "1";
+          nameInput.style.zIndex = "10";
+          nameInput.style.position = "relative";
+          nameInput.style.display = "block";
+        }
+      });
+    </script>
   </body>
 </html>
