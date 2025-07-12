@@ -481,26 +481,30 @@
     <!-- Unlock RV Name input for mobile Chrome/iOS -->
     <script>
       window.addEventListener("load", () => {
-        const nameInput = document.getElementById("rvName");
-        if (nameInput) {
-          nameInput.removeAttribute("readonly");
-          nameInput.removeAttribute("disabled");
+        const nameGroup = document.getElementById("rvNameGroup");
+        if (nameGroup) {
+          const clone = nameGroup.cloneNode(true);
+          nameGroup.replaceWith(clone);
 
-          nameInput.style.pointerEvents = "auto";
-          nameInput.style.opacity = "1";
-          nameInput.style.display = "block";
-          nameInput.style.visibility = "visible";
-          nameInput.style.zIndex = "999";
+          const nameInput = clone.querySelector("#rvName");
+          if (nameInput) {
+            nameInput.removeAttribute("readonly");
+            nameInput.removeAttribute("disabled");
+            nameInput.style.pointerEvents = "auto";
+            nameInput.style.opacity = "1";
+            nameInput.style.display = "block";
+            nameInput.style.visibility = "visible";
+            nameInput.style.zIndex = "999";
+            nameInput.style.position = "relative";
+            nameInput.setAttribute("inputmode", "text");
+            nameInput.setAttribute("autocapitalize", "words");
+            nameInput.setAttribute("autocomplete", "on");
+            nameInput.setAttribute("autocorrect", "on");
 
-          nameInput.setAttribute("autocomplete", "on");
-          nameInput.setAttribute("inputmode", "text");
-          nameInput.setAttribute("autocorrect", "on");
-          nameInput.setAttribute("autocapitalize", "words");
-
-          // Ensure browser fully registers the field
-          setTimeout(() => {
-            nameInput.focus();
-          }, 300);
+            setTimeout(() => {
+              nameInput.focus();
+            }, 300);
+          }
         }
       });
     </script>
