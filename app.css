@@ -1044,14 +1044,6 @@ label[for="defaultLongitude"] {
     padding: 6px 12px;
 }
 
-/* ========== RV Name Group Test Block ========== */
-.form-group#rvNameGroup {
-    margin-top: 80px;
-    margin-bottom: 20px;
-    background-color: lightblue;
-    /* TEMP: visual check */
-}
-
 .name-with-nav {
     display: flex;
     align-items: center;
@@ -1354,12 +1346,14 @@ input[type="number"] {
     border: 2px solid purple;
     padding: 30px;
 }
+
 .form-group#rvNameGroup {
-    background-color: lightblue;
-    margin-top: 80px;
-    padding: 12px;
-    border: 2px dashed red;
+    margin-top: 10px;
+    padding: 8px;
+    border: none;
+    background: none;
 }
+
 .rv-form-fields input[type="text"],
 .rv-form-fields input[type="email"],
 .rv-form-fields input[type="tel"],
