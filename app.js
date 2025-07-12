@@ -27,6 +27,10 @@ const googleMapsApiKeyInput = document.getElementById("googleMapsApiKey");
 
 // RV Form View Elements
 const rvNameInput = document.getElementById("rvName");
+rvNameInput.addEventListener("input", (e) => {
+  e.target.value += e.data ?? "";
+});
+
 const rvAddressInput = document.getElementById("rvAddress");
 const rvCityInput = document.getElementById("rvCity");
 const rvStateInput = document.getElementById("rvState");
