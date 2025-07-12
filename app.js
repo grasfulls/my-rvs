@@ -372,9 +372,13 @@ function showView(viewToShow) {
     );
     return; // Stop further execution of showView until dialog is handled
   }
-
-  // If trying to navigate away from settings and settings are incomplete
-  if (viewToShow !== settingsView && !areSettingsComplete()) {
+  // If trying to navigate away from settings and settings are incomplete,
+  // EXCEPT when navigating to the RV Form View
+  if (
+    viewToShow !== settingsView &&
+    viewToShow !== rvFormView &&
+    !areSettingsComplete()
+  ) {
     showMessage(
       "Please complete your default City/State or Coordinates in Settings before proceeding.",
       "warning"
