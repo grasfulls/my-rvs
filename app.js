@@ -442,6 +442,7 @@ function proceedToShowView(viewToShow) {
     generateAreaFilterCheckboxes("map"); // Regenerate filter options for map view
     mapLink.classList.add("active"); // Add active class to Map link
   } else if (viewToShow === rvFormView) {
+    console.log("RV Form View activated");
     appSubheading.textContent = "RV Information"; // Set subheading for RV form view
     getFilteredAndSortedRVs(); // Show header nav buttons and run layout logic
     prevRvBtn.style.display = "flex";
