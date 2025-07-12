@@ -52,6 +52,21 @@ input#rvName {
 /* --------------------------------------------------- */
 /* Section 2: Header Styling (Fixed) */
 /* --------------------------------------------------- */
+
+#rvName {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
+    position: relative;
+}
+
+.eruda-container {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 99999 !important;
+}
+
 .app-header {
     background-color: #3f51b5;
     color: white;
