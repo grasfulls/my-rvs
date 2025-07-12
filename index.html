@@ -478,7 +478,7 @@
     </div>
     <!-- Link to the JavaScript file -->
     <script type="module" src="app.js"></script>
-    <!-- Unlocks RV Name input for mobile typing -->
+    <!-- Unlock RV Name input for mobile Chrome/iOS -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const nameInput = document.getElementById("rvName");
@@ -490,6 +490,18 @@
           nameInput.style.zIndex = "10";
           nameInput.style.position = "relative";
           nameInput.style.display = "block";
+
+          // Improve typing consistency on Chrome/iOS
+          nameInput.setAttribute("inputmode", "text");
+          nameInput.setAttribute("autocapitalize", "words");
+          nameInput.setAttribute("autocomplete", "on");
+          nameInput.setAttribute("autocorrect", "on");
+
+          // Reinforce clean focus
+          setTimeout(() => {
+            nameInput.blur();
+            nameInput.focus();
+          }, 100);
         }
       });
     </script>
