@@ -2292,15 +2292,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // RV Form Autofill on Name Entry:
-  rvNameInput.addEventListener("input", () => {
-    // Only autofill if it's a new RV (currentRVId is null) and the form is currently empty
-    if (!currentRVId && rvNameInput.value.trim().length === 1) {
-      // Trigger on first character
-      clearRVForm(true); // Now autofill with defaults and initial visit
-    }
-  });
-
   // RV Form Autosave: Add blur listeners to all relevant inputs for autosave
   document
     .querySelectorAll("#rvFormView input:not([readonly]), #rvFormView textarea") // Exclude readonly inputs
