@@ -479,32 +479,5 @@
     <!-- Link to the JavaScript file -->
     <script type="module" src="app.js"></script>
     <!-- Unlock RV Name input for mobile Chrome/iOS -->
-    <script>
-      window.addEventListener("load", () => {
-        const nameInput = document.getElementById("rvName");
-        if (nameInput) {
-          nameInput.removeAttribute("readonly");
-          nameInput.removeAttribute("disabled");
-          nameInput.style.pointerEvents = "auto";
-          nameInput.style.opacity = "1";
-          nameInput.style.display = "block";
-          nameInput.style.visibility = "visible";
-          nameInput.style.zIndex = "999";
-
-          nameInput.setAttribute("autocomplete", "on");
-          nameInput.setAttribute("inputmode", "text");
-          nameInput.setAttribute("autocorrect", "on");
-          nameInput.setAttribute("autocapitalize", "words");
-
-          nameInput.addEventListener("input", (e) => {
-            e.target.value += e.data ?? "";
-          });
-
-          setTimeout(() => {
-            nameInput.focus();
-          }, 300);
-        }
-      });
-    </script>
   </body>
 </html>
