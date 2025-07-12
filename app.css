@@ -1336,11 +1336,6 @@ input[type="number"] {
     appearance: textfield;
     /* Standard property for compatibility */
 }
-.form-group-wrapper {
-    border: 2px dashed orange;
-    padding: 20px;
-    margin-bottom: 20px;
-}
 
 .rv-form-fields {
     border: 2px solid purple;

@@ -263,97 +263,89 @@
           </div>
 
           <div class="rv-form-fields">
-            <div class="form-group-wrapper">
-              <div class="form-group" id="rvNameGroup">
-                <label for="rvName" id="rvNameLabel">Name:</label>
-                <div class="name-with-nav">
-                  <input
-                    type="text"
-                    id="rvName"
-                    placeholder="e.g., John Smith"
-                  />
-                  <button
-                    id="prevRvBtn"
-                    class="form-nav-btn prev-btn"
-                    title="Previous Return Visit"
-                    style="display: none"
+            <div class="form-group" id="rvNameGroup">
+              <label for="rvName" id="rvNameLabel">Name:</label>
+              <div class="name-with-nav">
+                <input type="text" id="rvName" placeholder="e.g., John Smith" />
+                <button
+                  id="prevRvBtn"
+                  class="form-nav-btn prev-btn"
+                  title="Previous Return Visit"
+                  style="display: none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="32px"
+                    height="32px"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      width="32px"
-                      height="32px"
-                    >
-                      <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                    </svg>
-                  </button>
-                  <button
-                    id="nextRvBtn"
-                    class="form-nav-btn next-btn"
-                    title="Next Return Visit"
-                    style="display: none"
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                  </svg>
+                </button>
+                <button
+                  id="nextRvBtn"
+                  class="form-nav-btn next-btn"
+                  title="Next Return Visit"
+                  style="display: none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="24px"
+                    height="24px"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      width="24px"
-                      height="24px"
-                    >
-                      <path
-                        d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                  </svg>
+                </button>
               </div>
-              <div class="form-group">
-                <label for="rvAddress">Address:</label>
-                <input
-                  type="text"
-                  id="rvAddress"
-                  placeholder="e.g., 123 Main St"
-                />
-              </div>
-              <div class="form-group">
-                <label for="rvCity">City:</label>
-                <input type="text" id="rvCity" placeholder="e.g., Anytown" />
-              </div>
-              <div class="form-group">
-                <label for="rvState">State:</label>
-                <input
-                  type="text"
-                  id="rvState"
-                  maxlength="2"
-                  placeholder="e.g., NY"
-                />
-              </div>
-              <div class="form-group">
-                <label for="rvEmail">Email:</label>
-                <input
-                  type="email"
-                  id="rvEmail"
-                  placeholder="e.g., example@domain.com"
-                />
-              </div>
-              <div class="form-group">
-                <label for="rvPhone">Phone:</label>
-                <input
-                  type="tel"
-                  id="rvPhone"
-                  placeholder="(XXX) XXX-XXXX"
-                  maxlength="14"
-                />
-              </div>
-              <div class="form-group">
-                <label for="rvArea">Area:</label>
-                <input
-                  type="text"
-                  id="rvArea"
-                  placeholder="e.g., North District"
-                />
-              </div>
+            </div>
+            <div class="form-group">
+              <label for="rvAddress">Address:</label>
+              <input
+                type="text"
+                id="rvAddress"
+                placeholder="e.g., 123 Main St"
+              />
+            </div>
+            <div class="form-group">
+              <label for="rvCity">City:</label>
+              <input type="text" id="rvCity" placeholder="e.g., Anytown" />
+            </div>
+            <div class="form-group">
+              <label for="rvState">State:</label>
+              <input
+                type="text"
+                id="rvState"
+                maxlength="2"
+                placeholder="e.g., NY"
+              />
+            </div>
+            <div class="form-group">
+              <label for="rvEmail">Email:</label>
+              <input
+                type="email"
+                id="rvEmail"
+                placeholder="e.g., example@domain.com"
+              />
+            </div>
+            <div class="form-group">
+              <label for="rvPhone">Phone:</label>
+              <input
+                type="tel"
+                id="rvPhone"
+                placeholder="(XXX) XXX-XXXX"
+                maxlength="14"
+              />
+            </div>
+            <div class="form-group">
+              <label for="rvArea">Area:</label>
+              <input
+                type="text"
+                id="rvArea"
+                placeholder="e.g., North District"
+              />
             </div>
 
             <label class="coordinates-main-label"> Or Coordinates: </label>
@@ -393,16 +385,14 @@
             </div>
 
             <!-- Visits Section -->
-            <div class="form-group-wrapper">
-              <div class="visits-header">
-                <label>Visits:</label>
-                <button class="add-visit-btn icon-button" title="Add Visit">
-                  +
-                </button>
-              </div>
-              <div id="rvVisitsContainer" class="visits-container">
-                <!-- Dynamic visit entries will be added here by JS -->
-              </div>
+            <div class="visits-header">
+              <label>Visits:</label>
+              <button class="add-visit-btn icon-button" title="Add Visit">
+                +
+              </button>
+            </div>
+            <div id="rvVisitsContainer" class="visits-container">
+              <!-- Dynamic visit entries will be added here by JS -->
             </div>
           </div>
         </section>
