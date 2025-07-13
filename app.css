@@ -165,6 +165,13 @@ input#rvName {
     align-items: center;
 }
 
+  .rv-form-view,
+  #rvFormView,
+    .settings-view,
+    .contact-view {
+    padding-bottom: 64px;
+}
+
 /* --------------------------------------------------- */
 /* Section 3: Main Content Area (Scrollable) */
 /* --------------------------------------------------- */
@@ -330,33 +337,24 @@ main#appContent {
 /* Section 6: Footer Styling (Fixed) */
 /* --------------------------------------------------- */
 .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
     background-color: #eee;
+    padding: 10px 0;
     display: flex;
     justify-content: center;
     gap: 20px;
-    padding: 10px 0;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 100;
+    z-index: 999;
+    box-sizing: border-box;
     height: 50px;
     flex-shrink: 0;
-    position: fixed;
-    /* Fixed position */
-    bottom: 0;
-    /* Stick to the bottom */
-    /* Use left: 0 and width: 100% then margin: auto for centering with max-width */
-    left: 0;
-    width: 100%;
-    /* Full width of the viewport */
-    max-width: 800px;
-    /* Match app-container max-width */
-    margin-left: auto;
-    /* Center fixed footer */
-    margin-right: auto;
-    /* Center fixed footer */
-    box-sizing: border-box;
-    /* Include padding in height/width */
     border-radius: 0;
-    /* Keep consistent with header for full-width layout */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .app-footer a,
