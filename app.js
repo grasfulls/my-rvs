@@ -2352,7 +2352,7 @@ window.addEventListener("DOMContentLoaded", () => {
   generateAreaFilterCheckboxes("map");
   generateAreaFilterCheckboxes("form");
 
-  const field = document.getElementById("rvState");
+   const field = document.getElementById("rvState");
   if (field) {
     // Format existing value
     field.value = field.value.trim().toUpperCase().slice(0, 2);
