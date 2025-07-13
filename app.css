@@ -1338,8 +1338,7 @@ input[type="number"] {
 }
 
 .rv-form-fields {
-    border: 2px solid purple;
-    padding: 30px;
+    padding: 12px;
 }
 
 .form-group#rvNameGroup {
