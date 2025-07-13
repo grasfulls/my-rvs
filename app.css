@@ -56,7 +56,6 @@ input#rvName {
 #rvName {
     pointer-events: auto !important;
     opacity: 1 !important;
-    z-index: 9999 !important;
     position: relative;
 }
 
@@ -81,7 +80,7 @@ input#rvName {
     max-width: 800px;
     height: 25px;
     flex-shrink: 0;
-    z-index: 100;
+    z-index: 1000;
     margin-left: auto;
     /* Center fixed header */
     margin-right: auto;
@@ -279,18 +278,15 @@ main#appContent {
     border-radius: 8px;
     color: white;
     font-weight: bold;
-    z-index: 1000;
+    z-index: 1003;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     text-align: center;
     min-width: 200px;
     white-space: nowrap;
-    /* Prevent message text from wrapping */
     overflow: hidden;
-    /* Hide overflow if text is too long */
     text-overflow: ellipsis;
-    /* Add ellipsis for overflowed text */
 }
 
 .message-box.success {
@@ -354,7 +350,7 @@ main#appContent {
     display: flex;
     justify-content: center;
     gap: 20px;
-    z-index: 999;
+    z-index:999;
     box-sizing: border-box;
     height: 50px;
     flex-shrink: 0;
