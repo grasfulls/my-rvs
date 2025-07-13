@@ -903,6 +903,18 @@ label[for="defaultLongitude"] {
 /* --------------------------------------------------- */
 /* Section 10: RV Entry Form View Styling (rvFormView) */
 /* --------------------------------------------------- */
+#rvHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: #fff;
+    padding: 12px 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* optional depth */
+}
+
 .rv-form-fields {
     padding: 0 20px;
     /* Horizontal padding for form fields */
