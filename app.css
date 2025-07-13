@@ -234,6 +234,16 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
+/* Scroll Adjustment for Fixed Header/Footer */
+/* --------------------------------------------------- */
+#appContent {
+    position: relative;
+    overflow-y: auto;
+    height: calc(100vh - 72px - 50px);
+    /* Header: 72px, Footer: 50px */
+}
+
+/* --------------------------------------------------- */
 /* Section 4: Loading Spinner */
 /* --------------------------------------------------- */
 #loadingSpinner {
@@ -737,6 +747,7 @@ label[for="defaultLongitude"] {
     align-items: flex-start;
     gap: 5px;
     margin-top: 0px;
+    margin-bottom: 8px;
     width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
@@ -911,9 +922,10 @@ label[for="defaultLongitude"] {
     position: relative;
     z-index: 1;
     padding-top: 16px;
-    /* reduced from 64px */
     padding-bottom: 64px;
-    /* keep bottom buffer for footer overlap */
+    max-height: calc(100vh - 72px - 50px);
+    /* match header/footer height */
+    overflow-y: auto;
 }
 
 .rv-form-fields {
