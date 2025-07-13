@@ -157,13 +157,6 @@ input#rvName {
     align-items: center;
 }
 
-  .rv-form-view,
-  #rvFormView,
-  .settings-view,
-  .contact-view {
-    padding-bottom:32px;
-}
-
 /* --------------------------------------------------- */
 /* Section 3: Main Content Area (Scrollable) */
 /* --------------------------------------------------- */
@@ -190,25 +183,25 @@ main#appContent {
 
 /* Styles for all "views" (sections that act as pages) */
 .view {
-    display: none;
-    /* Padding is now handled by main#appContent for overall spacing */
-    /* Individual elements within views can have their own margins/paddings */
-    padding: 0;
-    /* Remove padding here, it's handled by main#appContent */
+    display: block;
     width: 100%;
-    /* Take full width of its parent (appContent) */
-    max-width: 100%;
-    /* Ensure views don't exceed parent width */
-    box-sizing: border-box;
-    flex-shrink: 0;
-    /* Prevent views from shrinking */
-    /* Prevent horizontal scrolling within views */
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
     overflow-x: hidden;
+    box-sizing: border-box;
+    padding: 0;
+    flex-shrink: 0;
 }
 
 #settingsView {
     display: none;
-    /* Controlled by JS now */
+    /* keep this */
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 /* --------------------------------------------------- */
@@ -713,7 +706,7 @@ label[for="defaultLongitude"] {
 }
 
 .sort-filter-controls {
-    position: sticky;
+    position: relative;
     top: 0px;
     background-color: rgba(255, 0, 0, 0.1);
     z-index: 1;
@@ -893,17 +886,32 @@ label[for="defaultLongitude"] {
     border-radius: 5px;
 }
 
+  .rv-form-view,
+  #rvFormView,
+  .settings-view,
+  .contact-view {
+      padding-bottom: 32px;
+  }
+
+  .contact-view {
+      height: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+  }
+
 /* --------------------------------------------------- */
 /* Section 10: RV Entry Form View Styling (rvFormView) */
 /* --------------------------------------------------- */
 #rvFormView {
-    position: relative;
-    z-index: 1;
     padding-top: 16px;
     padding-bottom: 64px;
-    max-height: calc(100vh - 72px - 50px);
-    /* match header/footer height */
+    height: 100%;
+    max-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .rv-form-fields {
@@ -1203,6 +1211,14 @@ input#rvName {
 /* Section 11: Map View Specific Styling */
 /* --------------------------------------------------- */
 
+#mapView {
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
 #mapView h2 {
     text-align: center;
     color: #333;
@@ -1260,7 +1276,6 @@ input#rvName {
         height: 35px;
         padding: 5px;
     }
-
 
     /* Adjustments for general view padding on small screens */
     .view {
