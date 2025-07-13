@@ -66,41 +66,25 @@ input#rvName {
     z-index: 99999 !important;
 }
 
-#rvHeader,
 .app-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1002;
-    background: #fff;
-    padding: 16px 16px;
-    height: 72px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.app-header {
-    background-color: #3f51b5;
-    color: white;
-    padding: 5px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     max-width: 800px;
-    height: 25px;
-    flex-shrink: 0;
-    z-index: 1000;
     margin-left: auto;
-    /* Center fixed header */
     margin-right: auto;
-    /* Center fixed header */
+    height: 72px;
+    padding: 16px;
+    background-color: #3f51b5;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1002;
+    flex-shrink: 0;
     border-radius: 0;
 }
 
