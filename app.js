@@ -2204,19 +2204,19 @@ function showNextRv() {
   }
 }
 
-// --- Event Listeners ---
+// --- Unified Event Listener ---
 
 document.addEventListener("DOMContentLoaded", async () => {
-  loadingSpinner.style.display = "flex"; // Show loading spinner
+  loadingSpinner.style.display = "flex";
 
-  // Initialize app data from local storage
+  // Load data and settings
   loadDataFromLocalStorage();
   populateSettingsForm();
 
-  // Initial view decision based on settings completion
+  // Decide initial view
   if (areSettingsComplete()) {
     showView(myRVsView);
-    renderRVs(); // Render RVs once loaded
+    renderRVs();
   } else {
     showView(settingsView);
     showMessage(
@@ -2224,29 +2224,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       "info"
     );
   }
-  loadingSpinner.style.display = "none"; // Hide loading spinner after data initialization
 
-  // Navigation Buttons
-  settingsBtn.addEventListener("click", () => {
-    showView(settingsView);
-  });
-  myRVsLink.addEventListener("click", () => {
-    showView(myRVsView);
-  });
-  mapLink.addEventListener("click", () => {
-    showView(mapView);
+  loadingSpinner.style.display = "none";
+
+  // Navigation
+  settingsBtn.addEventListener("click", () => showView(settingsView));
+  myRVsLink.addEventListener("click", () => showView(myRVsView));
+  mapLink.addEventListener("click", () => showView(mapView));
+  addRVBtn.addEventListener("click", () => {
+    if (!areSettingsComplete()) {
+      showConfirmationDialog(
+        "Before adding a new RV, please complete your default City/State or Coordinates in Settings. Do you want to proceed to Settings?",
+        () => showView(settingsView),
+        () => {}
+      );
+    } else {
+      clearRVForm(false);
+      showView(rvFormView);
+    }
   });
 
-  // Settings Autosave: Add blur listeners to all relevant inputs for autosave
+  // Settings Autosave
   document
     .querySelectorAll(
       '#settingsView input[type="text"], #settingsView input[type="number"]'
     )
-    .forEach((input) => {
-      input.addEventListener("blur", saveSettings);
-    });
+    .forEach((input) => input.addEventListener("blur", saveSettings));
 
-  // Add event listeners for input changes to trigger geocoding/reverse geocoding
+  // Geocoding triggers
   defaultCityInput.addEventListener("change", () =>
     updateCoordinatesFromCityState("default")
   );
@@ -2273,113 +2278,64 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCoordinatesFromCityState("rv")
   );
 
-  // My RVs View Buttons
-  addRVBtn.addEventListener("click", () => {
-    // If settings are incomplete, show warning, otherwise proceed to add RV
-    if (!areSettingsComplete()) {
-      showConfirmationDialog(
-        "Before adding a new RV, please complete your default City/State or Coordinates in Settings. Do you want to proceed to Settings?",
-        () => {
-          showView(settingsView);
-        },
-        () => {
-          // User chose to go back, stay on current view
-        }
-      );
-    } else {
-      clearRVForm(false); // Do not autofill immediately
-      showView(rvFormView);
-    }
-  });
-
-  // RV Form Autosave: Add blur listeners to all relevant inputs for autosave
+  // Form Autosave
   document
-    .querySelectorAll("#rvFormView input:not([readonly]), #rvFormView textarea") // Exclude readonly inputs
-    .forEach((input) => {
-      input.addEventListener("blur", saveRV);
-    });
+    .querySelectorAll("#rvFormView input:not([readonly]), #rvFormView textarea")
+    .forEach((input) => input.addEventListener("blur", saveRV));
 
-  // Phone number auto-formatting
   rvPhoneInput.addEventListener("input", (e) => {
     e.target.value = formatPhoneNumber(e.target.value);
   });
 
-  // Area input autosave
   rvAreaInput.addEventListener("blur", saveRV);
 
-  addVisitBtnHeader.addEventListener("click", () => addVisit()); // Add new visit
+  addVisitBtnHeader.addEventListener("click", () => addVisit());
 
-  // Previous/Next RV navigation buttons
   prevRvBtn.addEventListener("click", showPreviousRv);
   nextRvBtn.addEventListener("click", showNextRv);
 
-  // Sort and Filter Event Listeners (for all relevant views)
-  // Main RV list sort
+  // Filters and Sorts
   document
-    .querySelectorAll('#myRVsView .sort-options input[type="radio"]')
-    .forEach((radio) => {
-      radio.addEventListener("change", handleSortFilterChange);
-    });
-  // RV Form view sort
-  document
-    .querySelectorAll('#rvFormView .sort-options input[type="radio"]')
-    .forEach((radio) => {
-      radio.addEventListener("change", handleSortFilterChange);
-    });
+    .querySelectorAll(
+      '#myRVsView .sort-options input[type="radio"], #rvFormView .sort-options input[type="radio"]'
+    )
+    .forEach((radio) =>
+      radio.addEventListener("change", handleSortFilterChange)
+    );
 
-  // Main RV list area filter to force commit
   document
-    .querySelectorAll('#myRVsView .filter-options input[type="checkbox"]')
-    .forEach((checkbox) => {
-      checkbox.addEventListener("change", handleFilterChange);
-    });
-  // Map view filters (color and area)
-  document
-    .querySelectorAll('#mapView .filter-options input[type="checkbox"]')
-    .forEach((checkbox) => {
-      checkbox.addEventListener("change", handleFilterChange);
-    });
-  // RV Form view filters (color and area)
-  document
-    .querySelectorAll('#rvFormView .filter-options input[type="checkbox"]')
-    .forEach((checkbox) => {
-      checkbox.addEventListener("change", handleFilterChange);
-    });
+    .querySelectorAll(
+      '#myRVsView .filter-options input[type="checkbox"], #mapView .filter-options input[type="checkbox"], #rvFormView .filter-options input[type="checkbox"]'
+    )
+    .forEach((checkbox) =>
+      checkbox.addEventListener("change", handleFilterChange)
+    );
 
-window.addEventListener("DOMContentLoaded", () => {
-  // Initial generation of Area filters for all views
-  generateAreaFilterCheckboxes("contact");
-  generateAreaFilterCheckboxes("map");
-  generateAreaFilterCheckboxes("form");
-
-   const field = document.getElementById("rvState");
-  if (field) {
-    // Format existing value
-    field.value = field.value.trim().toUpperCase().slice(0, 2);
-
-    // Enforce format as user types
-    field.addEventListener("input", () => {
-      field.value = field.value.toUpperCase().slice(0, 2);
+  // Input formatting
+  const stateField = document.getElementById("rvState");
+  if (stateField) {
+    stateField.value = stateField.value.trim().toUpperCase().slice(0, 2);
+    stateField.addEventListener("input", () => {
+      stateField.value = stateField.value.toUpperCase().slice(0, 2);
     });
   }
 
-  ["rvName", "rvAddress", "rvCity"].forEach(id => {
+  ["rvName", "rvAddress", "rvCity"].forEach((id) => {
     const field = document.getElementById(id);
     if (field) {
       field.value = field.value
         .toLowerCase()
-        .replace(/\b\w/g, char => char.toUpperCase());
-    }
-  });
-
-  ["rvName", "rvAddress", "rvCity"].forEach(id => {
-    const field = document.getElementById(id);
-    if (field) {
+        .replace(/\b\w/g, (char) => char.toUpperCase());
       field.addEventListener("input", () => {
         field.value = field.value
           .toLowerCase()
-          .replace(/\b\w/g, char => char.toUpperCase());
+          .replace(/\b\w/g, (char) => char.toUpperCase());
       });
     }
   });
+
+  // Area Filter Setup
+  generateAreaFilterCheckboxes("contact");
+  generateAreaFilterCheckboxes("map");
+  generateAreaFilterCheckboxes("form");
 });
