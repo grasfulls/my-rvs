@@ -2346,8 +2346,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       checkbox.addEventListener("change", handleFilterChange);
     });
 
+window.addEventListener("DOMContentLoaded", () => {
   // Initial generation of Area filters for all views
   generateAreaFilterCheckboxes("contact");
   generateAreaFilterCheckboxes("map");
   generateAreaFilterCheckboxes("form");
+
+  const field = document.getElementById("rvState");
+  field.value = field.value.trim().toUpperCase().slice(0, 2);
+
+  ["rvName", "rvAddress", "rvCity"].forEach(id => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.value = field.value
+        .toLowerCase()
+        .replace(/\b\w/g, char => char.toUpperCase());
+    }
+  });
+
+  ["rvName", "rvAddress", "rvCity"].forEach(id => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.addEventListener("input", () => {
+        field.value = field.value
+          .toLowerCase()
+          .replace(/\b\w/g, char => char.toUpperCase());
+      });
+    }
+  });
 });

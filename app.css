@@ -75,10 +75,10 @@ input#rvName {
     z-index: 1002;
     background: #fff;
     padding: 16px 16px;
-    /* taller padding for plus icon spacing */
+    height: 72px;
+    display: flex;
+    align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height: 64px;
-    /* ensures plus icon fits */
 }
 
 .app-header {
@@ -734,7 +734,6 @@ label[for="defaultLongitude"] {
     top: 0px;
     background-color: rgba(255, 0, 0, 0.1);
     z-index: 1;
-    /* Ensure it's above content but below header/footer */
     padding: 0px 20px 5px 20px;
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -743,12 +742,8 @@ label[for="defaultLongitude"] {
     align-items: flex-start;
     gap: 5px;
     margin-top: 0px;
-    /* Ensure no top margin */
     width: 100%;
-    /* Take full width of its parent (appContent) */
     box-sizing: border-box;
-    /* Include padding in width/height */
-    /* Prevent horizontal scrolling within sort/filter controls */
     overflow-x: hidden;
 }
 
