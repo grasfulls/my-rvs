@@ -183,12 +183,7 @@ input#rvName {
   #rvFormView,
   .settings-view,
   .contact-view {
-    padding-bottom: 64px;
-}
-
-#rvFormView {
-    position: relative;
-    z-index: 1;
+    padding-bottom:32px;
 }
 
 /* --------------------------------------------------- */
@@ -915,10 +910,10 @@ label[for="defaultLongitude"] {
 #rvFormView {
     position: relative;
     z-index: 1;
-    padding-top: 64px;
-    /* matches taller header height */
+    padding-top: 16px;
+    /* reduced from 64px */
     padding-bottom: 64px;
-    /* ensures last field clears the footer */
+    /* keep bottom buffer for footer overlap */
 }
 
 .rv-form-fields {
