@@ -166,8 +166,8 @@ input#rvName {
 
   .rv-form-view,
   #rvFormView,
-    .settings-view,
-    .contact-view {
+  .settings-view,
+  .contact-view {
     padding-bottom: 64px;
 }
 
@@ -339,7 +339,7 @@ main#appContent {
 /* --------------------------------------------------- */
 .app-footer {
     position: fixed;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom, 0);
     left: 0;
     width: 100%;
     max-width: 800px;
