@@ -75,7 +75,7 @@ input#rvName {
     margin-left: auto;
     margin-right: auto;
     height: 48px;
-    padding: 4px 16px;
+    padding: 1px 16px;
     /* ⬅️ Horizontal only — no top/bottom padding */
     background-color: #3f51b5;
     color: white;
