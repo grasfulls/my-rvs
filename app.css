@@ -172,6 +172,11 @@ input#rvName {
     padding-bottom: 64px;
 }
 
+#rvFormView {
+    position: relative;
+    z-index: 1;
+}
+
 /* --------------------------------------------------- */
 /* Section 3: Main Content Area (Scrollable) */
 /* --------------------------------------------------- */
