@@ -1252,9 +1252,13 @@ input#rvName {
 /* --------------------------------------------------- */
 
 @media (max-width: 600px) {
-    .app-header h1 {
-        font-size: 1.8em;
-    }
+    #rvHeader,
+        .app-header {
+            position: fixed;
+            top: env(safe-area-inset-top, 0);
+            z-index: 1002;
+            ...
+        }
 
     .coordinates-inputs {
         flex-direction: column;
