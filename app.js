@@ -2353,7 +2353,15 @@ window.addEventListener("DOMContentLoaded", () => {
   generateAreaFilterCheckboxes("form");
 
   const field = document.getElementById("rvState");
-  field.value = field.value.trim().toUpperCase().slice(0, 2);
+  if (field) {
+    // Format existing value
+    field.value = field.value.trim().toUpperCase().slice(0, 2);
+
+    // Enforce format as user types
+    field.addEventListener("input", () => {
+      field.value = field.value.toUpperCase().slice(0, 2);
+    });
+  }
 
   ["rvName", "rvAddress", "rvCity"].forEach(id => {
     const field = document.getElementById(id);
