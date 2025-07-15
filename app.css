@@ -4,14 +4,12 @@
 html,
 body {
     box-sizing: border-box;
-    scroll-behavior: smooth;
-    overflow-x: hidden;
     margin: 0;
     padding: 0;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    font-family: Arial, sans-serif;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
 }
 
 *,
@@ -23,15 +21,13 @@ body {
 .app-container {
     max-width: 800px;
     width: 100%;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    height: 100%;
-     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     border-radius: 0;
     overflow: hidden;
-    overflow-x: hidden;
 }
 
 /* Specific styling for rvName input, ensuring it's always interactive */
