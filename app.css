@@ -597,6 +597,33 @@ main#appContent {
     justify-content: flex-start;
 }
 
+.city-state-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.city-state-row .field-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 140px;
+}
+
+.city-state-row label {
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.city-state-row input[type="text"] {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+}
+
 .coordinates-main-label {
     text-align: left;
     display: block;
