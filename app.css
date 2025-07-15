@@ -510,7 +510,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - REWRITTEN */
+/* Section 8: Settings View Specific Styling - REWRITTEN & ENHANCED FOR CHROME */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -520,7 +520,6 @@ main#appContent {
     font-size: 1.8em;
 }
 
-/* New: Styles for the information message at the top of the settings */
 .first-time-message {
     background-color: #e0f7fa;
     border-left: 5px solid #00bcd4;
@@ -537,16 +536,15 @@ main#appContent {
     color: #00796b;
 }
 
-/* General styling for each setting item (e.g., Google Maps API Key field) */
 .setting-item {
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     gap: 3px;
     align-items: flex-start;
-    /* Aligns content to the left */
     width: 100%;
     padding-left: 20px;
+    /* Keep general setting items indented if desired */
     padding-right: 20px;
 }
 
@@ -556,26 +554,21 @@ main#appContent {
     font-size: 1em;
     margin-bottom: 0;
     text-align: left;
-    /* Ensures the label text itself is left-aligned */
     width: 100%;
-    /* Ensures the label takes full width for text-align to be effective */
 }
 
-/* For field notes that might appear under labels (like for Google Maps API Key) */
 .field-note {
     font-size: 0.75em;
     color: #777;
     flex-shrink: 0;
     white-space: nowrap;
     margin-left: 5px;
-    /* Adjust as needed for spacing from label */
 }
 
 /* General input styling for text and number fields in Settings */
 .setting-item input[type="text"],
 .setting-item input[type="number"] {
     width: 100%;
-    /* Default to full width of parent .setting-item */
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -583,9 +576,7 @@ main#appContent {
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     height: auto;
-    /* Let padding and content dictate height */
     min-height: 36px;
-    /* Ensure consistent minimum height for all inputs */
 }
 
 .setting-item input[type="text"]:focus,
@@ -599,71 +590,67 @@ main#appContent {
 .setting-item.city-state-row {
     display: flex;
     flex-direction: row;
-    /* Keep City and State on the same line */
+    /* Ensure they are in a row */
     gap: 12px;
-    flex-wrap: wrap;
-    /* Allow wrapping on smaller screens */
+    flex-wrap: nowrap;
+    /* Prevent wrapping to a new line */
     align-items: flex-start;
-    /* Aligns the field-wrappers to the top */
     padding-left: 0px;
-    /* <--- CHANGED TO 0PX */
+    /* Moves them to the very left */
     padding-right: 20px;
     justify-content: flex-start;
-    /* Justifies content to the left */
-    width: 100%;
+    width: auto;
+    /* Allow the container to shrink to fit content if necessary, or use 100% and let gaps push */
 }
 
 .setting-item.city-state-row .field-wrapper {
     display: flex;
     flex-direction: column;
-    /* Stacks label and input vertically */
     align-items: flex-start;
-    /* Left aligns label and input within their wrapper */
+    /* Adding flex-shrink: 0 to prevent shrinking on smaller screens */
+    flex-shrink: 0;
 }
 
 .setting-item.city-state-row label {
     margin-bottom: 4px;
     font-weight: 500;
     text-align: left;
-    width: 100%;
-    /* Ensures the label takes full width for text-align to be effective */
+    width: auto;
+    /* Allow label width to be dictated by content, not force 100% */
 }
 
 /* Specific input width for Default City in settings */
 #defaultCity {
     width: 140px;
-    /* Specific width for city input */
     max-width: 140px;
-    /* Ensures it doesn't grow beyond this */
     padding: 8px 10px;
     font-size: 0.9em;
     border: 1px solid #ccc;
     border-radius: 8px;
-    /* Consistent border-radius */
     box-sizing: border-box;
     height: auto;
-    /* Overrides any previous fixed height */
     min-height: 36px;
-    /* Ensures consistent minimum height */
+    /* Adding flex-basis and flex-grow to better control sizing in flex container */
+    flex-basis: 140px;
+    flex-grow: 0;
 }
 
 /* Specific input width for Default State in settings */
 #defaultState {
     width: 52px;
-    /* Specific width for state input */
     max-width: 52px;
-    /* Ensures it doesn't grow beyond this */
     padding: 8px 10px;
     font-size: 0.9em;
     border: 1px solid #ccc;
     border-radius: 8px;
-    /* Consistent border-radius */
     box-sizing: border-box;
     height: auto;
-    /* Overrides any previous fixed height */
     min-height: 36px;
-    /* Ensures consistent minimum height */
+    /* Adding flex-basis and flex-grow to better control sizing in flex container */
+    flex-basis: 52px;
+    flex-grow: 0;
 }
+
 
 /* Coordinates Group Specific Styling (Settings View Lat/Long) */
 .setting-item.coordinates-group {
@@ -671,14 +658,13 @@ main#appContent {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: flex-end;
-    /* Aligns the inputs and button to their bottom for a consistent baseline */
     gap: 10px;
     margin-top: 5px;
     margin-bottom: 10px;
     padding-left: 20px;
+    /* Keep these fields indented if desired */
     padding-right: 20px;
     justify-content: flex-start;
-    /* Justifies content to the left */
 }
 
 .coordinates-main-label {
@@ -691,23 +677,19 @@ main#appContent {
     font-size: 1em;
     padding-left: 0;
     width: 100%;
-    /* Ensures this label takes full width */
 }
 
 .coordinates-inputs {
     display: flex;
     flex-direction: column;
-    /* Stacks Latitude and Longitude labels/inputs */
     gap: 5px;
 }
 
 .form-group-lat-long {
     display: flex;
     flex-direction: column;
-    /* Stacks individual Lat/Long label and input */
     gap: 3px;
     align-items: flex-start;
-    /* Left aligns label and input within their group */
 }
 
 .form-group-lat-long label {
@@ -716,21 +698,15 @@ main#appContent {
     font-size: 1em;
     margin-bottom: 0;
     text-align: left;
-    /* Ensures the label text itself is left-aligned */
     width: 100%;
-    /* Ensures the label takes full width for text-align to be effective */
 }
 
-/* Specific adjustment for Longitude label if needed for spacing, but often not necessary with column flex */
 label[for="defaultLongitude"] {
     margin-top: 0px;
-    /* Adjusted to remove previous margin-top */
 }
 
-/* Styling for Latitude and Longitude input fields */
 .form-group-lat-long input[type="number"] {
     width: 120px;
-    /* Specific width for lat/long inputs */
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -738,9 +714,7 @@ label[for="defaultLongitude"] {
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     height: auto;
-    /* Let padding and content dictate height */
     min-height: 36px;
-    /* Ensures consistent minimum height */
 }
 
 .form-group-lat-long input[type="number"]:focus {
@@ -749,13 +723,10 @@ label[for="defaultLongitude"] {
     outline: none;
 }
 
-/* No specific margin-top needed if min-height is consistent */
 #defaultLongitude {
     margin-top: 0px;
 }
 
-
-/* Settings actions (Save/Cancel buttons - were removed from HTML, but keeping styles if they return) */
 .settings-actions {
     display: flex;
     flex-direction: row;
