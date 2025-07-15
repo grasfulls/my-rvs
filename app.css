@@ -605,7 +605,8 @@ main#appContent {
     /* Allow wrapping on smaller screens */
     align-items: flex-start;
     /* Aligns the field-wrappers to the top */
-    padding-left: 20px;
+    padding-left: 0px;
+    /* <--- CHANGED TO 0PX */
     padding-right: 20px;
     justify-content: flex-start;
     /* Justifies content to the left */
