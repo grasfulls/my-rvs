@@ -619,20 +619,22 @@ main#appContent {
 #defaultCity {
     flex: 0 1 140px;
     max-width: 140px;
-    padding: 8px 10px;
+    height: 32px;
+    padding: 4px 8px;
+    font-size: 0.9em;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 0.9em;
     box-sizing: border-box;
 }
 
 #defaultState {
     width: 52px;
     max-width: 52px;
-    padding: 8px 10px;
+    height: 32px;
+    padding: 4px 6px;
+    font-size: 0.9em;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 0.9em;
     box-sizing: border-box;
 }
 
