@@ -520,13 +520,15 @@ main#appContent {
     font-size: 1.8em;
 }
 
-.setting-item.city-state-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    padding-left: 20px;
-    padding-right: 20px;
+.setting-item.city-state-row #defaultCity {
+    width: 140px;
+    max-width: 140px;
+    height: 36px;
+    padding: 8px 10px;
+    font-size: 0.9em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
 }
 
 .setting-item.city-state-row .field-wrapper {
@@ -636,6 +638,16 @@ main#appContent {
     justify-content: flex-start;
 }
 
+.setting-item.city-state-row #defaultCity {
+    width: 140px;
+    padding: 8px 10px;
+    font-size: 0.9em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    /* match coordinate fields */
+    box-sizing: border-box;
+}
+
 .city-state-row {
     display: flex;
     gap: 12px;
@@ -653,17 +665,6 @@ main#appContent {
 .city-state-row label {
     margin-bottom: 4px;
     font-weight: 500;
-}
-
-#defaultCity {
-    flex: 0 1 140px;
-    max-width: 140px;
-    padding: 8px 10px;
-    font-size: 0.9em;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    height: 36px;
 }
 
 #defaultState {
