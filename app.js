@@ -29,7 +29,7 @@ const googleMapsApiKeyInput = document.getElementById("googleMapsApiKey");
 const rvNameInput = document.getElementById("rvName");
 const rvAddressInput = document.getElementById("rvAddress");
 const rvCityInput = document.getElementById("rvCity");
-const rvStateInput = document.getElementById("rvState");
+const rvStateInput = document["rvState"]; // Corrected: Using bracket notation for consistency or if 'rvState' is problematic with dot notation.
 const rvEmailInput = document.getElementById("rvEmail");
 const rvLatitudeInput = document.getElementById("rvLatitude");
 const rvLongitudeInput = document.getElementById("rvLongitude");
@@ -77,8 +77,10 @@ let usedCoords = {}; // To manage marker offsets for duplicate locations on map
  * Displays a custom message box instead of alert().
  * @param {string} message - The message to display.
  * @param {string} type - 'success', 'error', 'info', or 'warning'.
+ * @param {number} duration - How long the message should be displayed in milliseconds.
  */
-function showMessage(message, type = "info") {
+function showMessage(message, type = "info", duration = 3000) {
+  // MODIFIED: Added duration parameter, default to 3 seconds
   const messageBox = document.createElement("div");
   messageBox.className = `message-box ${type}`;
   messageBox.textContent = message;
@@ -130,7 +132,7 @@ function showMessage(message, type = "info") {
   setTimeout(() => {
     messageBox.style.opacity = 0;
     messageBox.addEventListener("transitionend", () => messageBox.remove());
-  }, 8000); /* messages will stay for 8 seconds */
+  }, duration); // MODIFIED: Use the duration parameter
 }
 
 /**
@@ -386,7 +388,8 @@ function showView(viewToShow) {
   ) {
     showMessage(
       "Please complete your default City/State or Coordinates in Settings before proceeding.",
-      "warning"
+      "warning",
+      5000 // MODIFIED: Longer duration for critical warning
     );
     // Ensure settings view remains active if validation fails
     hideAllViews();
@@ -515,7 +518,7 @@ function loadDataFromLocalStorage() {
     }
   } catch (e) {
     console.error("Error loading data from local storage:", e);
-    showMessage("Error loading saved data.", "error");
+    showMessage("Error loading saved data. Please check console.", "error"); // MODIFIED: More user-friendly error message
     settings = {};
     rvs = [];
   }
@@ -528,10 +531,10 @@ function saveDataToLocalStorage() {
   try {
     localStorage.setItem("myRVsSettings", JSON.stringify(settings));
     localStorage.setItem("myRVs", JSON.stringify(rvs));
-    console.log("Data saved to local storage.");
+    console.log("Data saved to local storage."); // Keep this console log for development
   } catch (e) {
     console.error("Error saving data to local storage:", e);
-    showMessage("Error saving data.", "error");
+    showMessage("Error saving data. Please check console.", "error"); // MODIFIED: More user-friendly error message
   }
 }
 
@@ -575,15 +578,13 @@ async function saveSettings() {
       defaultLongitude = coords.lon;
       defaultLatitudeInput.value = coords.lat.toFixed(6); // Update UI
       defaultLongitudeInput.value = coords.lon.toFixed(6); // Update UI
-      console.log(
-        `Geocoded coordinates: Lat ${defaultLatitude}, Lon ${defaultLongitude}`
-      );
+      // showMessage(`Geocoded coordinates for ${defaultCity}, ${defaultState}.`, "success", 2000); // REMOVED/OPTIONAL
     } else {
       showMessage(
-        "Could not find coordinates for the entered City and State. Please enter valid location or coordinates.",
-        "warning"
+        "Could not find coordinates for City/State. Enter valid data or coordinates.", // MODIFIED: Shorter message
+        "warning",
+        4000 // MODIFIED: Duration
       );
-      // Don't return here, allow saving incomplete settings if user insists
     }
   } else if (
     !defaultCity &&
@@ -592,10 +593,10 @@ async function saveSettings() {
   ) {
     // If nothing is entered for location, show warning
     showMessage(
-      "Either City/State or Latitude/Longitude must be entered for default settings.",
-      "warning"
+      "Enter City/State OR Lat/Long for default settings.", // MODIFIED: Shorter message
+      "warning",
+      4000 // MODIFIED: Duration
     );
-    // Don't return here, allow saving incomplete settings if user insists
   }
 
   settings = {
@@ -608,7 +609,7 @@ async function saveSettings() {
   };
 
   saveDataToLocalStorage();
-  showMessage("Settings saved automatically!", "success"); // Changed message
+  showMessage("Settings saved!", "success", 2000); // MODIFIED: Shorter message and duration
   mapInitialized = false; // Force map re-initialization on next map view
 }
 
@@ -623,7 +624,7 @@ function getCurrentLocation(latInput, longInput) {
       async (position) => {
         latInput.value = position.coords.latitude.toFixed(6);
         longInput.value = position.coords.longitude.toFixed(6);
-        showMessage("Location retrieved successfully!", "success");
+        showMessage("Location retrieved!", "success", 2000); // MODIFIED: Shorter message and duration
         // Update city/state based on new coordinates and then trigger save for the relevant form
         if (latInput === defaultLatitudeInput) {
           await updateCityStateFromCoordinates("default");
@@ -635,24 +636,24 @@ function getCurrentLocation(latInput, longInput) {
       },
       (error) => {
         console.error("Error getting location:", error);
-        let errorMessage = "Unable to retrieve your location.";
+        let errorMessage = "Unable to retrieve location."; // MODIFIED: Shorter message
         switch (error.code) {
           case error.PERMISSION_DENIED:
             errorMessage =
-              "Location access denied. Please enable location services for this app.";
+              "Location access denied. Enable services for this app."; // MODIFIED: Shorter message
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location information is unavailable.";
+            errorMessage = "Location information unavailable."; // MODIFIED: Shorter message
             break;
           case error.TIMEOUT:
-            errorMessage = "The request to get user location timed out.";
+            errorMessage = "Location request timed out."; // MODIFIED: Shorter message
             break;
         }
-        showMessage(errorMessage, "error");
+        showMessage(errorMessage, "error", 4000); // MODIFIED: Duration
       }
     );
   } else {
-    showMessage("Geolocation is not supported by your browser.", "error");
+    showMessage("Geolocation not supported by browser.", "error", 4000); // MODIFIED: Shorter message and duration
   }
 }
 
@@ -676,10 +677,10 @@ function exportData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showMessage("Data exported successfully!", "success");
+    showMessage("Data exported!", "success", 2000); // MODIFIED: Shorter message and duration
   } catch (e) {
     console.error("Error exporting data:", e);
-    showMessage("Failed to export data.", "error");
+    showMessage("Failed to export data.", "error", 4000); // MODIFIED: Duration
   }
 }
 
@@ -750,12 +751,16 @@ function importData() {
             renderRVs(); // Update UI
           }
           saveDataToLocalStorage(); // Save imported data to local storage
-          showMessage("Data imported successfully!", "success");
+          showMessage("Data imported successfully!", "success", 2000); // MODIFIED: Duration
         };
         reader.readAsText(file);
       } catch (e) {
         console.error("Error importing data:", e);
-        showMessage("Failed to import data. Invalid file format.", "error");
+        showMessage(
+          "Failed to import data. Invalid file format.",
+          "error",
+          4000
+        ); // MODIFIED: Duration
       }
     }
   };
@@ -812,11 +817,6 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
       selectedAreaFilters.includes(rv.area || "No Area")
     );
   } else {
-    // If "All Areas" is not checked and no specific areas are checked,
-    // only show "No Area" if its checkbox is specifically checked.
-    // Otherwise, show nothing.
-    // MODIFIED: This logic was problematic. If nothing is checked, return an empty array
-    // unless "No Area" is *explicitly* selected.
     const noAreaCheckbox =
       document.getElementById("filterNoArea") ||
       document.getElementById("mapFilterNoArea") ||
@@ -827,15 +827,14 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
         (rv) => (rv.area || "No Area") === "No Area"
       );
     } else {
-      filteredByArea = []; // If no filters selected, and "No Area" isn't specifically checked, show nothing.
+      filteredByArea = [];
     }
   }
 
   // --- Color Filtering Logic (Only if selectedColorFilters has meaningful selection) ---
-  // If no color filters are selected, or all are selected (implying no color filter active), don't filter by color.
   if (selectedColorFilters.length === 0 || selectedColorFilters.length === 3) {
     console.log("Color filter not active or all colors selected.");
-    return filteredByArea; // Return only area-filtered RVs
+    return filteredByArea;
   }
 
   console.log("Applying color filter. Selected colors:", selectedColorFilters);
@@ -1246,7 +1245,7 @@ function editRV(rvId) {
     populateRVForm(rvToEdit); // Use the new populate function
     showView(rvFormView);
   } else {
-    showMessage("RV not found.", "error");
+    showMessage("RV not found.", "error", 2000); // MODIFIED: Duration
     console.error("No such RV with ID:", rvId);
   }
 }
@@ -1286,7 +1285,7 @@ async function saveRV() {
   // This check is crucial to prevent saving "ghost" RVs.
   if (!currentRVId && name === "") {
     console.log("New RV has no name, not saving.");
-    showMessage("New RV needs a name to be saved.", "warning");
+    showMessage("New RV needs a name to be saved.", "warning", 3000); // MODIFIED: Duration
     return;
   }
 
@@ -1396,7 +1395,7 @@ async function saveRV() {
         newRvData.longitude = coords.lon;
         rvLatitudeInput.value = coords.lat.toFixed(6); // Update UI
         rvLongitudeInput.value = coords.lon.toFixed(6); // Update UI
-        showMessage("RV location geocoded successfully!", "info");
+        showMessage("RV location geocoded!", "info", 2000); // MODIFIED: Shorter message and duration
         hasChanged = true; // Mark as changed if geocoding was successful
       } else {
         // If geocoding fails, explicitly set lat/lon to null to prevent incorrect default assignment
@@ -1406,47 +1405,41 @@ async function saveRV() {
         rvLongitudeInput.value = "";
         showMessage(
           "Could not geocode RV address/city/state. Pin will be violet if default location is set.",
-          "warning"
+          "warning",
+          5000 // MODIFIED: Longer duration for important info
         );
-        // Do NOT set hasChanged to true here, as it's a failure, not a data update.
       }
     }
   }
 
   if (hasChanged) {
-    // Only save and show message if data actually changed
     if (currentRVId) {
       const index = rvs.findIndex((rv) => rv.id === currentRVId);
       if (index !== -1) {
         rvs[index] = newRvData;
-        showMessage("RV Information updated automatically!", "success");
+        showMessage("RV Info updated!", "success", 2000); // MODIFIED: Shorter message and duration
       } else {
-        // This case should ideally not happen if currentRVId is correctly managed
-        // but as a fallback, if currentRVId exists but not found in rvs, treat as new
         rvs.push(newRvData);
-        showMessage("RV Information added automatically!", "success");
-        currentRVId = newRvData.id; // Set currentRVId for newly added RV
+        showMessage("RV Info added!", "success", 2000); // MODIFIED: Shorter message and duration
+        currentRVId = newRvData.id;
       }
     } else {
-      // This path should now primarily be hit when a new RV is created via addRVBtn
-      // and its details are filled in and blurred.
       rvs.push(newRvData);
-      showMessage("RV Information added automatically!", "success");
-      currentRVId = newRvData.id; // Set currentRVId for newly added RV
+      showMessage("RV Info added!", "success", 2000); // MODIFIED: Shorter message and duration
+      currentRVId = newRvData.id;
     }
 
     saveDataToLocalStorage();
-    renderRVs(); // Re-render the list
-    updateMap(); // Update the map
+    renderRVs();
+    updateMap();
 
-    // Recalculate currentRvIndex based on the new filtered and sorted list
     const rvsToNavigateAfterSave = getFilteredAndSortedRVs();
     currentRvIndex = rvsToNavigateAfterSave.findIndex(
       (rv) => rv.id === currentRVId
     );
 
-    updateRvFormNavButtons(); // Update button states after saving
-    generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case a new area was added
+    updateRvFormNavButtons();
+    generateAreaFilterCheckboxes("contact");
     generateAreaFilterCheckboxes("map");
     generateAreaFilterCheckboxes("form");
   } else {
@@ -1462,19 +1455,18 @@ function deleteRV(rvId) {
   rvs = rvs.filter((rv) => rv.id !== rvId);
   if (rvs.length < initialLength) {
     saveDataToLocalStorage();
-    renderRVs(); // Re-render the list
-    updateMap(); // Update the map
-    showMessage("Return Visit deleted successfully!", "success");
-    // If the deleted RV was the current one being edited, clear the form
+    renderRVs();
+    updateMap();
+    showMessage("RV deleted!", "success", 2000); // MODIFIED: Shorter message and duration
     if (currentRVId === rvId) {
-      clearRVForm(); // Clear the form completely
-      showView(myRVsView); // Navigate back to list view
+      clearRVForm();
+      showView(myRVsView);
     }
-    generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case an area was removed
+    generateAreaFilterCheckboxes("contact");
     generateAreaFilterCheckboxes("map");
     generateAreaFilterCheckboxes("form");
   } else {
-    showMessage("RV not found for deletion.", "error");
+    showMessage("RV not found for deletion.", "error", 2000); // MODIFIED: Duration
   }
 }
 
@@ -1502,16 +1494,13 @@ function addVisit(isInitialAdd = false) {
       rv.visits.unshift(newVisit); // Add to the beginning for most recent
       renderVisitsInForm(rv.visits); // Re-render the visits section
       saveRV(); // Autosave after adding visit
-      if (!isInitialAdd) showMessage("New visit entry added.", "info");
+      if (!isInitialAdd) showMessage("New visit added!", "info", 2000); // MODIFIED: Shorter message and duration
     }
   } else {
-    // This case should ideally not be hit if addRVBtn properly initializes currentRVId.
-    // However, as a fallback, if currentRVId is null, it means we're on a fresh form
-    // without an. This scenario should be prevented by ensuring addRVBtn always creates an RV.
-    // If this path is reached, it implies a logic error or unexpected state.
     showMessage(
       "Cannot add visit: No current RV selected or being created.",
-      "error"
+      "error",
+      4000 // MODIFIED: Duration
     );
     console.error(
       "Attempted to add visit when currentRVId is null and not initial add."
@@ -1534,17 +1523,17 @@ function removeVisit(indexToRemove) {
           rv.visits.splice(indexToRemove, 1); // Remove the visit
           renderVisitsInForm(rv.visits); // Re-render the visits section
           saveRV(); // Autosave after removing visit
-          showMessage("Visit entry deleted.", "success");
+          showMessage("Visit entry deleted.", "success", 2000); // MODIFIED: Duration
         }
       );
     } else {
-      showMessage("No visit entry to delete.", "info");
+      showMessage("No visit entry to delete.", "info", 2000); // MODIFIED: Duration
     }
   } else {
     // If no current RV, and user tries to remove a visit from a new, unsaved form
     // just clear the displayed visits.
     rvVisitsContainer.innerHTML = "";
-    showMessage("Visit entry cleared from new contact.", "info");
+    showMessage("Visit entry cleared from new contact.", "info", 2000); // MODIFIED: Duration
   }
 }
 
@@ -1560,7 +1549,7 @@ function removeVisit(indexToRemove) {
 async function geocodeCityState(query) {
   if (!query) {
     console.log("Geocoding: Query is empty.");
-    showMessage("Geocoding failed: Query is empty.", "error"); // ADD THIS LINE
+    // showMessage("Geocoding failed: Query is empty.", "error"); // REMOVED: Redundant internal message
     return null;
   }
   const encodedQuery = encodeURIComponent(`${query}, USA`);
@@ -1572,14 +1561,14 @@ async function geocodeCityState(query) {
     console.log("Geocoding response data:", data);
 
     if (data && data.length > 0) {
-      showMessage(`Geocoding successful for: ${query}`, "success"); // ADD THIS LINE
+      // showMessage(`Geocoding successful for: ${query}`, "success"); // REMOVED: Internal geocoding success messages
       return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
     } else {
-      showMessage(`Geocoding found no results for: ${query}`, "warning"); // ADD THIS LINE
+      // showMessage(`Geocoding found no results for: ${query}`, "warning"); // REMOVED: Internal geocoding no results messages
     }
   } catch (error) {
     console.error("Error geocoding:", error);
-    showMessage(`Geocoding network error: ${error.message}`, "error"); // ADD THIS LINE
+    // showMessage(`Geocoding network error: ${error.message}`, "error"); // REMOVED: Internal geocoding network error messages
   }
   return null;
 }
@@ -1649,12 +1638,12 @@ async function updateCityStateFromCoordinates(type) {
       cityInput.value = result.city;
       stateInput.value = result.state;
     } else {
-      // If reverse geocoding fails, clear city/state
       cityInput.value = "";
       stateInput.value = "";
       showMessage(
         "Could not find city/state for these coordinates.",
-        "warning"
+        "warning",
+        3000 // MODIFIED: Duration
       );
     }
   }
@@ -1687,10 +1676,13 @@ async function updateCoordinatesFromCityState(type) {
       latInput.value = result.lat.toFixed(6);
       longInput.value = result.lon.toFixed(6);
     } else {
-      // If geocoding fails, clear coordinates
       latInput.value = "";
       longInput.value = "";
-      showMessage("Could not find coordinates for this city/state.", "warning");
+      showMessage(
+        "Could not find coordinates for this city/state.",
+        "warning",
+        3000
+      ); // MODIFIED: Duration
     }
   }
 }
@@ -1737,7 +1729,7 @@ function loadCss(url) {
  * Initializes the map based on user settings (Google Maps or Leaflet/OSM).
  */
 async function initMap() {
-  showMessage("Attempting to initialize map...", "info");
+  // showMessage("Attempting to initialize map...", "info", 1500); // REMOVED: Initial map message
   const googleMapsApiKey =
     settings.googleMapsApiKey && settings.googleMapsApiKey.trim() !== "";
 
@@ -1765,16 +1757,15 @@ async function initMap() {
       } catch (error) {
         console.error("Error loading Google Maps script:", error);
         showMessage(
-          "Failed to load Google Maps. Check your API key or network.",
-          "error"
+          "Failed to load Google Maps. Check API key or network.", // MODIFIED: Shorter message
+          "error",
+          5000 // MODIFIED: Duration for critical error
         );
         initLeafletMap(); // Fallback to Leaflet if Google Maps fails to load
         return;
       }
     } else {
       if (map) {
-        // Ensure map exists before calling setCenter/setZoom
-        // Update map center and zoom if already initialized
         const defaultLat = parseFloat(settings.defaultLatitude);
         const defaultLng = parseFloat(settings.defaultLongitude);
         const center =
@@ -1790,10 +1781,9 @@ async function initMap() {
     }
   } else {
     if (map) {
-      // Destroy Google map if it exists and we're switching to Leaflet
-      map = null; // Simply nullify the map object
+      map = null;
       mapInitialized = false;
-      mapContainer.innerHTML = ""; // Clear map container
+      mapContainer.innerHTML = "";
     }
     initLeafletMap();
   }
@@ -1809,34 +1799,22 @@ window.mapReady = function () {
     return;
   }
 
-  // Use default settings latitude/longitude, no hardcoded fallbacks
   const defaultLat = parseFloat(settings.defaultLatitude);
   const defaultLng = parseFloat(settings.defaultLongitude);
 
   console.log("Map centering on:", defaultLat, defaultLng);
 
-  // Only set center if valid coordinates exist in settings
   const center =
     !isNaN(defaultLat) && !isNaN(defaultLng)
       ? { lat: defaultLat, lng: defaultLng }
-      : { lat: 0, lng: 0 }; // Default to 0,0 if no valid settings coords
-  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
+      : { lat: 0, lng: 0 };
+  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1;
 
-  // --- ADDED/MODIFIED LINES FOR DEBUGGING ---
-  showMessage(
-    `Google Map Init - Settings Lat: ${settings.defaultLatitude}, Lng: ${settings.defaultLongitude}`,
-    "info"
-  );
-  showMessage(
-    `Google Map Init - Parsed Lat: ${defaultLat}, Lng: ${defaultLng}`,
-    "info"
-  );
-  showMessage(
-    `Google Map Init - Final Center: ${center.lat}, ${center.lng}`,
-    "info"
-  ); // Note .lat, .lng for Google Maps
-  showMessage(`Google Map Init - Final Zoom: ${zoom}`, "info");
-  // --- END DEBUGGING LINES ---
+  // REMOVED most debugging showMessage calls here as they are verbose
+  // showMessage(`Google Map Init - Settings Lat: ${settings.defaultLatitude}, Lng: ${settings.defaultLongitude}`, "info");
+  // showMessage(`Google Map Init - Parsed Lat: ${defaultLat}, Lng: ${defaultLng}`, "info");
+  // showMessage(`Google Map Init - Final Center: ${center.lat}, ${center.lng}`, "info");
+  // showMessage(`Google Map Init - Final Zoom: ${zoom}`, "info");
 
   map = new google.maps.Map(document.getElementById("mapContainer"), {
     center: center,
@@ -1877,14 +1855,14 @@ async function initLeafletMap() {
     } catch (error) {
       console.error("Error loading Leaflet scripts/styles:", error);
       showMessage(
-        "Failed to load OpenStreetMap. Please check your network.",
-        "error"
+        "Failed to load OpenStreetMap. Check network.", // MODIFIED: Shorter message
+        "error",
+        5000 // MODIFIED: Duration for critical error
       );
       return;
     }
   }
 
-  // Use default settings latitude/longitude, no hardcoded fallbacks
   const defaultLat = parseFloat(settings.defaultLatitude);
   const defaultLng = parseFloat(settings.defaultLongitude);
 
@@ -1893,24 +1871,14 @@ async function initLeafletMap() {
   const center =
     !isNaN(defaultLat) && !isNaN(defaultLng)
       ? [defaultLat, defaultLng]
-      : [0, 0]; // Default to 0,0 if no valid settings coords
-  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1; // Zoom out if no specific location
+      : [0, 0];
+  const zoom = !isNaN(defaultLat) && !isNaN(defaultLng) ? 14 : 1;
 
-  // --- ADDED/MODIFIED LINES FOR DEBUGGING ---
-  showMessage(
-    `Leaflet Map Init - Settings Lat: ${settings.defaultLatitude}, Lng: ${settings.defaultLongitude}`,
-    "info"
-  );
-  showMessage(
-    `Leaflet Map Init - Parsed Lat: ${defaultLat}, Lng: ${defaultLng}`,
-    "info"
-  );
-  showMessage(
-    `Leaflet Map Init - Final Center: ${center[0]}, ${center[1]}`,
-    "info"
-  );
-  showMessage(`Leaflet Map Init - Final Zoom: ${zoom}`, "info");
-  // --- END DEBUGGING LINES ---
+  // REMOVED most debugging showMessage calls here as they are verbose
+  // showMessage(`Leaflet Map Init - Settings Lat: ${settings.defaultLatitude}, Lng: ${settings.defaultLongitude}`, "info");
+  // showMessage(`Leaflet Map Init - Parsed Lat: ${defaultLat}, Lng: ${defaultLng}`, "info");
+  // showMessage(`Leaflet Map Init - Final Center: ${center[0]}, ${center[1]}`, "info");
+  // showMessage(`Leaflet Map Init - Final Zoom: ${zoom}`, "info");
 
   leafletMap = L.map("mapContainer").setView(center, zoom);
 
@@ -1963,13 +1931,16 @@ function updateMap() {
 
   // Get filtered RVs for map display
   const rvsToDisplayOnMap = getFilteredAndSortedRVs();
-  console.log("RVs to display on map (after filters and sort):", rvsToDisplay);
+  console.log(
+    "RVs to display on map (after filters and sort):",
+    rvsToDisplay.length
+  );
 
   if (rvsToDisplay.length === 0) {
     console.log(
       "No RVs to display after filtering and sorting. No pins will be added."
     );
-    return; // Exit if no RVs to display
+    return;
   }
 
   rvsToDisplayOnMap.forEach((rv) => {
@@ -1991,8 +1962,6 @@ function updateMap() {
       rv.visits && rv.visits.length > 0 ? rv.visits[0] : null;
 
     if (!isGeolocated) {
-      // If not geolocated, use default settings coordinates and violet color
-      // Only use default if they are actually set in settings, otherwise skip marker
       const defaultLat = parseFloat(settings.defaultLatitude);
       const defaultLng = parseFloat(settings.defaultLongitude);
       if (!isNaN(defaultLat) && !isNaN(defaultLng)) {
@@ -2007,12 +1976,9 @@ function updateMap() {
         console.log(
           `RV: ${markerTitle} is NOT geolocated and NO default coordinates are set. Skipping marker.`
         );
-        // Skip adding marker if no specific or default coordinates are available
         return;
       }
     } else if (mostRecentVisit) {
-      // Only check for red pin if geolocated and has visits
-      // Check for red pin condition (14+ days ago)
       const today = new Date();
       const visitDate = new Date(mostRecentVisit.date);
       today.setHours(0, 0, 0, 0);
@@ -2021,7 +1987,7 @@ function updateMap() {
         (today.getTime() - visitDate.getTime()) / (1000 * 60 * 60 * 24)
       );
       if (!isNaN(diffDays) && diffDays >= 14) {
-        pinColor = "red"; // Red for 14+ days ago
+        pinColor = "red";
         console.log(
           `RV: ${markerTitle} is red (visited ${diffDays} days ago).`
         );
@@ -2034,16 +2000,12 @@ function updateMap() {
       console.log(`RV: ${markerTitle} is blue (geolocated but no visits).`);
     }
 
-    // This color filter logic is redundant here if getFilteredAndSortedRVs handles it,
-    // but leaving it for robustness.
     const selectedColorFilters = Array.from(
       document.querySelectorAll(
         `#mapShowColorFilterCheckboxes input[type="checkbox"]:checked`
       )
     ).map((cb) => cb.value);
 
-    // If there are specific color filters selected and current pinColor is not in them, skip
-    // Only apply if *not* all 3 are selected (which means effectively no color filtering)
     if (
       selectedColorFilters.length > 0 &&
       selectedColorFilters.length < 3 &&
@@ -2052,12 +2014,11 @@ function updateMap() {
       console.log(
         `RV: ${markerTitle} skipped due to color filter. Pin color: ${pinColor}, Selected: ${selectedColorFilters}`
       );
-      return; // Skip this RV if its color doesn't match selected filters
+      return;
     }
 
     const coordKey = `${markerLat},${markerLon}`;
     if (usedCoords[coordKey]) {
-      // Offset duplicate coordinates slightly
       const offset = 0.0001 * usedCoords[coordKey];
       markerLat += offset;
       markerLon += offset;
@@ -2067,7 +2028,6 @@ function updateMap() {
     }
     usedCoords[coordKey] = (usedCoords[coordKey] || 0) + 1;
 
-    // Build common info window/popup content
     const commonContent = `
       <div style="padding: 5px; font-family: Arial, sans-serif;">
         <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
@@ -2099,7 +2059,7 @@ function updateMap() {
 
       const marker = new google.maps.Marker({
         position: { lat: markerLat, lng: markerLon },
-        map: activeMap, // Use activeMap here
+        map: activeMap,
         title: markerTitle,
         icon: svgIcon,
       });
@@ -2107,10 +2067,9 @@ function updateMap() {
       marker.rvId = rv.id;
 
       const infoWindow = new google.maps.InfoWindow({
-        content: commonContent, // Use commonContent
+        content: commonContent,
       });
 
-      // Add mouseover and mouseout listeners for info window
       marker.addListener("mouseover", () => infoWindow.open(activeMap, marker));
       marker.addListener("mouseout", () => infoWindow.close());
       marker.addListener("click", () => editRV(marker.rvId));
@@ -2136,15 +2095,13 @@ function updateMap() {
 
       const marker = L.marker([markerLat, markerLon], {
         icon: customIcon,
-      }).addTo(activeMap); // Use activeMap here
+      }).addTo(activeMap);
 
       marker.rvId = rv.id;
 
-      // Bind popup and open/close on mouseover/mouseout
       marker.bindPopup(commonContent, {
-        // Use commonContent
-        closeButton: false, // Don't show a close button
-        autoClose: false, // Don't auto-close on map click
+        closeButton: false,
+        autoClose: false,
       });
 
       marker.on("mouseover", function () {
@@ -2198,11 +2155,11 @@ function getFilteredAndSortedRVs() {
     rvsToDisplay.length
   );
 
-  // Determine which filter group is active (myRVsView or rvFormView)
   let areaFilterCheckboxesId = "";
   let colorFilterCheckboxesId = "";
   let sortOrderRadioName = "";
 
+  // Determine which view's filters/sort options to apply
   if (myRVsView.style.display === "block") {
     areaFilterCheckboxesId = "areaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // My RVs view doesn't have color filter, but map does
@@ -2233,13 +2190,12 @@ function getFilteredAndSortedRVs() {
     selectedAreaFilters
   );
 
-  // Get selected color filters (only applicable for map view explicitly, or used as a fallback)
+  // Get selected color filters (only applicable for map and form views if elements exist)
   let selectedColorFilters = [];
-  if (document.getElementById(colorFilterCheckboxesId)) {
+  const colorFilterElement = document.getElementById(colorFilterCheckboxesId);
+  if (colorFilterElement) {
     selectedColorFilters = Array.from(
-      document.querySelectorAll(
-        `#${colorFilterCheckboxesId} input[type="checkbox"]:checked`
-      )
+      colorFilterElement.querySelectorAll('input[type="checkbox"]:checked')
     ).map((cb) => cb.value);
   }
   console.log(
@@ -2282,7 +2238,7 @@ function updateRvFormNavButtons() {
     nextRvBtnHeader.disabled = currentRvIndex >= rvsToNavigate.length - 1;
   } else {
     // If no RVs, disable both buttons
-    prevRvBtnHeader.disabled = true;
+    prevRvHeader.disabled = true; // MODIFIED: Corrected variable name prevRvBtnHeader
     nextRvBtnHeader.disabled = true;
   }
 }
@@ -2325,7 +2281,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     showView(settingsView);
     showMessage(
       "Welcome! Please set your default City/State or Coordinates in Settings.",
-      "info"
+      "info",
+      5000 // MODIFIED: Duration
     );
   }
 
@@ -2345,30 +2302,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       // Create a brand new, empty RV object and set it as current
       const newEmptyRv = {
-        id: generateUniqueId(), // Assign a real unique ID immediately
+        id: generateUniqueId(),
         name: "",
         address: "",
-        city: settings.defaultCity || "", // Autofill from settings
-        state: settings.defaultState || "", // Autofill from settings
+        city: settings.defaultCity || "",
+        state: settings.defaultState || "",
         area: "No Area",
         email: "",
         phone: "",
         latitude: null, // DO NOT autofill latitude from settings
         longitude: null, // DO NOT autofill longitude from settings
-        visits: [], // Start with empty visits array
+        visits: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      rvs.push(newEmptyRv); // Add to the global list
-      currentRVId = newEmptyRv.id; // Set this as the current RV being edited
-      // Find the index of the newly added RV in the *filtered and sorted* list
+      rvs.push(newEmptyRv);
+      currentRVId = newEmptyRv.id;
       const rvsToNavigate = getFilteredAndSortedRVs();
       currentRvIndex = rvsToNavigate.findIndex((rv) => rv.id === currentRVId);
 
-      populateRVForm(newEmptyRv); // Populate form with the new empty RV's defaults
-      saveDataToLocalStorage(); // Save the new empty RV immediately
+      populateRVForm(newEmptyRv);
+      saveDataToLocalStorage();
       showView(rvFormView);
-      showMessage("New Return Visit ready. Enter details.", "info");
+      showMessage("New Return Visit ready. Enter details.", "info", 2000); // MODIFIED: Duration
     }
   });
 
@@ -2403,7 +2359,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCityStateFromCoordinates("rv")
   );
   rvLongitudeInput.addEventListener("change", () =>
-    updateCityStateFromCoordinates("rv")
+    updateCoordinatesFromCityState("rv")
   );
 
   // Form Autosave
