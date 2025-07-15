@@ -20,7 +20,7 @@ const defaultCityInput = document.getElementById("defaultCity");
 const defaultStateInput = document.getElementById("defaultState");
 const defaultLatitudeInput = document.getElementById("defaultLatitude");
 const defaultLongitudeInput = document.getElementById("defaultLongitude");
-const useCurrentLocationBtn = document.getElementById("useCurrentLocationBtn");
+// Removed useCurrentLocationBtn as it's no longer in HTML for settings
 const exportDataBtn = document.getElementById("exportDataBtn");
 const importDataBtn = document.getElementById("importDataBtn");
 const googleMapsApiKeyInput = document.getElementById("googleMapsApiKey");
@@ -69,6 +69,7 @@ const nextRvBtnHeader = document.getElementById("nextRvBtnHeader");
 let currentRVId = null; // To store the ID of the RV being edited
 let currentRvIndex = -1; // To store the index of the RV being edited in the filtered list
 let mapInitialized = false; // Flag to prevent multiple map initializations
+let usedCoords = {}; // To manage marker offsets for duplicate locations on map
 
 // --- Utility Functions ---
 
@@ -266,7 +267,6 @@ function getFormattedDay(dateString) {
   if (isNaN(date.getTime())) return ""; // Invalid date
   return date.toLocaleDateString("en-US", { weekday: "short" });
 }
-
 /**
  * Formats a phone number string to (XXX) XXX-XXXX.
  * @param {string} phoneNumberString - The raw phone number string.
@@ -803,6 +803,8 @@ function sortRVs(rvsArray, sortOrder) {
  */
 function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
   let filteredByArea = [];
+
+  // --- Area Filtering Logic ---
   if (selectedAreaFilters.includes("all")) {
     filteredByArea = rvsArray;
   } else if (selectedAreaFilters.length > 0) {
@@ -813,26 +815,30 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
     // If "All Areas" is not checked and no specific areas are checked,
     // only show "No Area" if its checkbox is specifically checked.
     // Otherwise, show nothing.
+    // MODIFIED: This logic was problematic. If nothing is checked, return an empty array
+    // unless "No Area" is *explicitly* selected.
     const noAreaCheckbox =
       document.getElementById("filterNoArea") ||
       document.getElementById("mapFilterNoArea") ||
       document.getElementById("formFilterNoArea");
+
     if (noAreaCheckbox && noAreaCheckbox.checked) {
       filteredByArea = rvsArray.filter(
         (rv) => (rv.area || "No Area") === "No Area"
       );
     } else {
-      filteredByArea = [];
+      filteredByArea = []; // If no filters selected, and "No Area" isn't specifically checked, show nothing.
     }
   }
 
-  // Apply color filtering
-  // If no color filters are selected, or all are selected, show all pins.
-  // Otherwise, only show pins matching selected colors.
+  // --- Color Filtering Logic (Only if selectedColorFilters has meaningful selection) ---
+  // If no color filters are selected, or all are selected (implying no color filter active), don't filter by color.
   if (selectedColorFilters.length === 0 || selectedColorFilters.length === 3) {
-    return filteredByArea;
+    console.log("Color filter not active or all colors selected.");
+    return filteredByArea; // Return only area-filtered RVs
   }
 
+  console.log("Applying color filter. Selected colors:", selectedColorFilters);
   return filteredByArea.filter((rv) => {
     let pinColor = "blue"; // Default Blue for geolocated pins
     let isGeolocated =
@@ -855,6 +861,13 @@ function filterRVs(rvsArray, selectedAreaFilters, selectedColorFilters) {
         pinColor = "red"; // Red for 14+ days ago
       }
     }
+    console.log(
+      `RV: ${
+        rv.name || rv.id
+      }, Pin Color: ${pinColor}, Is selected? ${selectedColorFilters.includes(
+        pinColor
+      )}`
+    );
     return selectedColorFilters.includes(pinColor);
   });
 }
@@ -908,8 +921,7 @@ function renderRVs() {
         rv.area && rv.area !== "No Area"
           ? `<div class="area-display">${rv.area}</div>`
           : ""
-      } <!-- Conditionally display area, hide if "No Area" -->
-    `;
+      } `;
     rvListContainer.appendChild(rvCard);
 
     // Add event listener to the card itself for editing
@@ -1176,7 +1188,6 @@ function renderVisitsInForm(visits) {
     removeBtn.addEventListener("click", () => removeVisit(index)); // Pass the index to remove
   });
 }
-
 /**
  * Clears the RV form fields.
  * This function now just clears the UI. The RV object itself is managed externally.
@@ -1442,7 +1453,6 @@ async function saveRV() {
     console.log("No significant changes detected, not saving RV.");
   }
 }
-
 /**
  * Deletes a Return Visit from local storage.
  * @param {string} rvId - The ID of the RV to delete.
@@ -1497,8 +1507,7 @@ function addVisit(isInitialAdd = false) {
   } else {
     // This case should ideally not be hit if addRVBtn properly initializes currentRVId.
     // However, as a fallback, if currentRVId is null, it means we're on a fresh form
-    // without an associated RV object yet. We can't add a visit without an RV.
-    // This scenario should be prevented by ensuring addRVBtn always creates an RV.
+    // without an. This scenario should be prevented by ensuring addRVBtn always creates an RV.
     // If this path is reached, it implies a logic error or unexpected state.
     showMessage(
       "Cannot add visit: No current RV selected or being created.",
@@ -1708,7 +1717,6 @@ function loadScript(url) {
     document.head.appendChild(script);
   });
 }
-
 /**
  * Loads a CSS file dynamically.
  * @param {string} url - The URL of the stylesheet to load.
@@ -1920,6 +1928,7 @@ async function initLeafletMap() {
  * Updates the map with markers for each RV, handling both Google Maps and Leaflet.
  */
 function updateMap() {
+  console.log("updateMap() called.");
   const mapProvider =
     settings.googleMapsApiKey && settings.googleMapsApiKey.trim() !== ""
       ? "google"
@@ -1927,7 +1936,9 @@ function updateMap() {
   const activeMap = mapProvider === "google" ? map : leafletMap;
 
   if (!activeMap) {
-    console.log("No active map initialized to update markers.");
+    console.log(
+      "No active map initialized to update markers. Exiting updateMap."
+    );
     return;
   }
 
@@ -1937,9 +1948,12 @@ function updateMap() {
     markers = [];
   } else {
     // Leaflet
-    markers.forEach((marker) => activeMap.removeLayer(marker)); // Use activeMap here
+    markers.forEach((marker) => activeMap.removeLayer(marker));
     markers = [];
   }
+
+  // Reset usedCoords for new map rendering cycle
+  usedCoords = {};
 
   const bounds =
     mapProvider === "google"
@@ -1949,6 +1963,14 @@ function updateMap() {
 
   // Get filtered RVs for map display
   const rvsToDisplayOnMap = getFilteredAndSortedRVs();
+  console.log("RVs to display on map (after filters and sort):", rvsToDisplay);
+
+  if (rvsToDisplay.length === 0) {
+    console.log(
+      "No RVs to display after filtering and sorting. No pins will be added."
+    );
+    return; // Exit if no RVs to display
+  }
 
   rvsToDisplayOnMap.forEach((rv) => {
     let lat = parseFloat(rv.latitude);
@@ -1959,6 +1981,11 @@ function updateMap() {
     let markerLat = lat;
     let markerLon = lon;
     let markerTitle = rv.name || rv.address || "Unnamed RV";
+    let rvNotes =
+      rv.visits && rv.visits.length > 0
+        ? rv.visits[0].note
+        : "No recent notes.";
+    if (rvNotes.length > 50) rvNotes = rvNotes.substring(0, 50) + "..."; // Truncate long notes
 
     const mostRecentVisit =
       rv.visits && rv.visits.length > 0 ? rv.visits[0] : null;
@@ -1973,7 +2000,13 @@ function updateMap() {
         markerLon = defaultLng;
         pinColor = "violet"; // Violet for non-geolocated
         markerTitle += " (Location Unknown)";
+        console.log(
+          `RV: ${markerTitle} is NOT geolocated. Using default settings coordinates.`
+        );
       } else {
+        console.log(
+          `RV: ${markerTitle} is NOT geolocated and NO default coordinates are set. Skipping marker.`
+        );
         // Skip adding marker if no specific or default coordinates are available
         return;
       }
@@ -1989,21 +2022,36 @@ function updateMap() {
       );
       if (!isNaN(diffDays) && diffDays >= 14) {
         pinColor = "red"; // Red for 14+ days ago
+        console.log(
+          `RV: ${markerTitle} is red (visited ${diffDays} days ago).`
+        );
+      } else {
+        console.log(
+          `RV: ${markerTitle} is blue (visited ${diffDays} days ago).`
+        );
       }
+    } else {
+      console.log(`RV: ${markerTitle} is blue (geolocated but no visits).`);
     }
 
-    // Apply color filter logic (already handled by getFilteredAndSortedRVs, but double-check for robustness)
+    // This color filter logic is redundant here if getFilteredAndSortedRVs handles it,
+    // but leaving it for robustness.
     const selectedColorFilters = Array.from(
       document.querySelectorAll(
         `#mapShowColorFilterCheckboxes input[type="checkbox"]:checked`
       )
     ).map((cb) => cb.value);
 
+    // If there are specific color filters selected and current pinColor is not in them, skip
+    // Only apply if *not* all 3 are selected (which means effectively no color filtering)
     if (
       selectedColorFilters.length > 0 &&
       selectedColorFilters.length < 3 &&
       !selectedColorFilters.includes(pinColor)
     ) {
+      console.log(
+        `RV: ${markerTitle} skipped due to color filter. Pin color: ${pinColor}, Selected: ${selectedColorFilters}`
+      );
       return; // Skip this RV if its color doesn't match selected filters
     }
 
@@ -2013,6 +2061,9 @@ function updateMap() {
       const offset = 0.0001 * usedCoords[coordKey];
       markerLat += offset;
       markerLon += offset;
+      console.log(
+        `Offsetting duplicate marker for ${markerTitle} to ${markerLat}, ${markerLon}`
+      );
     }
     usedCoords[coordKey] = (usedCoords[coordKey] || 0) + 1;
 
@@ -2032,6 +2083,7 @@ function updateMap() {
               )}, Lon: ${lon.toFixed(5)}</p>`
             : ""
         }
+        <p style="margin-top: 5px; font-size: 0.9em; color: #555;">Notes: ${rvNotes}</p>
       </div>
     `;
 
@@ -2067,6 +2119,9 @@ function updateMap() {
       if (isGeolocated)
         bounds.extend(new google.maps.LatLng(markerLat, markerLon));
       pinsAdded++;
+      console.log(
+        `Added Google Marker for ${markerTitle} at ${markerLat}, ${markerLon}`
+      );
     } else {
       // Leaflet
       const svgIconUrl = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${encodeURIComponent(
@@ -2103,6 +2158,9 @@ function updateMap() {
       markers.push(marker);
       if (isGeolocated) bounds.extend(L.latLng(markerLat, markerLon));
       pinsAdded++;
+      console.log(
+        `Added Leaflet Marker for ${markerTitle} at ${markerLat}, ${markerLon}`
+      );
     }
   });
 
@@ -2110,13 +2168,21 @@ function updateMap() {
     if (mapProvider === "google") {
       if (!bounds.isEmpty()) {
         map.fitBounds(bounds);
+        console.log("Google Map fitted to bounds.");
+      } else {
+        console.log("Google Map bounds are empty, not fitting.");
       }
     } else {
       // Leaflet
       if (bounds.isValid()) {
         leafletMap.fitBounds(bounds);
+        console.log("Leaflet Map fitted to bounds.");
+      } else {
+        console.log("Leaflet Map bounds are invalid, not fitting.");
       }
     }
+  } else {
+    console.log("No pins added, not fitting map bounds.");
   }
 }
 
@@ -2127,6 +2193,10 @@ function updateMap() {
  */
 function getFilteredAndSortedRVs() {
   let rvsToDisplay = [...rvs];
+  console.log(
+    "getFilteredAndSortedRVs: Initial RVs count:",
+    rvsToDisplay.length
+  );
 
   // Determine which filter group is active (myRVsView or rvFormView)
   let areaFilterCheckboxesId = "";
@@ -2134,18 +2204,14 @@ function getFilteredAndSortedRVs() {
   let sortOrderRadioName = "";
 
   if (myRVsView.style.display === "block") {
-    // document.getElementById("rvNavHeaderBtns").style.display = "none"; // Handled in showView
     areaFilterCheckboxesId = "areaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // My RVs view doesn't have color filter, but map does
     sortOrderRadioName = "sortOrder";
   } else if (rvFormView.style.display === "block") {
-    // document.getElementById("rvNavHeaderBtns").style.display = "flex"; // Handled in showView
     areaFilterCheckboxesId = "formAreaFilterCheckboxes";
-    // Removed color filter from form view, so use an empty array for filtering
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // Fallback to map's color filter for consistency in filterRVs
     sortOrderRadioName = "formSortOrder";
   } else if (mapView.style.display === "block") {
-    // document.getElementById("rvNavHeaderBtns").style.display = "none"; // Handled in showView
     areaFilterCheckboxesId = "mapAreaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes";
     sortOrderRadioName = "sortOrder"; // Map view uses the main list's sort order
@@ -2162,17 +2228,24 @@ function getFilteredAndSortedRVs() {
       `#${areaFilterCheckboxesId} input[type="checkbox"]:checked`
     )
   ).map((cb) => cb.value);
+  console.log(
+    "getFilteredAndSortedRVs: Selected Area Filters:",
+    selectedAreaFilters
+  );
 
-  // Get selected color filters (only applicable for map and form views)
+  // Get selected color filters (only applicable for map view explicitly, or used as a fallback)
   let selectedColorFilters = [];
   if (document.getElementById(colorFilterCheckboxesId)) {
-    // Check if the element exists
     selectedColorFilters = Array.from(
       document.querySelectorAll(
         `#${colorFilterCheckboxesId} input[type="checkbox"]:checked`
       )
     ).map((cb) => cb.value);
   }
+  console.log(
+    "getFilteredAndSortedRVs: Selected Color Filters:",
+    selectedColorFilters
+  );
 
   // Apply filtering
   rvsToDisplay = filterRVs(
@@ -2180,12 +2253,20 @@ function getFilteredAndSortedRVs() {
     selectedAreaFilters,
     selectedColorFilters
   );
+  console.log(
+    "getFilteredAndSortedRVs: RVs count after filterRVs():",
+    rvsToDisplay.length
+  );
 
   // Apply sorting
   const selectedSortOrder =
     document.querySelector(`input[name="${sortOrderRadioName}"]:checked`)
       ?.value || "oldest"; // Default to 'oldest' if no radio is checked
   rvsToDisplay = sortRVs(rvsToDisplay, selectedSortOrder);
+  console.log(
+    "getFilteredAndSortedRVs: RVs count after sortRVs():",
+    rvsToDisplay.length
+  );
 
   return rvsToDisplay;
 }
@@ -2204,9 +2285,6 @@ function updateRvFormNavButtons() {
     prevRvBtnHeader.disabled = true;
     nextRvBtnHeader.disabled = true;
   }
-  // Ensure buttons are visible in RV form view
-  // This is handled by showView, but can be reinforced here if needed:
-  // rvNavHeaderBtns.style.display = "flex";
 }
 
 /**
@@ -2219,7 +2297,6 @@ function showPreviousRv() {
     editRV(rvsToNavigate[currentRvIndex].id);
   }
 }
-
 /**
  * Navigates to the next RV in the filtered/sorted list.
  */
