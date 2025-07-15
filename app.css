@@ -639,8 +639,8 @@ main#appContent {
 
 /* Specific input width for Default City in settings - Keep width, but height is now global */
 #defaultCity {
-    width: 140px;
-    max-width: 140px;
+    width: 180px;
+    max-width: 180px;
     /* flex-basis here aligns with its width, but height is now general */
     flex-basis: 140px;
     flex-grow: 0;
