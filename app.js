@@ -2276,8 +2276,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         area: "No Area",
         email: "",
         phone: "",
-        latitude: settings.defaultLatitude || null, // Autofill from settings
-        longitude: settings.defaultLongitude || null, // Autofill from settings
+        latitude: null, // DO NOT autofill latitude from settings
+        longitude: null, // DO NOT autofill longitude from settings
         visits: [], // Start with empty visits array
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
