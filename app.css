@@ -510,7 +510,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - REWRITTEN & ENHANCED FOR CHROME */
+/* Section 8: Settings View Specific Styling - REWRITTEN & ENHANCED FOR CHROME (Attempt 2) */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -544,7 +544,6 @@ main#appContent {
     align-items: flex-start;
     width: 100%;
     padding-left: 20px;
-    /* Keep general setting items indented if desired */
     padding-right: 20px;
 }
 
@@ -590,25 +589,28 @@ main#appContent {
 .setting-item.city-state-row {
     display: flex;
     flex-direction: row;
-    /* Ensure they are in a row */
     gap: 12px;
     flex-wrap: nowrap;
-    /* Prevent wrapping to a new line */
+    /* Keep this to prevent wrapping */
     align-items: flex-start;
     padding-left: 0px;
-    /* Moves them to the very left */
+    /* Still zero for left alignment */
     padding-right: 20px;
     justify-content: flex-start;
-    width: auto;
-    /* Allow the container to shrink to fit content if necessary, or use 100% and let gaps push */
+    width: 100%;
+    /* Ensure it takes full width to provide space for flex items */
 }
 
 .setting-item.city-state-row .field-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* Adding flex-shrink: 0 to prevent shrinking on smaller screens */
     flex-shrink: 0;
+    /* Adding flex-basis here to give it a minimum width that should accommodate its content */
+    flex-basis: auto;
+    /* Let content dictate initial size */
+    flex-grow: 0;
+    /* Prevent it from growing to fill extra space */
 }
 
 .setting-item.city-state-row label {
@@ -616,7 +618,6 @@ main#appContent {
     font-weight: 500;
     text-align: left;
     width: auto;
-    /* Allow label width to be dictated by content, not force 100% */
 }
 
 /* Specific input width for Default City in settings */
@@ -630,8 +631,8 @@ main#appContent {
     box-sizing: border-box;
     height: auto;
     min-height: 36px;
-    /* Adding flex-basis and flex-grow to better control sizing in flex container */
     flex-basis: 140px;
+    /* Explicit basis */
     flex-grow: 0;
 }
 
@@ -646,8 +647,8 @@ main#appContent {
     box-sizing: border-box;
     height: auto;
     min-height: 36px;
-    /* Adding flex-basis and flex-grow to better control sizing in flex container */
     flex-basis: 52px;
+    /* Explicit basis */
     flex-grow: 0;
 }
 
@@ -657,12 +658,12 @@ main#appContent {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    /* Keep wrap here to allow flexibility */
     align-items: flex-end;
     gap: 10px;
     margin-top: 5px;
     margin-bottom: 10px;
     padding-left: 20px;
-    /* Keep these fields indented if desired */
     padding-right: 20px;
     justify-content: flex-start;
 }
@@ -683,6 +684,8 @@ main#appContent {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    flex-shrink: 0;
+    /* Prevent these inputs from shrinking too much */
 }
 
 .form-group-lat-long {
@@ -690,6 +693,8 @@ main#appContent {
     flex-direction: column;
     gap: 3px;
     align-items: flex-start;
+    flex-shrink: 0;
+    /* Prevent these wrappers from shrinking */
 }
 
 .form-group-lat-long label {
@@ -715,6 +720,9 @@ label[for="defaultLongitude"] {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     height: auto;
     min-height: 36px;
+    flex-basis: 120px;
+    /* Explicit basis */
+    flex-grow: 0;
 }
 
 .form-group-lat-long input[type="number"]:focus {
