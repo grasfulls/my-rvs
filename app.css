@@ -59,15 +59,14 @@ input#rvName {
 
 .app-header {
     position: fixed;
-    top: 0;
-    /* FIX: Remove left: 0; and add right: 0; for proper centering with margin: auto */
-    right: 0;
+    top: env(safe-area-inset-top, 0);
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
     height: 48px;
     padding: 0px 16px;
+    padding-top: env(safe-area-inset-top, 0);
     background-color: #3f51b5;
     color: white;
     display: flex;
@@ -317,14 +316,15 @@ main#appContent {
 /* --------------------------------------------------- */
 .app-footer {
     position: fixed;
+    bottom: env(safe-area-inset-bottom, 0);
     left: 50%;
-    bottom: 0;
     transform: translateX(-50%);
     width: 100%;
     max-width: 800px;
     height: 50px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
     background-color: #eee;
-    padding: 10px 0;
+    padding-top: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
