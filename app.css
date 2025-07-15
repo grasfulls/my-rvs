@@ -510,7 +510,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - REWRITTEN & ENHANCED FOR CHROME (Attempt 2) */
+/* Section 8: Settings View Specific Styling - REWRITTEN (Correcting Input Heights) */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -536,6 +536,7 @@ main#appContent {
     color: #00796b;
 }
 
+/* General styling for each setting item container */
 .setting-item {
     margin-bottom: 10px;
     display: flex;
@@ -545,6 +546,8 @@ main#appContent {
     width: 100%;
     padding-left: 20px;
     padding-right: 20px;
+    box-sizing: border-box;
+    /* Crucial for consistent width calculation */
 }
 
 .setting-item label {
@@ -564,18 +567,27 @@ main#appContent {
     margin-left: 5px;
 }
 
-/* General input styling for text and number fields in Settings */
+/* MODIFIED: General input styling for ALL text and number fields in Settings */
+/* This is the core change to unify height based on API Key field's style */
 .setting-item input[type="text"],
 .setting-item input[type="number"] {
     width: 100%;
+    /* Default to full width of parent .setting-item (minus its padding) */
     padding: 8px 10px;
+    /* This padding usually creates a comfortable input height */
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 0.9em;
+    /* Keep text size consistent */
     box-sizing: border-box;
+    /* Include padding and border in width/height calculation */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     height: auto;
-    min-height: 36px;
+    /* Let padding and font-size determine height */
+    min-height: unset;
+    /* IMPORTANT: Remove any previously set min-height */
+    max-height: unset;
+    /* Ensure no max-height is restricting it */
 }
 
 .setting-item input[type="text"]:focus,
@@ -585,20 +597,19 @@ main#appContent {
     outline: none;
 }
 
-/* Specific styling for the City and State row in Settings */
+/* Specific styling for the City and State row container */
 .setting-item.city-state-row {
     display: flex;
     flex-direction: row;
     gap: 12px;
     flex-wrap: nowrap;
-    /* Keep this to prevent wrapping */
+    /* Prevent wrapping */
     align-items: flex-start;
     padding-left: 0px;
-    /* Still zero for left alignment */
-    padding-right: 20px;
+    /* Position to the very left edge of the .setting-item's content area */
+    padding-right: 0px;
     justify-content: flex-start;
     width: 100%;
-    /* Ensure it takes full width to provide space for flex items */
 }
 
 .setting-item.city-state-row .field-wrapper {
@@ -606,11 +617,8 @@ main#appContent {
     flex-direction: column;
     align-items: flex-start;
     flex-shrink: 0;
-    /* Adding flex-basis here to give it a minimum width that should accommodate its content */
     flex-basis: auto;
-    /* Let content dictate initial size */
     flex-grow: 0;
-    /* Prevent it from growing to fill extra space */
 }
 
 .setting-item.city-state-row label {
@@ -620,51 +628,37 @@ main#appContent {
     width: auto;
 }
 
-/* Specific input width for Default City in settings */
+/* Specific input width for Default City in settings - NO HEIGHT/MIN-HEIGHT HERE */
 #defaultCity {
     width: 140px;
     max-width: 140px;
-    padding: 8px 10px;
-    font-size: 0.9em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    height: auto;
-    min-height: 36px;
+    /* Height properties are now handled by the general .setting-item input rules */
     flex-basis: 140px;
-    /* Explicit basis */
     flex-grow: 0;
 }
 
-/* Specific input width for Default State in settings */
+/* Specific input width for Default State in settings - NO HEIGHT/MIN-HEIGHT HERE */
 #defaultState {
     width: 52px;
     max-width: 52px;
-    padding: 8px 10px;
-    font-size: 0.9em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    height: auto;
-    min-height: 36px;
+    /* Height properties are now handled by the general .setting-item input rules */
     flex-basis: 52px;
-    /* Explicit basis */
     flex-grow: 0;
 }
-
 
 /* Coordinates Group Specific Styling (Settings View Lat/Long) */
 .setting-item.coordinates-group {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /* Keep wrap here to allow flexibility */
     align-items: flex-end;
+    /* Align to bottom for consistency with the button */
     gap: 10px;
     margin-top: 5px;
     margin-bottom: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
+    /* Remove specific horizontal padding here, parent .setting-item handles it */
+    padding-left: 0px;
+    padding-right: 0px;
     justify-content: flex-start;
 }
 
@@ -685,7 +679,6 @@ main#appContent {
     flex-direction: column;
     gap: 5px;
     flex-shrink: 0;
-    /* Prevent these inputs from shrinking too much */
 }
 
 .form-group-lat-long {
@@ -694,7 +687,6 @@ main#appContent {
     gap: 3px;
     align-items: flex-start;
     flex-shrink: 0;
-    /* Prevent these wrappers from shrinking */
 }
 
 .form-group-lat-long label {
@@ -710,6 +702,7 @@ label[for="defaultLongitude"] {
     margin-top: 0px;
 }
 
+/* Styling for Latitude and Longitude input fields - NO HEIGHT/MIN-HEIGHT HERE */
 .form-group-lat-long input[type="number"] {
     width: 120px;
     padding: 8px 10px;
@@ -719,9 +712,12 @@ label[for="defaultLongitude"] {
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     height: auto;
-    min-height: 36px;
+    /* Let padding and font-size determine height */
+    min-height: unset;
+    /* IMPORTANT: Remove any previously set min-height */
+    max-height: unset;
+    /* Ensure no max-height is restricting it */
     flex-basis: 120px;
-    /* Explicit basis */
     flex-grow: 0;
 }
 
