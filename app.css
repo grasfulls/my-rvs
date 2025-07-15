@@ -197,10 +197,14 @@ main#appContent {
 #appContent {
     position: relative;
     overflow-y: auto;
-    /* Adjusted to match header/footer heights */
-    height: calc(100vh - 48px - 50px);
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    flex-grow: 1;
+    padding-top: 58px;    /* Header height + buffer */
+    padding-bottom: 60px;    /* Footer height + buffer */
+    height: calc(100vh - 108px);    /* Subtract header (48px) + footer (50px) + buffer (10px) */
 }
-
 /* --------------------------------------------------- */
 /* Section 4: Loading Spinner */
 /* --------------------------------------------------- */
