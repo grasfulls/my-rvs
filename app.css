@@ -597,20 +597,18 @@ main#appContent {
     justify-content: flex-start;
 }
 
-.city-state-row input[type="text"] {
-    flex: 0 1 140px;    /* ⬅️ No growing, shrinking allowed, base size 140px */
-    max-width: 140px;    /* ⬅️ Prevents expanding beyond 140px */
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 0.9em;
-    box-sizing: border-box;
+.city-state-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .city-state-row .field-wrapper {
     display: flex;
     flex-direction: column;
-    flex: 1 1 140px;
 }
 
 .city-state-row label {
@@ -618,7 +616,19 @@ main#appContent {
     font-weight: 500;
 }
 
-.city-state-row input[type="text"] {
+#defaultCity {
+    flex: 0 1 140px;
+    max-width: 140px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+}
+
+#defaultState {
+    width: 52px;
+    max-width: 52px;
     padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
