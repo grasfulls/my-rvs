@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My RVs</title>
 
+    <!-- Eruda for mobile debugging - keep this -->
     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
     <script>
       eruda.init();
@@ -12,6 +13,7 @@
 
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="app.css?v=3" />
+    <!-- IMPORTANT: Only include app.js ONCE. Keeping this one in the head. -->
     <script type="module" src="app.js?v=3"></script>
   </head>
   <body>
@@ -22,25 +24,44 @@
           <h1 class="main-header-title">My RVs</h1>
           <span id="appSubheading" class="app-subheading"></span>
           <!-- Add RV Button now always visible in header -->
-          <button id="addRVBtn" class="add-button">+</button>
+          <button id="addRVBtn" class="add-button" title="Add New Return Visit">
+            +
+          </button>
           <div
             id="rvNavHeaderBtns"
             class="header-nav-btns"
             style="display: none"
           >
+            <!-- These are the primary navigation buttons for RV form -->
             <button
               id="prevRvBtnHeader"
               class="form-nav-btn prev-btn"
               title="Previous Return Visit"
             >
-              <!-- SVG left arrow -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="32px"
+                height="32px"
+              >
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+              </svg>
             </button>
             <button
               id="nextRvBtnHeader"
               class="form-nav-btn next-btn"
               title="Next Return Visit"
             >
-              <!-- SVG right arrow -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="24px"
+                height="24px"
+              >
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+              </svg>
             </button>
           </div>
         </div>
@@ -65,7 +86,7 @@
             longitude. These are necessary for default entries for new RVs and
             for initial map view and pin placements. All information is stored
             on your local device. Click + above to add a RV, or navigate to any
-            view below.
+            view below, after entering City/State or LAtitude/Longitude
           </p>
 
           <div class="setting-item">
@@ -267,38 +288,8 @@
               <label for="rvName" id="rvNameLabel">Name:</label>
               <div class="name-with-nav">
                 <input type="text" id="rvName" placeholder="e.g., John Smith" />
-                <button
-                  id="prevRvBtn"
-                  class="form-nav-btn prev-btn"
-                  title="Previous Return Visit"
-                  style="display: none"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="32px"
-                    height="32px"
-                  >
-                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                  </svg>
-                </button>
-                <button
-                  id="nextRvBtn"
-                  class="form-nav-btn next-btn"
-                  title="Next Return Visit"
-                  style="display: none"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="24px"
-                    height="24px"
-                  >
-                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                  </svg>
-                </button>
+                <!-- Navigation buttons are now solely in the header -->
+                <!-- Removed prevRvBtn and nextRvBtn from here as they are now in the header -->
               </div>
             </div>
             <div class="form-group">
@@ -399,7 +390,7 @@
       </main>
 
       <footer class="app-footer">
-        <a id="myRVsLink" aria-label="My RVs">
+        <a id="myRVsLink" aria-label="My RVs" title="My RVs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -413,7 +404,7 @@
           </svg>
         </a>
 
-        <a id="mapLink" aria-label="Map">
+        <a id="mapLink" aria-label="Map" title="Map">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -466,8 +457,5 @@
         </button>
       </footer>
     </div>
-    <!-- Link to the JavaScript file -->
-    <script type="module" src="app.js"></script>
-    <!-- Unlock RV Name input for mobile Chrome/iOS -->
   </body>
 </html>

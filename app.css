@@ -22,26 +22,19 @@ body {
 
 .app-container {
     max-width: 800px;
-    /* Max width for desktop views */
     width: 100%;
-    /* Take full width on smaller screens */
     margin: 0 auto;
-    /* Center the container horizontally */
     display: flex;
     flex-direction: column;
-    /* Stack header, main, footer vertically */
     height: 100%;
-    /* Ensure app-container fills body height */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     border-radius: 0;
-    /* No rounded corners on main container */
     overflow: hidden;
-    /* Prevent internal scrollbars from breaking layout */
-    /* Prevent horizontal scrolling within the app container */
     overflow-x: hidden;
 }
 
+/* Specific styling for rvName input, ensuring it's always interactive */
 input#rvName {
     pointer-events: auto;
     position: relative;
@@ -53,12 +46,14 @@ input#rvName {
 /* Section 2: Header Styling (Fixed) */
 /* --------------------------------------------------- */
 
+/* Ensure rvName is always interactive and visible */
 #rvName {
     pointer-events: auto !important;
     opacity: 1 !important;
     position: relative;
 }
 
+/* Eruda container styling for debugging console */
 .eruda-container {
     position: fixed !important;
     bottom: 20px !important;
@@ -69,14 +64,14 @@ input#rvName {
 .app-header {
     position: fixed;
     top: 0;
-    left: 0;
+    /* FIX: Remove left: 0; and add right: 0; for proper centering with margin: auto */
+    right: 0;
     width: 100%;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     height: 48px;
     padding: 0px 16px;
-    /* ⬅️ Horizontal only — no top/bottom padding */
     background-color: #3f51b5;
     color: white;
     display: flex;
@@ -102,7 +97,7 @@ input#rvName {
     font-size: 1em;
     flex-shrink: 0;
     display: none;
-    /* Hide the main title */
+    /* Hide the main title as per original HTML */
 }
 
 .app-subheading {
@@ -163,22 +158,14 @@ input#rvName {
 /* --------------------------------------------------- */
 main#appContent {
     flex-grow: 1;
-    /* Takes all available space between header and footer */
     overflow-y: auto;
-    /* Enable vertical scrolling for content */
-    /* Add padding to account for fixed header and footer */
-    /* The 10px is the general padding for content inside main#appContent */
     padding: 10px 20px;
-    /* General padding, adjust as needed */
-    padding-top: 35px;
-    /* Header height + desired top padding for content */
+    padding-top: 58px;
+    /* Adjusted padding-top to account for header height + desired top padding */
     padding-bottom: calc(50px + 10px);
     /* Footer height + desired bottom padding for content */
     box-sizing: border-box;
-    /* Include padding in height calculation */
     width: 100%;
-    /* Ensure it takes full width */
-    /* Prevent horizontal scrolling within main content */
     overflow-x: hidden;
 }
 
@@ -197,7 +184,6 @@ main#appContent {
 
 #settingsView {
     display: none;
-    /* keep this */
     height: 100%;
     max-height: 100%;
     overflow-y: auto;
@@ -211,8 +197,8 @@ main#appContent {
 #appContent {
     position: relative;
     overflow-y: auto;
-    height: calc(100vh - 72px - 50px);
-    /* Header: 72px, Footer: 50px */
+    /* Adjusted to match header/footer heights */
+    height: calc(100vh - 48px - 50px);
 }
 
 /* --------------------------------------------------- */
@@ -332,7 +318,8 @@ main#appContent {
 .app-footer {
     position: fixed;
     bottom: env(safe-area-inset-bottom, 0);
-    left: 0;
+    /* FIX: Remove left: 0; and add right: 0; for proper centering with margin: auto */
+    right: 0;
     width: 100%;
     max-width: 800px;
     margin-left: auto;
@@ -342,7 +329,7 @@ main#appContent {
     display: flex;
     justify-content: center;
     gap: 20px;
-    z-index:999;
+    z-index: 999;
     box-sizing: border-box;
     height: 50px;
     flex-shrink: 0;
@@ -502,13 +489,6 @@ main#appContent {
     stroke: #512DA8;
 }
 
-/* Removed specific colors for export/import buttons as they are now in footer */
-/* #exportDataBtn { color: #2196F3; border-color: #2196F3; } */
-/* #exportDataBtn:hover { background-color: #2196F3; color: white; } */
-/* #importDataBtn { color: #FFC107; border-color: #FFC107; transform: rotate(180deg); } */
-/* #importDataBtn:hover { background-color: #FFC107; color: #333; } */
-
-/* Removed save/cancel buttons from form-actions, so these rules are now obsolete */
 #saveSettingsBtn,
 #saveRvBtn {
     color: white;
@@ -531,7 +511,6 @@ main#appContent {
     background-color: #f44336;
     color: white;
 }
-
 
 /* --------------------------------------------------- */
 /* Section 8: Settings View Specific Styling */
@@ -676,7 +655,6 @@ label[for="defaultLongitude"] {
     margin-top: 0px;
 }
 
-/* Removed Export/Import buttons from settings-actions */
 .settings-actions {
     display: flex;
     flex-direction: row;
@@ -710,6 +688,7 @@ label[for="defaultLongitude"] {
     position: relative;
     top: 10px;
     background-color: rgba(255, 0, 0, 0.1);
+    /* This seems to be a debug color, consider removing or changing */
     z-index: 1;
     padding: 0px 20px 5px 20px;
     border-bottom: 1px solid #eee;
@@ -754,7 +733,6 @@ label[for="defaultLongitude"] {
     margin-bottom: 0;
     flex-shrink: 0;
     white-space: nowrap;
-    /* Keep label on one line */
 }
 
 .radio-group,
@@ -779,7 +757,6 @@ label[for="defaultLongitude"] {
     color: #444;
     cursor: pointer;
     white-space: nowrap;
-    /* Prevent label text from wrapping */
 }
 
 /* RV List Container (for displaying RV cards - content yet to be added) */
@@ -887,20 +864,20 @@ label[for="defaultLongitude"] {
     border-radius: 5px;
 }
 
-  .rv-form-view,
-  #rvFormView,
-  .settings-view,
-  .contact-view {
-      padding-bottom: 32px;
-  }
+.rv-form-view,
+#rvFormView,
+.settings-view,
+.contact-view {
+    padding-bottom: 32px;
+}
 
-  .contact-view {
-      height: 100%;
-      max-height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      box-sizing: border-box;
-  }
+.contact-view {
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
 
 /* --------------------------------------------------- */
 /* Section 10: RV Entry Form View Styling (rvFormView) */
@@ -920,8 +897,6 @@ label[for="defaultLongitude"] {
     /* Horizontal padding for form fields */
 }
 
-/* Previous/Next Buttons Container */
-/* Navigation buttons now placed beside the Name field (outside label) */
 .form-group label#rvNameLabel {
     display: flex;
     align-items: center;
@@ -968,8 +943,6 @@ label[for="defaultLongitude"] {
     height: 27px;
 }
 
-/* Wrapper for each form group to manage overall spacing (Name, Address, etc.) */
-/* Style for individual form-group divs (label + input/elements) */
 /* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
 .rv-form-fields .form-group input[type="text"],
 .rv-form-fields .form-group input[type="number"],
@@ -1260,11 +1233,12 @@ input#rvName {
 /* --------------------------------------------------- */
 
 @media (max-width: 600px) {
+
     #rvHeader,
-        .app-header {
-            position: fixed;
-            top: env(safe-area-inset-top, 0);
-            z-index: 1002;
+    .app-header {
+        position: fixed;
+        top: env(safe-area-inset-top, 0);
+        z-index: 1002;
     }
 
     .coordinates-inputs {

@@ -1,6 +1,6 @@
 // --- Global Variables (Local Storage and App Data) ---
-let rvs = []; // Array to hold all RV objects
-let settings = {}; // Object to hold user settings
+let rvs = [];
+let settings = {};
 
 // DOM Elements
 const appContent = document.getElementById("appContent");
@@ -42,8 +42,6 @@ const rvAreaInput = document.getElementById("rvArea"); // New Area input
 const rvListContainer = document.querySelector(".rv-list");
 const sortOldNewRadio = document.getElementById("sortOldNew");
 const sortNewOldRadio = document.getElementById("sortNewOld");
-const filterAllAreasCheckbox = document.getElementById("filterAllAreas");
-const filterNoAreaCheckbox = document.getElementById("filterNoArea");
 const areaFilterCheckboxesDiv = document.getElementById("areaFilterCheckboxes");
 const mapAreaFilterCheckboxesDiv = document.getElementById(
   "mapAreaFilterCheckboxes"
@@ -52,9 +50,8 @@ const mapAreaFilterCheckboxesDiv = document.getElementById(
 const formAreaFilterCheckboxesDiv = document.getElementById(
   "formAreaFilterCheckboxes"
 );
-const formShowColorFilterCheckboxesDiv = document.getElementById(
-  "formShowColorFilterCheckboxes"
-); // This will be removed
+// Removed reference to formShowColorFilterCheckboxesDiv as it's not in HTML
+// const formShowColorFilterCheckboxesDiv = document.getElementById("formShowColorFilterCheckboxes");
 const formSortOldNewRadio = document.getElementById("formSortOldNew");
 const formSortNewOldRadio = document.getElementById("formSortNewOld");
 
@@ -64,9 +61,10 @@ const addVisitBtnHeader = document.querySelector(
   ".visits-header .add-visit-btn"
 ); // The plus button for adding visits
 
-// Previous/Next RV Navigation Elements (moved to be children of rvName label)
-const prevRvBtn = document.getElementById("prevRvBtn");
-const nextRvBtn = document.getElementById("nextRvBtn");
+// Previous/Next RV Navigation Elements (now in header)
+const rvNavHeaderBtns = document.getElementById("rvNavHeaderBtns"); // Container for header nav buttons
+const prevRvBtnHeader = document.getElementById("prevRvBtnHeader");
+const nextRvBtnHeader = document.getElementById("nextRvBtnHeader");
 
 let currentRVId = null; // To store the ID of the RV being edited
 let currentRvIndex = -1; // To store the index of the RV being edited in the filtered list
@@ -352,16 +350,23 @@ function showView(viewToShow) {
   );
 
   // If trying to navigate away from RV form and name is empty
+  // AND it's a new RV (currentRVId is not found in the main rvs array, meaning it's not saved)
   if (
     currentActiveView === rvFormView &&
     viewToShow !== rvFormView && // Only if navigating to a *different* view
-    rvNameInput.value.trim() === ""
+    rvNameInput.value.trim() === "" &&
+    !rvs.some((rv) => rv.id === currentRVId) // Check if currentRVId is not in saved RVs
   ) {
     showConfirmationDialog(
-      "No name has been entered, if you proceed this contact will not be created.",
+      "No name has been entered. If you proceed, this contact will not be created. Do you want to discard this new contact?",
       () => {
-        // User confirmed to proceed without saving this specific contact
-        clearRVForm(false); // Clear the form without saving, pass false to not autofill current date/time
+        // User confirmed to discard the new contact
+        // Remove the unsaved RV from the global array if it exists
+        if (currentRVId) {
+          rvs = rvs.filter((rv) => rv.id !== currentRVId);
+          saveDataToLocalStorage(); // Save the updated list
+        }
+        clearRVForm(); // Clear the form completely
         // Now proceed to the originally intended view
         proceedToShowView(viewToShow);
       },
@@ -373,7 +378,7 @@ function showView(viewToShow) {
     return; // Stop further execution of showView until dialog is handled
   }
   // If trying to navigate away from settings and settings are incomplete,
-  // EXCEPT when navigating to the RV Form View
+  // EXCEPT when navigating to the RV Form View (as RV form can be used without map)
   if (
     viewToShow !== settingsView &&
     viewToShow !== rvFormView &&
@@ -422,25 +427,19 @@ function proceedToShowView(viewToShow) {
       item.classList.remove("active");
     });
 
-  // Control addRVBtn visibility (now always visible in header for relevant views)
-  addRVBtn.style.display = "flex"; // Default to flex
-  // Control Previous/Next buttons visibility in footer
-  prevRvBtn.style.display = "none";
-  nextRvBtn.style.display = "none";
+  // Control Previous/Next buttons visibility in header
+  rvNavHeaderBtns.style.display = "none"; // Default to hidden
 
   if (viewToShow === settingsView) {
     appSubheading.textContent = "Settings";
-    // addRVBtn.style.display is already flex from above (now visible in all views)
     settingsBtn.classList.add("active"); // Add active class to settings button
   } else if (viewToShow === myRVsView) {
     appSubheading.textContent = "Contact Info";
-    // addRVBtn.style.display is already flex from above
     generateAreaFilterCheckboxes("contact"); // Regenerate filter options for contacts view
     myRVsLink.classList.add("active"); // Add active class to My RVs link
     renderRVs(); // Re-render RVs when returning to this view
   } else if (viewToShow === mapView) {
     appSubheading.textContent = "Map";
-    // addRVBtn.style.display is already flex from above (now visible in all views)
     loadDataFromLocalStorage(); // Ensure settings are fresh before initializing map
     initMap(); // Initialize map when map view is shown
     generateAreaFilterCheckboxes("map"); // Regenerate filter options for map view
@@ -448,9 +447,9 @@ function proceedToShowView(viewToShow) {
   } else if (viewToShow === rvFormView) {
     console.log("RV Form View activated");
     appSubheading.textContent = "RV Information"; // Set subheading for RV form view
-    getFilteredAndSortedRVs(); // Show header nav buttons and run layout logic
-    prevRvBtn.style.display = "flex";
-    nextRvBtn.style.display = "flex";
+    // No need to call getFilteredAndSortedRVs here, as populateRVForm will handle it
+    rvNavHeaderBtns.style.display = "flex"; // Show header nav buttons
+    updateRvFormNavButtons(); // Ensure button states are correct for current RV
     generateAreaFilterCheckboxes("form"); // Regenerate filter options for RV form view
   }
 }
@@ -993,6 +992,7 @@ function generateAreaFilterCheckboxes(viewType) {
   };
 
   // Retrieve their last checked state from the DOM if they existed, otherwise default.
+  // Default "All Areas" to checked, "No Area" to unchecked.
   const prevAllAreasChecked =
     document.getElementById(filterAllId)?.checked || true;
   const prevNoAreaChecked =
@@ -1026,6 +1026,10 @@ function generateAreaFilterCheckboxes(viewType) {
  */
 function handleSortFilterChange() {
   renderRVs();
+  if (mapView.style.display === "block") {
+    updateMap();
+  }
+  updateRvFormNavButtons(); // Update nav buttons if sort/filter changes affect current index
 }
 
 /**
@@ -1081,6 +1085,7 @@ function handleFilterChange(event) {
     // Only update map if map view is active
     updateMap();
   }
+  updateRvFormNavButtons(); // Update nav buttons if sort/filter changes affect current index
 }
 
 // --- RV Form View Functions (Add/Edit) ---
@@ -1096,6 +1101,9 @@ function renderVisitsInForm(visits) {
     // No visits to display
     return;
   }
+
+  // Sort visits by timestamp in descending order (most recent first)
+  visits.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   visits.forEach((visit, index) => {
     const visitEntryDiv = document.createElement("div");
@@ -1132,44 +1140,83 @@ function renderVisitsInForm(visits) {
 
     dateInput.addEventListener("change", (e) => {
       dayInput.value = getFormattedDay(e.target.value);
-      saveRV(); // Autosave on change
+      // Update the visit object in the current RV's visits array
+      if (currentRVId) {
+        const rv = rvs.find((r) => r.id === currentRVId);
+        if (rv && rv.visits[index]) {
+          rv.visits[index].date = e.target.value;
+          rv.visits[index].timestamp = new Date(
+            `${e.target.value}T${rv.visits[index].time || "00:00"}`
+          ).toISOString();
+          saveRV(); // Autosave on change
+        }
+      }
     });
-    timeInput.addEventListener("change", saveRV);
-    noteInput.addEventListener("blur", saveRV); // Use blur for note autosave
+    timeInput.addEventListener("change", (e) => {
+      if (currentRVId) {
+        const rv = rvs.find((r) => r.id === currentRVId);
+        if (rv && rv.visits[index]) {
+          rv.visits[index].time = e.target.value;
+          rv.visits[index].timestamp = new Date(
+            `${rv.visits[index].date}T${e.target.value}`
+          ).toISOString();
+          saveRV(); // Autosave on change
+        }
+      }
+    });
+    noteInput.addEventListener("blur", (e) => {
+      if (currentRVId) {
+        const rv = rvs.find((r) => r.id === currentRVId);
+        if (rv && rv.visits[index]) {
+          rv.visits[index].note = e.target.value;
+          saveRV(); // Autosave on blur
+        }
+      }
+    }); // Use blur for note autosave
     removeBtn.addEventListener("click", () => removeVisit(index)); // Pass the index to remove
   });
 }
 
 /**
  * Clears the RV form fields.
- * @param {boolean} autofillDefaults - Whether to autofill default values (city, state, area, initial visit).
+ * This function now just clears the UI. The RV object itself is managed externally.
  */
-function clearRVForm(autofillDefaults = false) {
-  // Changed default to false
+function clearRVForm() {
   rvNameInput.value = "";
   rvAddressInput.value = "";
   rvCityInput.value = "";
   rvStateInput.value = "";
   rvEmailInput.value = "";
   rvPhoneInput.value = "";
-  rvAreaInput.value = "";
+  rvAreaInput.value = "No Area"; // Always default Area to "No Area"
   rvLatitudeInput.value = "";
   rvLongitudeInput.value = "";
-  currentRVId = null;
-  currentRvIndex = -1; // Reset index for new RV
+  currentRVId = null; // Reset current RV ID
+  currentRvIndex = -1; // Reset index
 
   rvVisitsContainer.innerHTML = ""; // Clear all existing visit entries
 
-  if (autofillDefaults) {
-    rvCityInput.value = settings.defaultCity || "";
-    rvStateInput.value = settings.defaultState || "";
-    rvAreaInput.value = "No Area";
-    addVisit(true); // Add a new, empty visit entry with current date/time
-  }
-
   // Disable Previous/Next buttons for new entry
-  prevRvBtn.disabled = true;
-  nextRvBtn.disabled = true;
+  updateRvFormNavButtons(); // This will now correctly disable if currentRVId is null
+}
+
+/**
+ * Populates the RV form fields for editing an existing RV or a new one.
+ * @param {object} rvData - The RV object to populate the form with.
+ */
+function populateRVForm(rvData) {
+  rvNameInput.value = rvData.name || "";
+  rvAddressInput.value = rvData.address || "";
+  rvCityInput.value = rvData.city || "";
+  rvStateInput.value = rvData.state || "";
+  rvEmailInput.value = rvData.email || "";
+  rvPhoneInput.value = rvData.phone || "";
+  rvAreaInput.value = rvData.area || "No Area";
+  rvLatitudeInput.value = rvData.latitude || "";
+  rvLongitudeInput.value = rvData.longitude || "";
+
+  renderVisitsInForm(rvData.visits);
+  updateRvFormNavButtons(); // Update button states after loading RV
 }
 
 /**
@@ -1185,21 +1232,8 @@ function editRV(rvId) {
     const rvToEdit = rvsToDisplay[currentRvIndex];
     currentRVId = rvToEdit.id;
 
-    rvNameInput.value = rvToEdit.name || "";
-    rvAddressInput.value = rvToEdit.address || "";
-    rvCityInput.value = rvToEdit.city || "";
-    rvStateInput.value = rvToEdit.state || "";
-    rvEmailInput.value = rvToEdit.email || "";
-    rvPhoneInput.value = rvToEdit.phone || ""; // Populate phone field
-    rvAreaInput.value = rvToEdit.area || "No Area"; // Populate Area field
-    rvLatitudeInput.value = rvToEdit.latitude || "";
-    rvLongitudeInput.value = rvToEdit.longitude || "";
-
-    // Render all visits for this RV
-    renderVisitsInForm(rvToEdit.visits);
-
+    populateRVForm(rvToEdit); // Use the new populate function
     showView(rvFormView);
-    updateRvFormNavButtons(); // Update button states after loading RV
   } else {
     showMessage("RV not found.", "error");
     console.error("No such RV with ID:", rvId);
@@ -1237,9 +1271,17 @@ async function saveRV() {
     }
   });
 
+  // If the name is empty for a new RV, don't save it.
+  // This check is crucial to prevent saving "ghost" RVs.
+  if (!currentRVId && name === "") {
+    console.log("New RV has no name, not saving.");
+    showMessage("New RV needs a name to be saved.", "warning");
+    return;
+  }
+
   // Construct the new RV data object based on current form values
   const newRvData = {
-    id: currentRVId || generateUniqueId(),
+    id: currentRVId || generateUniqueId(), // Use existing ID or generate new
     name: name,
     address: address,
     city: city,
@@ -1360,11 +1402,6 @@ async function saveRV() {
     }
   }
 
-  // If name is empty, show confirmation dialog
-  // This check is now only done when navigating away or adding a new visit
-  // It's removed from the general blur listener.
-  // The logic for this is now handled in showView and addVisit functions.
-
   if (hasChanged) {
     // Only save and show message if data actually changed
     if (currentRVId) {
@@ -1372,18 +1409,31 @@ async function saveRV() {
       if (index !== -1) {
         rvs[index] = newRvData;
         showMessage("RV Information updated automatically!", "success");
+      } else {
+        // This case should ideally not happen if currentRVId is correctly managed
+        // but as a fallback, if currentRVId exists but not found in rvs, treat as new
+        rvs.push(newRvData);
+        showMessage("RV Information added automatically!", "success");
+        currentRVId = newRvData.id; // Set currentRVId for newly added RV
       }
     } else {
+      // This path should now primarily be hit when a new RV is created via addRVBtn
+      // and its details are filled in and blurred.
       rvs.push(newRvData);
       showMessage("RV Information added automatically!", "success");
       currentRVId = newRvData.id; // Set currentRVId for newly added RV
-      // Find the index of the newly added RV in the *unfiltered* rvs array
-      currentRvIndex = rvs.findIndex((rv) => rv.id === currentRVId);
     }
 
     saveDataToLocalStorage();
     renderRVs(); // Re-render the list
     updateMap(); // Update the map
+
+    // Recalculate currentRvIndex based on the new filtered and sorted list
+    const rvsToNavigateAfterSave = getFilteredAndSortedRVs();
+    currentRvIndex = rvsToNavigateAfterSave.findIndex(
+      (rv) => rv.id === currentRVId
+    );
+
     updateRvFormNavButtons(); // Update button states after saving
     generateAreaFilterCheckboxes("contact"); // Re-generate area filters in case a new area was added
     generateAreaFilterCheckboxes("map");
@@ -1434,26 +1484,7 @@ function addVisit(isInitialAdd = false) {
     timestamp: now.toISOString(),
   };
 
-  // Check for empty name *before* adding visit if not an initial autofill
-  if (!isInitialAdd && rvNameInput.value.trim() === "") {
-    showConfirmationDialog(
-      "No name has been entered for this contact. It cannot be easily identified without one. Do you want to proceed without saving this contact?",
-      () => {
-        // User chose to proceed without saving current (empty name) RV
-        // Add the new visit to a *new* RV (which will be blank until name is entered)
-        clearRVForm(false); // Clear current form, don't autofill
-        // Now, add the new visit to this newly cleared form
-        renderVisitsInForm([newVisit]);
-        showMessage("New visit entry added to a new, unsaved contact.", "info");
-      },
-      () => {
-        // User chose to cancel, do nothing, stay on current form
-      }
-    );
-    return; // Stop further execution
-  }
-
-  // If adding to an existing RV, find it and add the visit
+  // If we are currently editing an RV (currentRVId is set)
   if (currentRVId) {
     const rv = rvs.find((r) => r.id === currentRVId);
     if (rv) {
@@ -1464,20 +1495,18 @@ function addVisit(isInitialAdd = false) {
       if (!isInitialAdd) showMessage("New visit entry added.", "info");
     }
   } else {
-    // If it's a new RV being created (currentRVId is null),
-    // and this is the initial autofill from clearRVForm(true)
-    if (isInitialAdd) {
-      renderVisitsInForm([newVisit]);
-    } else {
-      // This case should ideally not be hit if the name check above works.
-      // But as a fallback, if currentRVId is null and it's not an initial add,
-      // it means an "Add Visit" was clicked on a blank new form.
-      // We'll treat it as creating a new RV with just this visit,
-      // and the "no name" dialog would have already handled the saving part.
-      // So, just render the visit.
-      renderVisitsInForm([newVisit]);
-      showMessage("New visit entry added to a new contact.", "info");
-    }
+    // This case should ideally not be hit if addRVBtn properly initializes currentRVId.
+    // However, as a fallback, if currentRVId is null, it means we're on a fresh form
+    // without an associated RV object yet. We can't add a visit without an RV.
+    // This scenario should be prevented by ensuring addRVBtn always creates an RV.
+    // If this path is reached, it implies a logic error or unexpected state.
+    showMessage(
+      "Cannot add visit: No current RV selected or being created.",
+      "error"
+    );
+    console.error(
+      "Attempted to add visit when currentRVId is null and not initial add."
+    );
   }
 }
 
@@ -1918,8 +1947,6 @@ function updateMap() {
       : L.latLngBounds();
   let pinsAdded = 0;
 
-  const usedCoords = {};
-
   // Get filtered RVs for map display
   const rvsToDisplayOnMap = getFilteredAndSortedRVs();
 
@@ -2107,18 +2134,18 @@ function getFilteredAndSortedRVs() {
   let sortOrderRadioName = "";
 
   if (myRVsView.style.display === "block") {
-    document.getElementById("rvNavHeaderBtns").style.display = "none";
+    // document.getElementById("rvNavHeaderBtns").style.display = "none"; // Handled in showView
     areaFilterCheckboxesId = "areaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // My RVs view doesn't have color filter, but map does
     sortOrderRadioName = "sortOrder";
   } else if (rvFormView.style.display === "block") {
-    document.getElementById("rvNavHeaderBtns").style.display = "flex";
+    // document.getElementById("rvNavHeaderBtns").style.display = "flex"; // Handled in showView
     areaFilterCheckboxesId = "formAreaFilterCheckboxes";
     // Removed color filter from form view, so use an empty array for filtering
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes"; // Fallback to map's color filter for consistency in filterRVs
     sortOrderRadioName = "formSortOrder";
   } else if (mapView.style.display === "block") {
-    document.getElementById("rvNavHeaderBtns").style.display = "none";
+    // document.getElementById("rvNavHeaderBtns").style.display = "none"; // Handled in showView
     areaFilterCheckboxesId = "mapAreaFilterCheckboxes";
     colorFilterCheckboxesId = "mapShowColorFilterCheckboxes";
     sortOrderRadioName = "sortOrder"; // Map view uses the main list's sort order
@@ -2170,16 +2197,16 @@ function updateRvFormNavButtons() {
   const rvsToNavigate = getFilteredAndSortedRVs();
   // Only enable/disable if there are RVs to navigate
   if (rvsToNavigate.length > 0) {
-    prevRvBtn.disabled = currentRvIndex <= 0;
-    nextRvBtn.disabled = currentRvIndex >= rvsToNavigate.length - 1;
+    prevRvBtnHeader.disabled = currentRvIndex <= 0;
+    nextRvBtnHeader.disabled = currentRvIndex >= rvsToNavigate.length - 1;
   } else {
     // If no RVs, disable both buttons
-    prevRvBtn.disabled = true;
-    nextRvBtn.disabled = true;
+    prevRvBtnHeader.disabled = true;
+    nextRvBtnHeader.disabled = true;
   }
   // Ensure buttons are visible in RV form view
-  prevRvBtn.style.display = "flex";
-  nextRvBtn.style.display = "flex";
+  // This is handled by showView, but can be reinforced here if needed:
+  // rvNavHeaderBtns.style.display = "flex";
 }
 
 /**
@@ -2239,8 +2266,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         () => {}
       );
     } else {
-      clearRVForm(false);
+      // Create a brand new, empty RV object and set it as current
+      const newEmptyRv = {
+        id: generateUniqueId(), // Assign a real unique ID immediately
+        name: "",
+        address: "",
+        city: settings.defaultCity || "", // Autofill from settings
+        state: settings.defaultState || "", // Autofill from settings
+        area: "No Area",
+        email: "",
+        phone: "",
+        latitude: settings.defaultLatitude || null, // Autofill from settings
+        longitude: settings.defaultLongitude || null, // Autofill from settings
+        visits: [], // Start with empty visits array
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      rvs.push(newEmptyRv); // Add to the global list
+      currentRVId = newEmptyRv.id; // Set this as the current RV being edited
+      // Find the index of the newly added RV in the *filtered and sorted* list
+      const rvsToNavigate = getFilteredAndSortedRVs();
+      currentRvIndex = rvsToNavigate.findIndex((rv) => rv.id === currentRVId);
+
+      populateRVForm(newEmptyRv); // Populate form with the new empty RV's defaults
+      saveDataToLocalStorage(); // Save the new empty RV immediately
       showView(rvFormView);
+      showMessage("New Return Visit ready. Enter details.", "info");
     }
   });
 
@@ -2275,7 +2326,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCityStateFromCoordinates("rv")
   );
   rvLongitudeInput.addEventListener("change", () =>
-    updateCoordinatesFromCityState("rv")
+    updateCityStateFromCoordinates("rv")
   );
 
   // Form Autosave
@@ -2291,8 +2342,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   addVisitBtnHeader.addEventListener("click", () => addVisit());
 
-  prevRvBtn.addEventListener("click", showPreviousRv);
-  nextRvBtn.addEventListener("click", showNextRv);
+  prevRvBtnHeader.addEventListener("click", showPreviousRv);
+  nextRvBtnHeader.addEventListener("click", showNextRv);
 
   // Filters and Sorts
   document
