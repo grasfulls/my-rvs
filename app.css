@@ -510,7 +510,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - REWRITTEN (Correcting Input Heights) */
+/* Section 8: Settings View Specific Styling - REWRITTEN (Focused on Correct Height) */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -547,7 +547,6 @@ main#appContent {
     padding-left: 20px;
     padding-right: 20px;
     box-sizing: border-box;
-    /* Crucial for consistent width calculation */
 }
 
 .setting-item label {
@@ -568,26 +567,33 @@ main#appContent {
 }
 
 /* MODIFIED: General input styling for ALL text and number fields in Settings */
-/* This is the core change to unify height based on API Key field's style */
+/* Set a fixed height that looks good for the API key field and apply universally. */
+/* Also ensure flex sizing properties are reset for inputs. */
 .setting-item input[type="text"],
 .setting-item input[type="number"] {
     width: 100%;
-    /* Default to full width of parent .setting-item (minus its padding) */
+    /* Default to full width of parent's content area */
     padding: 8px 10px;
-    /* This padding usually creates a comfortable input height */
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 0.9em;
-    /* Keep text size consistent */
     box-sizing: border-box;
-    /* Include padding and border in width/height calculation */
+    /* Include padding and border in width/height */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    height: auto;
-    /* Let padding and font-size determine height */
-    min-height: unset;
-    /* IMPORTANT: Remove any previously set min-height */
-    max-height: unset;
-    /* Ensure no max-height is restricting it */
+
+    /* CRITICAL CHANGES FOR HEIGHT */
+    height: 36px;
+    /* Explicitly set a common height, adjust this value if needed */
+    min-height: 36px;
+    /* Ensure it never shrinks below this */
+    max-height: 36px;
+    /* Ensure it never grows beyond this */
+
+    /* Override any flex properties that might be stretching it */
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+    /* Let content width dictate basis if no explicit width is set */
 }
 
 .setting-item input[type="text"]:focus,
@@ -606,7 +612,6 @@ main#appContent {
     /* Prevent wrapping */
     align-items: flex-start;
     padding-left: 0px;
-    /* Position to the very left edge of the .setting-item's content area */
     padding-right: 0px;
     justify-content: flex-start;
     width: 100%;
@@ -619,6 +624,10 @@ main#appContent {
     flex-shrink: 0;
     flex-basis: auto;
     flex-grow: 0;
+    /* Reset height for field-wrapper if it interferes */
+    height: auto;
+    min-height: unset;
+    max-height: unset;
 }
 
 .setting-item.city-state-row label {
@@ -628,22 +637,26 @@ main#appContent {
     width: auto;
 }
 
-/* Specific input width for Default City in settings - NO HEIGHT/MIN-HEIGHT HERE */
+/* Specific input width for Default City in settings - Keep width, but height is now global */
 #defaultCity {
     width: 140px;
     max-width: 140px;
-    /* Height properties are now handled by the general .setting-item input rules */
+    /* flex-basis here aligns with its width, but height is now general */
     flex-basis: 140px;
     flex-grow: 0;
+    flex-shrink: 0;
+    /* Ensure it doesn't shrink */
 }
 
-/* Specific input width for Default State in settings - NO HEIGHT/MIN-HEIGHT HERE */
+/* Specific input width for Default State in settings - Keep width, but height is now global */
 #defaultState {
     width: 52px;
     max-width: 52px;
-    /* Height properties are now handled by the general .setting-item input rules */
+    /* flex-basis here aligns with its width, but height is now general */
     flex-basis: 52px;
     flex-grow: 0;
+    flex-shrink: 0;
+    /* Ensure it doesn't shrink */
 }
 
 /* Coordinates Group Specific Styling (Settings View Lat/Long) */
@@ -651,12 +664,12 @@ main#appContent {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    /* Keep wrap here to allow flexibility */
     align-items: flex-end;
     /* Align to bottom for consistency with the button */
     gap: 10px;
     margin-top: 5px;
     margin-bottom: 10px;
-    /* Remove specific horizontal padding here, parent .setting-item handles it */
     padding-left: 0px;
     padding-right: 0px;
     justify-content: flex-start;
@@ -679,6 +692,9 @@ main#appContent {
     flex-direction: column;
     gap: 5px;
     flex-shrink: 0;
+    flex-grow: 0;
+    /* Prevent from growing */
+    flex-basis: auto;
 }
 
 .form-group-lat-long {
@@ -687,6 +703,13 @@ main#appContent {
     gap: 3px;
     align-items: flex-start;
     flex-shrink: 0;
+    flex-grow: 0;
+    /* Prevent from growing */
+    flex-basis: auto;
+    /* Reset height for form-group-lat-long if it interferes */
+    height: auto;
+    min-height: unset;
+    max-height: unset;
 }
 
 .form-group-lat-long label {
@@ -702,7 +725,7 @@ label[for="defaultLongitude"] {
     margin-top: 0px;
 }
 
-/* Styling for Latitude and Longitude input fields - NO HEIGHT/MIN-HEIGHT HERE */
+/* Styling for Latitude and Longitude input fields - Apply global height */
 .form-group-lat-long input[type="number"] {
     width: 120px;
     padding: 8px 10px;
@@ -711,14 +734,17 @@ label[for="defaultLongitude"] {
     font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    height: auto;
-    /* Let padding and font-size determine height */
-    min-height: unset;
-    /* IMPORTANT: Remove any previously set min-height */
-    max-height: unset;
-    /* Ensure no max-height is restricting it */
+
+    /* CRITICAL CHANGES FOR HEIGHT */
+    height: 36px;
+    /* Explicitly set a common height, adjust if needed */
+    min-height: 36px;
+    max-height: 36px;
+
+    /* Override any flex properties that might be stretching it */
     flex-basis: 120px;
     flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .form-group-lat-long input[type="number"]:focus {
@@ -730,6 +756,54 @@ label[for="defaultLongitude"] {
 #defaultLongitude {
     margin-top: 0px;
 }
+
+/* Styles for the "Use Current" buttons to ensure consistent alignment */
+#useCurrentLocationBtn,
+#rvUseCurrentLocationBtn {
+    background-color: #8BC34A;
+    color: white;
+    border-color: #8BC34A;
+    height: 36px;
+    /* Explicitly set button height to match inputs */
+    min-height: 36px;
+    max-height: 36px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0 12px;
+    /* Adjust padding to fit text vertically within 36px */
+    line-height: 1.2;
+    /* Helps center text vertically */
+    display: flex;
+    /* Ensure flex for centering text/icon */
+    align-items: center;
+    /* Vertically center */
+    justify-content: center;
+    /* Horizontally center */
+}
+
+#useCurrentLocationBtn span,
+#rvUseCurrentLocationBtn span {
+    font-size: 0.85em;
+    /* Make text smaller to fit */
+    line-height: 1.1;
+    /* Tighter line height for multiline text */
+    text-align: center;
+    padding-right: 5px;
+}
+
+#useCurrentLocationBtn:hover,
+#rvUseCurrentLocationBtn:hover {
+    background-color: #689F38;
+}
+
+#useCurrentLocationBtn svg,
+#rvUseCurrentLocationBtn svg {
+    fill: #673AB7;
+    stroke: #673AB7;
+    width: 24px;
+    /* Ensure icon size is appropriate */
+    height: 24px;
+}
+
 
 .settings-actions {
     display: flex;
