@@ -510,7 +510,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - REWRITTEN (Lat/Long on one row, no Use Current button) */
+/* Section 8: Settings View Specific Styling - FINAL REVISION (Lat/Long Horizontal) */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -570,16 +570,17 @@ main#appContent {
 .setting-item input[type="text"],
 .setting-item input[type="number"] {
     width: 100%;
+    /* Default to full width of parent's content area */
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 0.9em;
     box-sizing: border-box;
+    /* Include padding and border in width/height */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
-    /* CRITICAL FOR HEIGHT CONSISTENCY */
+    /* CRITICAL FOR HEIGHT CONSISTENCY (Adjust 36px if still not perfect match) */
     height: 36px;
-    /* Explicitly set a common height */
     min-height: 36px;
     max-height: 36px;
 
@@ -602,6 +603,7 @@ main#appContent {
     flex-direction: row;
     gap: 12px;
     flex-wrap: nowrap;
+    /* Prevent wrapping */
     align-items: flex-start;
     padding-left: 0px;
     padding-right: 0px;
@@ -654,14 +656,12 @@ main#appContent {
     flex-direction: column;
     /* Stack the main label and the input row */
     gap: 5px;
-    /* Reduced gap from 10px */
     margin-top: 5px;
     margin-bottom: 10px;
     padding-left: 20px;
     /* This handles the overall left indent for the group */
     padding-right: 20px;
     box-sizing: border-box;
-    /* Crucial for consistent width calculation */
 }
 
 /* MODIFIED: Label for the Latitude/Longitude group */
@@ -671,16 +671,15 @@ main#appContent {
     color: #333;
     font-size: 1em;
     margin-bottom: 0px;
-    /* Reduced margin-bottom */
     padding-left: 0;
     width: 100%;
 }
 
-/* NEW RULE: Container for Latitude and Longitude fields to place them in a row */
+/* MODIFIED: Container for Latitude and Longitude fields to place them in a row */
 .coordinates-input-row {
     display: flex;
     flex-direction: row;
-    /* Put Lat and Long side-by-side */
+    /* CRITICAL: Put Lat and Long side-by-side */
     gap: 12px;
     /* Space between Lat and Long fields */
     flex-wrap: nowrap;
@@ -693,14 +692,16 @@ main#appContent {
     /* Take full width of parent .setting-item */
 }
 
+/* MODIFIED: Individual Lat/Long field group */
 .form-group-lat-long {
     display: flex;
     flex-direction: column;
-    /* Stacks label and input vertically within its own group */
+    /* Keep label and input stacked vertically within its own group */
     gap: 3px;
     align-items: flex-start;
-    /* Left-align label and input */
+    /* Left-align label and input within its group */
     flex-shrink: 0;
+    /* Prevent shrinking of the individual lat/long groups */
     flex-grow: 0;
     flex-basis: auto;
     height: auto;
@@ -708,26 +709,22 @@ main#appContent {
     max-height: unset;
 }
 
+/* MODIFIED: Labels for Latitude and Longitude */
 .form-group-lat-long label {
     font-weight: bold;
     color: #555;
     font-size: 1em;
     margin-bottom: 0;
     text-align: left;
+    /* Removed width: 100% to allow labels to only take content width if needed */
     width: auto;
-    /* Allow label width to be dynamic */
 }
 
-label[for="defaultLongitude"] {
-    margin-top: 0px;
-}
-
-/* Styling for Latitude and Longitude input fields */
+/* Specific latitude/longitude input styles (height is now universal) */
 .form-group-lat-long input[type="number"] {
     width: 120px;
     /* Specific width for lat/long inputs */
     max-width: 120px;
-    /* Height properties are handled by the general .setting-item input rules */
     flex-basis: 120px;
     flex-grow: 0;
     flex-shrink: 0;
@@ -743,10 +740,67 @@ label[for="defaultLongitude"] {
     margin-top: 0px;
 }
 
-/* Remove 'Use Current' button specific styles as it's removed from HTML */
-/* You had these under Section 7, but they are now effectively dead code.
-   I'm leaving them out of Section 8 for clarity as they won't be used here. */
-/* #useCurrentLocationBtn, #rvUseCurrentLocationBtn, etc. */
+/* Re-adding the button styles in case they are used elsewhere, but they won't affect Settings now */
+/* Assuming these buttons are still used in RV Form view */
+.utility-btn.text-icon-button {
+    width: auto;
+    height: auto;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+}
+
+.utility-btn.text-icon-button span {
+    display: inline-block;
+    line-height: 1.2;
+    text-align: right;
+    padding-right: 5px;
+}
+
+.utility-btn.text-icon-button svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+/* Specific styles for the "Use Current" buttons (if they appear in RV form) */
+#useCurrentLocationBtn,
+/* This ID is now only for the RV form button if it exists there */
+#rvUseCurrentLocationBtn {
+    background-color: #8BC34A;
+    color: white;
+    border-color: #8BC34A;
+    height: 36px;
+    /* Ensure button height aligns with inputs where it appears */
+    min-height: 36px;
+    max-height: 36px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0 12px;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#useCurrentLocationBtn span,
+#rvUseCurrentLocationBtn span {
+    font-size: 0.85em;
+    line-height: 1.1;
+    text-align: center;
+    padding-right: 5px;
+}
+
+#useCurrentLocationBtn:hover,
+#rvUseCurrentLocationBtn:hover {
+    background-color: #689F38;
+}
+
+#useCurrentLocationBtn svg,
+#rvUseCurrentLocationBtn svg {
+    fill: #673AB7;
+    stroke: #673AB7;
+    width: 24px;
+    height: 24px;
+}
 
 
 .settings-actions {
