@@ -601,7 +601,7 @@ main#appContent {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: flex-end;
     padding-left: 20px;
     padding-right: 20px;
 }
