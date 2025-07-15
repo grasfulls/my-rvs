@@ -510,7 +510,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - FINAL REVISION (Lat/Long Horizontal) */
+/* Section 8: Settings View Specific Styling - FINAL REVISION (Lat/Long Horizontal, no main label) */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -651,10 +651,11 @@ main#appContent {
 
 
 /* MODIFIED: Coordinates Group Specific Styling (Settings View Lat/Long) */
+/* The main label is now gone from HTML, so this just styles the overall container for the lat/long inputs */
 .setting-item.coordinates-group {
     display: flex;
     flex-direction: column;
-    /* Stack the main label and the input row */
+    /* This now stacks the input row below if there was other content here */
     gap: 5px;
     margin-top: 5px;
     margin-bottom: 10px;
@@ -664,22 +665,14 @@ main#appContent {
     box-sizing: border-box;
 }
 
-/* MODIFIED: Label for the Latitude/Longitude group */
-.coordinates-main-label {
-    text-align: left;
-    font-weight: bold;
-    color: #333;
-    font-size: 1em;
-    margin-bottom: 0px;
-    padding-left: 0;
-    width: 100%;
-}
+/* REMOVED: .coordinates-main-label CSS rule as the HTML element is being removed */
+
 
 /* MODIFIED: Container for Latitude and Longitude fields to place them in a row */
 .coordinates-input-row {
     display: flex;
     flex-direction: row;
-    /* CRITICAL: Put Lat and Long side-by-side */
+    /* Put Lat and Long side-by-side */
     gap: 12px;
     /* Space between Lat and Long fields */
     flex-wrap: nowrap;
@@ -716,8 +709,8 @@ main#appContent {
     font-size: 1em;
     margin-bottom: 0;
     text-align: left;
-    /* Removed width: 100% to allow labels to only take content width if needed */
     width: auto;
+    /* Allow label width to be dynamic */
 }
 
 /* Specific latitude/longitude input styles (height is now universal) */
