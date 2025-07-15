@@ -520,6 +520,45 @@ main#appContent {
     font-size: 1.8em;
 }
 
+.setting-item.city-state-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.setting-item.city-state-row .field-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.setting-item.city-state-row label {
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.setting-item.city-state-row #defaultCity {
+    width: 140px;
+    height: 36px;
+    padding: 8px 10px;
+    font-size: 0.9em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.setting-item.city-state-row #defaultState {
+    width: 52px;
+    height: 36px;
+    padding: 8px 10px;
+    font-size: 0.9em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
 .first-time-message {
     background-color: #e0f7fa;
     border-left: 5px solid #00bcd4;
