@@ -266,7 +266,7 @@ main#appContent {
     text-align: center;
     min-width: 200px;
     width: calc(100% - 40px);
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
 }
