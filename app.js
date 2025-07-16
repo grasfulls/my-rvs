@@ -1968,13 +1968,13 @@ function updateMap() {
   const rvsToDisplayOnMap = getFilteredAndSortedRVs();
 
   rvsToDisplayOnMap.forEach((rv) => {
-    let lat = parseFloat(rv.latitude);
-    let lon = parseFloat(rv.longitude);
-    let isGeolocated = !isNaN(lat) && !isNaN(lon);
+    let rvLatitude = parseFloat(rv.latitude);
+    let rvLongitude = parseFloat(rv.longitude);
+    let isGeolocated = !isNaN(rvLatitude) && !isNaN(rvLongitude);
 
     let pinColor = "blue"; // Default Blue for geolocated pins
-    let markerLat = lat;
-    let markerLon = lon;
+    let markerLatitude = rvLatitude;
+    let markerLongitude = rvLongitude;
     let markerTitle = rv.name || rv.address || "Unnamed RV";
 
     const mostRecentVisit =
@@ -1983,11 +1983,11 @@ function updateMap() {
     if (!isGeolocated) {
       // If not geolocated, use default settings coordinates and violet color
       // Only use default if they are actually set in settings, otherwise skip marker
-      const defaultLat = parseFloat(settings.defaultLatitude);
-      const defaultLng = parseFloat(settings.defaultLongitude);
-      if (!isNaN(defaultLat) && !isNaN(defaultLng)) {
-        markerLat = defaultLat;
-        markerLon = defaultLng;
+      const defaultLatitude = parseFloat(settings.defaultLatitude);
+      const defaultLongitude = parseFloat(settings.defaultLongitude);
+      if (!isNaN(defaultLatitude) && !isNaN(defaultLongitude)) {
+        markerLatitude = defaultLatitude;
+        markerLongitude = defaultLongitude;
         pinColor = "violet"; // Violet for non-geolocated
         markerTitle += " (Location Unknown)";
       } else {
@@ -2007,9 +2007,8 @@ function updateMap() {
       if (!isNaN(diffDays) && diffDays >= 14) {
         pinColor = "red"; // Red for 14+ days ago
       }
-    }
+    } // Apply color filter logic (already handled by getFilteredAndSortedRVs, but double-check for robustness)
 
-    // Apply color filter logic (already handled by getFilteredAndSortedRVs, but double-check for robustness)
     const selectedColorFilters = Array.from(
       document.querySelectorAll(
         `#mapShowColorFilterCheckboxes input[type="checkbox"]:checked`
@@ -2024,33 +2023,32 @@ function updateMap() {
       return; // Skip this RV if its color doesn't match selected filters
     }
 
-    const coordKey = `${markerLat},${markerLon}`;
+    const coordKey = `${markerLatitude},${markerLongitude}`;
     if (usedCoords[coordKey]) {
       // Offset duplicate coordinates slightly
       const offset = 0.0001 * usedCoords[coordKey];
-      markerLat += offset;
-      markerLon += offset;
+      markerLatitude += offset;
+      markerLongitude += offset;
     }
-    usedCoords[coordKey] = (usedCoords[coordKey] || 0) + 1;
+    usedCoords[coordKey] = (usedCoords[coordKey] || 0) + 1; // Build common info window/popup content
 
-    // Build common info window/popup content
     const commonContent = `
-      <div style="padding: 5px; font-family: Arial, sans-serif;">
-        <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
-          rv.name || "Unnamed RV"
-        }</h4>
-        <p style="margin-bottom: 3px;">${rv.address || ""}${
+      <div style="padding: 5px; font-family: Arial, sans-serif;">
+        <h4 style="margin-top: 0; margin-bottom: 5px; color: #333;">${
+      rv.name || "Unnamed RV"
+    }</h4>
+        <p style="margin-bottom: 3px;">${rv.address || ""}${
       rv.address && (rv.city || rv.state) ? ", " : ""
     }${rv.city || ""}${rv.city && rv.state ? ", " : ""}${rv.state || ""}</p>
-        ${
-          isGeolocated
-            ? `<p style="font-size: 0.8em; color: #666;">Lat: ${lat.toFixed(
-                5
-              )}, Lon: ${lon.toFixed(5)}</p>`
-            : ""
-        }
-      </div>
-    `;
+        ${
+      isGeolocated
+        ? `<p style="font-size: 0.8em; color: #666;">Lat: ${rvLatitude.toFixed(
+            5
+          )}, Lon: ${rvLongitude.toFixed(5)}</p>`
+        : ""
+    }
+      </div>
+    `;
 
     if (mapProvider === "google") {
       const svgIcon = {
@@ -2063,7 +2061,7 @@ function updateMap() {
       };
 
       const marker = new google.maps.Marker({
-        position: { lat: markerLat, lng: markerLon },
+        position: { lat: markerLatitude, lng: markerLongitude },
         map: activeMap, // Use activeMap here
         title: markerTitle,
         icon: svgIcon,
@@ -2073,16 +2071,15 @@ function updateMap() {
 
       const infoWindow = new google.maps.InfoWindow({
         content: commonContent, // Use commonContent
-      });
+      }); // Add mouseover and mouseout listeners for info window
 
-      // Add mouseover and mouseout listeners for info window
       marker.addListener("mouseover", () => infoWindow.open(activeMap, marker));
       marker.addListener("mouseout", () => infoWindow.close());
       marker.addListener("click", () => editRV(marker.rvId));
 
       markers.push(marker);
       if (isGeolocated)
-        bounds.extend(new google.maps.LatLng(markerLat, markerLon));
+        bounds.extend(new google.maps.LatLng(markerLatitude, markerLongitude));
       pinsAdded++;
     } else {
       // Leaflet
@@ -2096,13 +2093,12 @@ function updateMap() {
         popupAnchor: [0, -24],
       });
 
-      const marker = L.marker([markerLat, markerLon], {
+      const marker = L.marker([markerLatitude, markerLongitude], {
         icon: customIcon,
       }).addTo(activeMap); // Use activeMap here
 
-      marker.rvId = rv.id;
+      marker.rvId = rv.id; // Bind popup and open/close on mouseover/mouseout
 
-      // Bind popup and open/close on mouseover/mouseout
       marker.bindPopup(commonContent, {
         // Use commonContent
         closeButton: false, // Don't show a close button
@@ -2118,14 +2114,16 @@ function updateMap() {
       marker.on("click", () => editRV(marker.rvId));
 
       markers.push(marker);
-      if (isGeolocated) bounds.extend(L.latLng(markerLat, markerLon));
+      if (isGeolocated)
+        bounds.extend(L.latLng(markerLatitude, markerLongitude));
       pinsAdded++;
     }
   });
 
   if (pinsAdded > 0) {
     if (mapProvider === "google") {
-      if (!bounds.isEmpty()) {
+      if (bounds && !bounds.isEmpty()) {
+        // Added 'bounds &&' check here
         map.fitBounds(bounds);
       }
     } else {

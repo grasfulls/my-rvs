@@ -514,7 +514,7 @@ main#appContent {
 }
 
 /* --------------------------------------------------- */
-/* Section 8: Settings View Specific Styling - FINAL REVISION (Lat/Long Horizontal, no main label) */
+/* Section 8: Settings View Specific Styling - FINAL REVISION (Latitude/Longitude Horizontal, no main label) */
 /* --------------------------------------------------- */
 
 #settingsView h2 {
@@ -654,8 +654,8 @@ main#appContent {
 }
 
 
-/* MODIFIED: Coordinates Group Specific Styling (Settings View Lat/Long) */
-/* The main label is now gone from HTML, so this just styles the overall container for the lat/long inputs */
+/* MODIFIED: Coordinates Group Specific Styling (Settings View Latitude/Longitude) */
+/* The main label is now gone from HTML, so this just styles the overall container for the Latitude/Longitude inputs */
 .setting-item.coordinates-group {
     display: flex;
     flex-direction: column;
@@ -689,8 +689,8 @@ main#appContent {
     /* Take full width of parent .setting-item */
 }
 
-/* MODIFIED: Individual Lat/Long field group */
-.form-group-lat-long {
+/* MODIFIED: Individual Latitude/Longitude field group */
+.form-group-latitude-longitude {
     display: flex;
     flex-direction: column;
     /* Keep label and input stacked vertically within its own group */
@@ -698,7 +698,7 @@ main#appContent {
     align-items: flex-start;
     /* Left-align label and input within its group */
     flex-shrink: 0;
-    /* Prevent shrinking of the individual lat/long groups */
+    /* Prevent shrinking of the individual Latitude/Longitude groups */
     flex-grow: 0;
     flex-basis: auto;
     height: auto;
@@ -706,8 +706,9 @@ main#appContent {
     max-height: unset;
 }
 
-/* MODIFIED: Labels for Latitude and Longitude */
-.form-group-lat-long label {
+/* MODIFIED: Labels for Latitude and Longitude (CORRECTED SELECTOR) */
+.form-group-latitude-longitude label {
+    /* <--- CRITICAL CORRECTION HERE: added ' label' */
     font-weight: bold;
     color: #555;
     font-size: 1em;
@@ -718,16 +719,16 @@ main#appContent {
 }
 
 /* Specific latitude/longitude input styles (height is now universal) */
-.form-group-lat-long input[type="number"] {
+.form-group-latitude-longitude input[type="number"] {
     width: 120px;
-    /* Specific width for lat/long inputs */
+    /* Specific width for Latitude/Longitude inputs */
     max-width: 120px;
     flex-basis: 120px;
     flex-grow: 0;
     flex-shrink: 0;
 }
 
-.form-group-lat-long input[type="number"]:focus {
+.form-group-latitude-longitude input[type="number"]:focus {
     border-color: #3f51b5;
     box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
     outline: none;
@@ -1088,9 +1089,7 @@ main#appContent {
     height: 27px;
 }
 
-/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
-/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
-/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Phone, Lat/Long) */
+/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Phone, Latitude/Longitude) */
 /* This rule applies fixed height to all single-line input fields */
 .rv-form-fields .form-group input[type="text"],
 .rv-form-fields .form-group input[type="number"],
@@ -1150,27 +1149,23 @@ main#appContent {
     white-space: nowrap;
 }
 
-/* RV Form Coordinates Group Styling (mirrors Settings page) */
+/* RV Form Coordinates Group Styling (Latitude/Longitude and Use Current Button) */
 .form-group.coordinates-group-rv {
     display: flex;
     flex-direction: row;
+    /* Main container for Latitude/Longitude fields and Use Current button */
     flex-wrap: wrap;
+    /* Allow wrapping on small screens if necessary */
     align-items: center;
+    /* Align items to the center of the cross axis */
     gap: 10px;
     padding: 0;
     justify-content: flex-start;
 }
 
-.form-group.coordinates-group-rv label {
-    text-align: center;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-    font-size: 1em;
-    width: 100%;
-}
-
-.form-group.coordinates-group-rv input {
+/* Specific styling for Latitude/Longitude input within the coordinates group */
+/* This combines the labels, input, and focus rules for cleanliness */
+.form-group.coordinates-group-rv .form-group-latitude-longitude input {
     width: 120px;
     padding: 8px 10px;
     border: 1px solid #ddd;
@@ -1180,7 +1175,7 @@ main#appContent {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group.coordinates-group-rv input:focus {
+.form-group.coordinates-group-rv .form-group-latitude-longitude input:focus {
     border-color: #3f51b5;
     box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
     outline: none;
