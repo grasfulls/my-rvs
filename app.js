@@ -1759,7 +1759,8 @@ function loadCss(url) {
  * Initializes the map based on user settings (Google Maps or Leaflet/OSM).
  */
 async function initMap() {
-  showMessage("Attempting to initialize map...", "info");
+  showMessage("Attempting to initialize map...", "info", 2000);
+  let mapInitMessageDisplayed = false; // Flag to control message display
   const googleMapsApiKey =
     settings.googleMapsApiKey && settings.googleMapsApiKey.trim() !== "";
 
@@ -1861,7 +1862,7 @@ window.mapReady = function () {
   // --- END DEBUGGING LINES ---
 
   map = new google.maps.Map(document.getElementById("mapContainer"), {
-    center: center,
+    center: { lat: defaultLat, lng: defaultLng }, // Directly use defaultLat/defaultLng
     zoom: zoom,
     mapTypeControl: false,
     streetViewControl: false,
@@ -1934,7 +1935,7 @@ async function initLeafletMap() {
   showMessage(`Leaflet Map Init - Final Zoom: ${zoom}`, "info");
   // --- END DEBUGGING LINES ---
 
-  leafletMap = L.map("mapContainer").setView(center, zoom);
+  leafletMap = L.map("mapContainer").setView([defaultLat, defaultLng], zoom); // Directly use defaultLat/defaultLng for Leaflet
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
