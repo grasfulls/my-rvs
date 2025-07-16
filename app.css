@@ -1167,14 +1167,20 @@ main#appContent {
 /* This combines the labels, input, and focus rules for cleanliness */
 .form-group.coordinates-group-rv .form-group-latitude-longitude input {
     width: 120px;
+    max-width: 120px;
+    flex-basis: 120px;
+    flex-grow: 0;
+    flex-shrink: 0;
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
 }
-
 .form-group.coordinates-group-rv .form-group-latitude-longitude input:focus {
     border-color: #3f51b5;
     box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
