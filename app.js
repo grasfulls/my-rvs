@@ -1271,13 +1271,30 @@ async function saveRV() {
     }
   });
 
-  // If the name is empty for a new RV, don't save it.
-  // This check is crucial to prevent saving "ghost" RVs.
-  if (!currentRVId && name === "") {
-    console.log("New RV has no name, not saving.");
-    showMessage("New RV needs a name to be saved.", "warning");
-    return;
+  // --- ENFORCEMENT 1: Name is Required ---
+  if (!name) {
+    // This applies to ALL RVs (new or existing)
+    // If it's a new RV (no currentRVId yet assigned based on initial save) and name is empty,
+    // we assume the user is trying to discard, or hasn't named it yet.
+    // Remove it from the global RVs array to allow discarding.
+    if (!currentRVId || !rvs.some((rv) => rv.id === currentRVId)) {
+      // If it's a new RV object
+      // Ensure this RV exists in 'rvs' before trying to filter it out
+      if (currentRVId && rvs.some((rv) => rv.id === currentRVId)) {
+        rvs = rvs.filter((rv) => rv.id !== currentRVId);
+        saveDataToLocalStorage(); // Save the updated list (without the ghost RV)
+      }
+      // Clear the form and set currentRVId to null to allow fresh start
+      clearRVForm();
+      showMessage("New Return Visit not named, discarded.", "info", 2000); // Friendly message
+    } else {
+      // It's an existing RV or a newly named RV that was later cleared
+      showMessage("Name is required to save a Return Visit.", "warning", 3000);
+      rvNameInput.focus(); // Focus on the name field to guide the user
+    }
+    return; // Stop saving process
   }
+  // --- END ENFORCEMENT 1 ---
 
   // Construct the new RV data object based on current form values
   const newRvData = {
