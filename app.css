@@ -1089,11 +1089,13 @@ main#appContent {
 }
 
 /* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
+/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Note) */
+/* Styling for general form inputs in RV form (Name, Address, City, State, Email, Phone, Lat/Long) */
+/* This rule applies fixed height to all single-line input fields */
 .rv-form-fields .form-group input[type="text"],
 .rv-form-fields .form-group input[type="number"],
 .rv-form-fields .form-group input[type="date"],
 .rv-form-fields .form-group input[type="time"],
-.rv-form-fields .form-group textarea,
 .rv-form-fields .form-group input[type="email"],
 .rv-form-fields .form-group input[type="tel"] {
     width: 100%;
@@ -1103,13 +1105,32 @@ main#appContent {
     font-size: 0.9em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 36px;
+    /* CRITICAL: Fixed height for all standard inputs in RV form */
+    min-height: 36px;
+    max-height: 36px;
+    flex-grow: 0;
+    /* Prevents inputs from distorting in flex containers */
+    flex-shrink: 0;
+    flex-basis: auto;
 }
 
-.rv-form-fields .form-group input:focus,
-.rv-form-fields .form-group textarea:focus {
-    border-color: #3f51b5;
-    box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
-    outline: none;
+/* Specific styling for textarea in RV form to allow multi-line and vertical resize */
+.rv-form-fields .form-group textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    min-height: 60px;
+    /* Minimum height for notes */
+    height: auto;
+    /* Allow auto-sizing if content makes it taller */
+    resize: vertical;
+    /* Allow vertical resizing */
+    max-height: unset;
+    /* Ensure no max-height prevents growth */
 }
 
 /* Specific styling for label and note combination (e.g., Area field) */
