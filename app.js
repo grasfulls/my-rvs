@@ -2390,13 +2390,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       checkbox.addEventListener("change", handleFilterChange)
     );
 
-  // Input formatting
-  const stateField = document.getElementById("rvState");
-  if (stateField) {
-    stateField.value = stateField.value.trim().toUpperCase().slice(0, 2);
-    stateField.addEventListener("input", () => {
-      stateField.value = stateField.value.toUpperCase().slice(0, 2);
+  // Input formatting for State fields (force 2-letter, all caps)
+  const defaultStateField = document.getElementById("defaultState");
+  if (defaultStateField) {
+    // Apply formatting on load/initial value
+    defaultStateField.value = defaultStateField.value
+      .trim()
+      .toUpperCase()
+      .slice(0, 2);
+    defaultStateField.addEventListener("input", (e) => {
+      e.target.value = e.target.value.toUpperCase().slice(0, 2);
     });
+    defaultStateField.addEventListener("blur", saveSettings); // Ensure settings save on blur
+  }
+
+  const rvStateField = document.getElementById("rvState");
+  if (rvStateField) {
+    // Apply formatting on load/initial value
+    rvStateField.value = rvStateField.value.trim().toUpperCase().slice(0, 2);
+    rvStateField.addEventListener("input", (e) => {
+      e.target.value = e.target.value.toUpperCase().slice(0, 2);
+    });
+    rvStateField.addEventListener("blur", saveRV); // Ensure RV saves on blur
   }
 
   ["rvName", "rvAddress", "rvCity"].forEach((id) => {
