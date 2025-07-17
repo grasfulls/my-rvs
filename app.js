@@ -1632,7 +1632,7 @@ async function geocodeCityState(query) {
     showMessage("Geocoding failed: Query is empty.", "error"); // ADD THIS LINE
     return null;
   }
-  const encodedQuery = encodeURIComponent(`${query}, USA`);
+  const encodedQuery = encodeURIComponent(query); // Just encode the query as is
   const url = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json&limit=1`;
   console.log("Geocoding URL:", url);
   try {
