@@ -1,15 +1,14 @@
 // service-worker.js
 
-const CACHE_NAME = "my-rvs-cache-v1";
+const CACHE_NAME = "my-rvs-cache-v2"; // Increased cache version to force update
 const urlsToCache = [
   "./", // Caches the root (index.html)
   "index.html",
-  "app.css",
-  "app.js",
+  "app.css?v=3", // Match version from index.html
+  "app.js?v=3", // Match version from index.html
   "manifest.json",
-  "icons/icon-192x192.png", // These are your PWA home screen icons
-  "icons/icon-512x512.png", // These are your PWA home screen icons
-  // Removed individual SVG icon paths as they are inline in HTML and not fetched separately.
+  "icons/icon-192x192.png",
+  "icons/icon-512x512.png",
 ];
 
 self.addEventListener("install", (event) => {
