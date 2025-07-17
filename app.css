@@ -1426,8 +1426,15 @@ input#rvName {
     }
 
     .coordinates-inputs {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
         flex-direction: column;
         gap: 8px;
+        box-sizing: border-box;
     }
 
     .app-footer a {
@@ -1436,39 +1443,64 @@ input#rvName {
         padding: 5px;
     }
 
-/* Adjustments for general view padding on small screens */
-.view {
-    width: 100%;
-    max-width: 800px;
-    /* Match header/footer */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 16px;
-    padding-right: 16px;
-    box-sizing: border-box;
-    display: block;
-    min-width: 0;
-    overflow-x: hidden;
-}
+    /* Adjustments for general view padding on small screens */
+    .view {
+        width: 100%;
+        max-width: 800px;
+        /* Match header/footer */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
+        display: block;
+        min-width: 0;
+        overflow-x: hidden;
+    }
 
-.setting-item {
-    width: 100%;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-bottom: 8px;
-    box-sizing: border-box;
-}
+    .setting-item {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        margin-bottom: 8px;
+        box-sizing: border-box;
+    }
+
+    .coordinates-label {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
+    }
 
     .coordinates-main-label {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
         margin-top: 10px;
+        box-sizing: border-box;
     }
 
     #rvUseCurrentLocationBtn {
-        padding: 4px 8px;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 4px;
+        padding-bottom: 4px;
         font-size: 0.8em;
+        box-sizing: border-box;
     }
 
     .rv-form-fields .form-group {
@@ -1504,17 +1536,34 @@ input#rvName {
 
     .visit-entry-header input[type="date"],
     .visit-entry-header input[type="time"] {
-        max-width: 100%;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
     }
 
     .utility-btn.icon-button {
-        width: 35px;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
         height: 35px;
+        box-sizing: border-box;
     }
 
     .utility-btn.icon-button svg {
-        width: 18px;
-        height: 18px;
+        width: 100%;
+        max-width: 18px;
+        height: auto;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
     }
 
     .form-actions {
