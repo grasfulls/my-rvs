@@ -1,14 +1,13 @@
 // service-worker.js
 
-const CACHE_NAME = "my-rvs-cache-v2"; // Increased cache version to force update
+const CACHE_NAME = "my-rvs-cache-v3"; // IMPORTANT: Increment cache version again
 const urlsToCache = [
-  "/", // Caches the root (index.html)
   "index.html",
-  "app.css?v=3", // Match version from index.html
-  "app.js?v=3", // Match version from index.html
   "manifest.json",
   "icons/icon-192x192.png",
   "icons/icon-512x512.png",
+  // Temporarily removed app.css and app.js from cache to isolate issue
+  // We will re-add them once registration is successful
 ];
 
 self.addEventListener("install", (event) => {
@@ -47,7 +46,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // console.log('Service Worker: Fetching', event.request.url);
+  console.log("Service Worker: Fetching", event.request.url);
   event.respondWith(
     caches.match(event.request).then((response) => {
       // Cache hit - return response
