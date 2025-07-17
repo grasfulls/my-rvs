@@ -1,10 +1,15 @@
 // service-worker.js
 
-const CACHE_NAME = "my-rvs-cache-v7"; // IMPORTANT: Increment cache version again
+const CACHE_NAME = "my-rvs-cache-v8"; // IMPORTANT: Increment cache version again
 const urlsToCache = [
-  "/my-rvs/index.html", // Explicitly use the full path including repository name
-  "/my-rvs/", // Explicitly use the full root path including repository name
-  // Removed other files for now to ensure basic registration works
+  "/", // Cache the root (index.html)
+  "index.html", // Explicitly cache index.html
+  "manifest.json",
+  "app.css?v=3", // Include version query parameter
+  "app.js?v=3", // Include version query parameter
+  "icons/icon-180x180.png?v=1", // Include cache busting
+  "icons/icon-192x192.png?v=1", // Include cache busting
+  "icons/icon-512x512.png?v=1", // Include cache busting
 ];
 
 // Add a temporary listener to help debug fetch failures during install
