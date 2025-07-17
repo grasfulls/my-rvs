@@ -268,11 +268,8 @@ main#appContent {
     width: calc(100% - 40px);
     /* 100% of viewport width minus 20px padding on each side */
     max-width: 760px;
-    /* Max width to align with app-container content area (800px - 2*20px padding) */
     white-space: normal;
-    /* Allow text to wrap */
     min-width: unset;
-    /* Remove minimum width constraint */
     overflow: hidden;
     text-overflow: ellipsis;
 }
