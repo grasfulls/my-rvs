@@ -455,8 +455,20 @@ function proceedToShowView(viewToShow) {
     renderRVs(); // Re-render RVs when returning to this view
   } else if (viewToShow === mapView) {
     appSubheading.textContent = "Map";
-    loadDataFromLocalStorage(); // Ensure settings are fresh before initializing map
-    initMap(); // Initialize map when map view is shown
+    loadDataFromLocalStorage(); // Ensure settings are fresh before initializing map // Only initialize map if default coordinates are set, or default city/state are set
+    if (areSettingsComplete()) {
+      initMap(); // Initialize map when map view is shown
+    } else {
+      showMessage(
+        "Please set default City/State or Coordinates in Settings to view the map.",
+        "warning"
+      ); // Optionally, redirect back to settings if map cannot be shown
+      hideAllViews();
+      settingsView.style.display = "block";
+      settingsBtn.classList.add("active");
+      appSubheading.textContent = "Settings";
+      return; // Stop showing map view if settings are incomplete
+    }
     generateAreaFilterCheckboxes("map"); // Regenerate filter options for map view
     mapLink.classList.add("active"); // Add active class to Map link
   } else if (viewToShow === rvFormView) {
