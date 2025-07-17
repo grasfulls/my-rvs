@@ -91,6 +91,8 @@ let mapInitialized = false; // Flag to prevent multiple map initializations
  * @param {string} type - 'success', 'error', 'info', or 'warning'.
  */
 function showMessage(message, type = "info") {
+  // Remove any existing message boxes to prevent stacking
+  document.querySelectorAll(".message-box").forEach((box) => box.remove());
   const messageBox = document.createElement("div");
   messageBox.className = `message-box ${type}`;
   messageBox.textContent = message;
