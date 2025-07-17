@@ -2,7 +2,7 @@
 
 const CACHE_NAME = "my-rvs-cache-v2"; // Increased cache version to force update
 const urlsToCache = [
-  "./", // Caches the root (index.html)
+  "/", // Caches the root (index.html)
   "index.html",
   "app.css?v=3", // Match version from index.html
   "app.js?v=3", // Match version from index.html
