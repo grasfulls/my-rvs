@@ -268,10 +268,18 @@ main#appContent {
 .message-box {
     position: fixed;
     top: 100px;
-    /* Adjusted to be lower on screen */
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 25px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 800px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+
+    padding-top: 15px;
+    padding-bottom: 15px;
     border-radius: 8px;
     color: white;
     font-weight: bold;
@@ -280,12 +288,7 @@ main#appContent {
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     text-align: center;
-    /* Adjusted width and removed nowrap for better responsiveness */
-    width: calc(100% - 40px);
-    /* 100% of viewport width minus 20px padding on each side */
-    max-width: 760px;
     white-space: normal;
-    min-width: unset;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -1425,6 +1428,16 @@ input#rvName {
         z-index: 1002;
     }
 
+    .visit-entry-header {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
+    }
+
     .coordinates-inputs {
         width: 100%;
         max-width: 800px;
@@ -1564,8 +1577,8 @@ input#rvName {
         margin-left: auto;
         margin-right: auto;
         box-sizing: border-box;
-    }
-
+    }    
+    
     .form-actions {
         width: 100%;
         max-width: 800px;
@@ -1577,6 +1590,15 @@ input#rvName {
         margin-top: 15px;
         padding-top: 10px;
         box-sizing: border-box;
+    }
+
+    body {
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    * {
+        box-sizing: inherit;
     }
 }
 
@@ -1599,8 +1621,8 @@ input[type="number"] {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 16px;
+    padding-right: 16px;
     box-sizing: border-box;
 }
 
