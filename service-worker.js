@@ -1,13 +1,17 @@
 // service-worker.js
 
-const CACHE_NAME = "my-rvs-cache-v4"; // IMPORTANT: Increment cache version again to force update
+const CACHE_NAME = "my-rvs-cache-v5"; // IMPORTANT: Increment cache version again to force update
 const urlsToCache = [
-  "/", // Caches the root (which includes index.html)
-  "icons/icon-192x192.png",
-  "icons/icon-512x512.png",
-  // Temporarily removed index.html, manifest.json, app.css, and app.js from explicit cache list
-  // The '/' path should cover index.html. We're being extremely minimal to get registration working.
+  "index.html", // Explicitly cache index.html
+  "/", // Also cache the root path
+  // Keep other files out for now until registration is successful
 ];
+
+// Add a temporary listener to help debug fetch failures during install
+self.addEventListener("fetch", (event) => {
+  // This is a temporary debug log to see what the SW is trying to fetch
+  console.log("SW Fetching:", event.request.url);
+});
 
 self.addEventListener("install", (event) => {
   console.log("Service Worker: Install event triggered.");
@@ -21,6 +25,15 @@ self.addEventListener("install", (event) => {
       .then(() => self.skipWaiting()) // Forces the waiting service worker to become the active service worker
       .catch((error) => {
         console.error("Service Worker: Failed to cache during install:", error);
+        // Attempt to log the specific URL that failed, if available
+        if (error.request) {
+          console.error("Failed request URL:", error.request.url);
+        } else if (error.message && error.message.includes("Failed to fetch")) {
+          console.error(
+            "Possible network issue during caching:",
+            error.message
+          );
+        }
       })
   );
 });
