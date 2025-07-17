@@ -639,18 +639,6 @@ main#appContent {
     width: 100%;
 }
 
-.setting-item.city-state-row {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    padding-left: 0px;
-    padding-right: 0px;
-    justify-content: flex-start;
-    width: 100%;
-}
-
 .setting-item.city-state-row label {
     margin-bottom: 4px;
     font-weight: 500;
