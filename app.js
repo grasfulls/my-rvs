@@ -574,84 +574,74 @@ async function saveSettings() {
   const googleMapsApiKey = googleMapsApiKeyInput.value.trim();
 
   // Determine if we need to geocode (City/State to Lat/Lon)
-    const shouldGeocode =
-      defaultCity &&
-      defaultState &&
-      (isNaN(defaultLatitude) || isNaN(defaultLongitude));
+  const shouldGeocode =
+    defaultCity &&
+    defaultState &&
+    (isNaN(defaultLatitude) || isNaN(defaultLongitude)); // Determine if we need to reverse geocode (Lat/Lon to City/State)
 
-    // Determine if we need to reverse geocode (Lat/Lon to City/State)
-    const shouldReverseGeocode =
-      (!defaultCity || !defaultState) &&
-      !isNaN(defaultLatitude) &&
-      !isNaN(defaultLongitude);
+  const shouldReverseGeocode =
+    (!defaultCity || !defaultState) &&
+    !isNaN(defaultLatitude) &&
+    !isNaN(defaultLongitude);
 
-    if (shouldGeocode) {
-      console.log(
-        `Attempting to geocode City: ${defaultCity}, State: ${defaultState}`
-      );
-      const coords = await geocodeCityState(
-        `${defaultCity}, ${defaultState}, USA`
-      );
-      if (coords) {
-        defaultLatitude = coords.lat;
-        defaultLongitude = coords.lon;
-        defaultLatitudeInput.value = coords.lat.toFixed(6); // Update UI
-        defaultLongitudeInput.value = coords.lon.toFixed(6); // Update UI
-        showMessage("Coordinates updated from City/State!", "success");
-      } else {
-        showMessage(
-          "Could not find coordinates for the entered City and State.",
-          "warning"
-        );
-        defaultLatitude = null; // Clear if geocoding failed
-        defaultLongitude = null; // Clear if geocoding failed
-        defaultLatitudeInput.value = ""; // Clear UI
-        defaultLongitudeInput.value = ""; // Clear UI
-      }
-    } else if (shouldReverseGeocode) {
-      console.log(
-        `Attempting to reverse geocode Lat: ${defaultLatitude}, Lon: ${defaultLongitude}`
-      );
-      const result = await reverseGeocodeCoordinates(
-        defaultLatitude,
-        defaultLongitude
-      );
-      if (result && result.city && result.state) {
-        defaultCity = result.city;
-        defaultState = result.state;
-        defaultCityInput.value = result.city; // Update UI
-        defaultStateInput.value = result.state; // Update UI
-        showMessage("City/State updated from Coordinates!", "success");
-      } else {
-        showMessage(
-          "Could not find City/State for the entered coordinates.",
-          "warning"
-        );
-        defaultCity = ""; // Clear if reverse geocoding failed
-        defaultState = ""; // Clear if reverse geocoding failed
-        defaultCityInput.value = ""; // Clear UI
-        defaultStateInput.value = ""; // Clear UI
-      }
-    }
+  if (shouldGeocode) {
+    console.log(
+      `Attempting to geocode City: ${defaultCity}, State: ${defaultState}`
+    );
+    const coords = await geocodeCityState(
+      `${defaultCity}, ${defaultState}, USA`
+    );
+    if (coords) {
+      defaultLatitude = coords.lat;
+      defaultLongitude = coords.lon;
+      defaultLatitudeInput.value = coords.lat.toFixed(6); // Update UI
+      defaultLongitudeInput.value = coords.lon.toFixed(6); // Update UI
+      showMessage("Coordinates updated from City/State!", "success");
+    } else {
+      showMessage(
+        "Could not find coordinates for the entered City and State.",
+        "warning"
+      );
+      defaultLatitude = null; // Clear if geocoding failed
+      defaultLongitude = null; // Clear if geocoding failed
+      defaultLatitudeInput.value = ""; // Clear UI
+      defaultLongitudeInput.value = ""; // Clear UI
+    }
+  } else if (shouldReverseGeocode) {
+    console.log(
+      `Attempting to reverse geocode Lat: ${defaultLatitude}, Lon: ${defaultLongitude}`
+    );
+    const result = await reverseGeocodeCoordinates(
+      defaultLatitude,
+      defaultLongitude
+    );
+    if (result && result.city && result.state) {
+      defaultCity = result.city;
+      defaultState = result.state;
+      defaultCityInput.value = result.city; // Update UI
+      defaultStateInput.value = result.state; // Update UI
+      showMessage("City/State updated from Coordinates!", "success");
+    } else {
+      showMessage(
+        "Could not find City/State for the entered coordinates.",
+        "warning"
+      );
+      defaultCity = ""; // Clear if reverse geocoding failed
+      defaultState = ""; // Clear if reverse geocoding failed
+      defaultCityInput.value = ""; // Clear UI
+      defaultStateInput.value = ""; // Clear UI
+    }
+  } // Final check for incomplete settings after geocoding attempts
 
-    // Final check for incomplete settings after geocoding attempts
-    if (!defaultCity && !defaultState && (isNaN(defaultLatitude) || isNaN(defaultLongitude))) {
-      showMessage(
-        "Either City/State or Latitude/Longitude must be entered for default settings.",
-        "warning"
-      );
-    }
-  } else if (
+  if (
     !defaultCity &&
     !defaultState &&
     (isNaN(defaultLatitude) || isNaN(defaultLongitude))
   ) {
-    // If nothing is entered for location, show warning
     showMessage(
       "Either City/State or Latitude/Longitude must be entered for default settings.",
       "warning"
     );
-    // Don't return here, allow saving incomplete settings if user insists
   }
 
   // Ensure defaultLatitude and defaultLongitude are numbers, or null if invalid
