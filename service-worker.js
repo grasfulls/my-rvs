@@ -1,10 +1,10 @@
 // service-worker.js
 
-const CACHE_NAME = "my-rvs-cache-v5"; // IMPORTANT: Increment cache version again to force update
+const CACHE_NAME = "my-rvs-cache-v7"; // IMPORTANT: Increment cache version again
 const urlsToCache = [
-  "index.html", // Explicitly cache index.html
-  "/", // Also cache the root path
-  // Keep other files out for now until registration is successful
+  "/my-rvs/index.html", // Explicitly use the full path including repository name
+  "/my-rvs/", // Explicitly use the full root path including repository name
+  // Removed other files for now to ensure basic registration works
 ];
 
 // Add a temporary listener to help debug fetch failures during install

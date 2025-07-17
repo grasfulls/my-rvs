@@ -4,7 +4,7 @@ let rvs = [];
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("./service-worker.js")
+      .register("./service-worker.js", { scope: "./" }) // Explicitly set scope to current directory
       .then((registration) => {
         console.log("Service Worker registered:", registration);
       })
