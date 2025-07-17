@@ -642,9 +642,8 @@ async function saveSettings() {
       "Either City/State or Latitude/Longitude must be entered for default settings.",
       "warning"
     );
-  }
+  } // Ensure defaultLatitude and defaultLongitude are numbers, or null if invalid
 
-  // Ensure defaultLatitude and defaultLongitude are numbers, or null if invalid
   defaultLatitude = isNaN(defaultLatitude) ? null : defaultLatitude;
   defaultLongitude = isNaN(defaultLongitude) ? null : defaultLongitude; // Construct the new settings object
 
