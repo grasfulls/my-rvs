@@ -7,17 +7,9 @@ const urlsToCache = [
   "app.css",
   "app.js",
   "manifest.json",
-  "icons/icon-192x192.png",
-  "icons/icon-512x512.png",
-  // Add other static assets like your SVG icons if you plan to use them as external files
-  // For now, these are inline in HTML, so not strictly necessary to cache here unless externalized.
-  "icons/cancel.svg",
-  "icons/export.svg",
-  "icons/home.svg",
-  "icons/import.svg",
-  "icons/map-pin.svg",
-  "icons/save.svg",
-  "icons/UseCurrent.png",
+  "icons/icon-192x192.png", // These are your PWA home screen icons
+  "icons/icon-512x512.png", // These are your PWA home screen icons
+  // Removed individual SVG icon paths as they are inline in HTML and not fetched separately.
 ];
 
 self.addEventListener("install", (event) => {
