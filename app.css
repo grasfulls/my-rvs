@@ -1651,7 +1651,3 @@ input[type="number"] {
         overscroll-behavior: contain;
     }
 }
-
-* {
-    outline: 1px dashed crimson;
-}
