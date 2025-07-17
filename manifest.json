@@ -2,7 +2,7 @@
     "name": "My RVs",
     "short_name": "My RVs",
     "description": "Manage your return visits and map locations.",
-    "start_url": ".", // Changed to '.' for current directory as start URL
+    "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#3f51b5",
