@@ -157,12 +157,11 @@ main#appContent {
     overflow-y: auto;
     padding: 10px 20px;
     padding-top: 58px;
-    /* Adjusted padding-top to account for header height + desired top padding */
     padding-bottom: calc(50px + 10px);
-    /* Footer height + desired bottom padding for content */
     box-sizing: border-box;
     width: 100%;
     overflow-x: hidden;
+    position: relative;
 }
 
 /* Styles for all "views" (sections that act as pages) */
