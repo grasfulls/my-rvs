@@ -67,19 +67,15 @@ input#rvName {
     position: fixed;
     top: env(safe-area-inset-top, 0);
     left: 0;
-    /* Changed from 50% */
     right: 0;
-    /* Added right: 0 */
     transform: none;
-    /* Removed translateX(-50%) */
     width: 100%;
     max-width: 800px;
-    /* Keep max-width */
-    margin: 0 auto;
-    /* Center fixed header within its max-width */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
     height: 48px;
-    padding: 0px 16px;
-    padding-top: env(safe-area-inset-top, 0);
     background-color: #3f51b5;
     color: white;
     display: flex;
@@ -343,31 +339,26 @@ main#appContent {
 /* Section 6: Footer Styling (Fixed) */
 /* --------------------------------------------------- */
 .app-footer {
-        position: fixed;
-        bottom: env(safe-area-inset-bottom, 0);
-        left: 0;
-        /* Changed from 50% */
-        right: 0;
-        /* Added right: 0 */
-        transform: none;
-        /* Removed translateX(-50%) */
-        width: 100%;
-        max-width: 800px;
-        /* Keep max-width */
-        margin: 0 auto;
-        /* Center fixed footer within its max-width */
-        height: 50px;
-        padding-bottom: env(safe-area-inset-bottom, 0);
-        background-color: #eee;
-        padding-top: 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        z-index: 1002;
-        box-sizing: border-box;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 800px;
+    /* ✅ Match header and body */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 50px;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+    z-index: 1001;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+}
 
 .app-footer a,
 .app-footer button {
@@ -1417,17 +1408,20 @@ input#rvName {
 
 @media (max-width: 600px) {
 
-    #rvHeader,
+#rvHeader,
     .app-header {
-        /* Ensure fixed positioning is consistent across all screen sizes */
         position: fixed;
         top: env(safe-area-inset-top, 0);
         left: 0;
-        /* Ensure it's not trying to re-center with transform */
         right: 0;
         transform: none;
-        margin: 0 auto;
-        /* Keep it centered within max-width */
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
         z-index: 1002;
     }
 
@@ -1457,11 +1451,16 @@ input#rvName {
     overflow-x: hidden;
 }
 
-    .setting-item {
-        margin-bottom: 8px;
-        padding-left: 5px;
-        padding-right: 5px;
-    }
+.setting-item {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
 
     .coordinates-main-label {
         margin-top: 10px;
@@ -1473,16 +1472,34 @@ input#rvName {
     }
 
     .rv-form-fields .form-group {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
         margin-bottom: 8px;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
     }
 
-    /* Adjusted for the new visits container */
     .visits-header {
-        padding: 0 5px;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
     }
 
     .visits-container {
-        padding: 0 5px;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
+        box-sizing: border-box;
     }
 
     .visit-entry-header input[type="date"],
@@ -1501,9 +1518,16 @@ input#rvName {
     }
 
     .form-actions {
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 16px;
+        padding-right: 16px;
         gap: 10px;
         margin-top: 15px;
         padding-top: 10px;
+        box-sizing: border-box;
     }
 }
 
