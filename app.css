@@ -176,9 +176,13 @@ main#appContent {
     box-sizing: border-box;
     width: 100%;
     overflow-x: hidden;
+    /* Explicitly hide horizontal overflow */
     position: relative;
+    min-width: 0;
+    /* Ensures flex item doesn't overflow its container */
 }
 
+/* Styles for all "views" (sections that act as pages) */
 /* Styles for all "views" (sections that act as pages) */
 .view {
     display: block;
@@ -187,9 +191,13 @@ main#appContent {
     max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    /* Explicitly hide horizontal overflow */
     box-sizing: border-box;
     padding: 0;
+    /* Default padding to 0 */
     flex-shrink: 0;
+    min-width: 0;
+    /* Ensures flex item doesn't overflow its container */
 }
 
 #settingsView {
@@ -1432,10 +1440,15 @@ input#rvName {
         padding: 5px;
     }
 
-    /* Adjustments for general view padding on small screens */
-    .view {
-        padding: 5px;
-    }
+/* Adjustments for general view padding on small screens */
+.view {
+    padding: 5px;
+    /* Apply specific padding for small screens */
+    min-width: 0;
+    /* Ensure min-width: 0 is also applied in media query */
+    overflow-x: hidden;
+    /* Ensure horizontal overflow is hidden in media query */
+}
 
     .setting-item {
         margin-bottom: 8px;
