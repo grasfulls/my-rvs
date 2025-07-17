@@ -184,19 +184,17 @@ main#appContent {
 /* Styles for all "views" (sections that act as pages) */
 /* Styles for all "views" (sections that act as pages) */
 .view {
-    display: block;
     width: 100%;
-    height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    /* Explicitly hide horizontal overflow */
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
     box-sizing: border-box;
-    padding: 0;
-    /* Default padding to 0 */
-    flex-shrink: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: block;
     min-width: 0;
-    /* Ensures flex item doesn't overflow its container */
 }
 
 #settingsView {
@@ -1441,12 +1439,13 @@ input#rvName {
 
 /* Adjustments for general view padding on small screens */
 .view {
-    padding: 5px;
-    /* Apply specific padding for small screens */
+    padding: 5px 12px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 480px;
+    box-sizing: border-box;
     min-width: 0;
-    /* Ensure min-width: 0 is also applied in media query */
     overflow-x: hidden;
-    /* Ensure horizontal overflow is hidden in media query */
 }
 
     .setting-item {
