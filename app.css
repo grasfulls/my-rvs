@@ -165,18 +165,20 @@ input#rvName {
 /* Section 3: Main Content Area (Scrollable) */
 /* --------------------------------------------------- */
 main#appContent {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 10px 20px;
+    width: 100%;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 16px;
     padding-top: 58px;
     padding-bottom: calc(50px + 10px);
     box-sizing: border-box;
-    width: 100%;
+    flex-grow: 1;
+    overflow-y: auto;
     overflow-x: hidden;
-    /* Explicitly hide horizontal overflow */
     position: relative;
     min-width: 0;
-    /* Ensures flex item doesn't overflow its container */
+    height: calc(100vh - 108px);
 }
 
 /* Styles for all "views" (sections that act as pages) */
