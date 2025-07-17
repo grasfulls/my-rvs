@@ -1,13 +1,12 @@
 // service-worker.js
 
-const CACHE_NAME = "my-rvs-cache-v3"; // IMPORTANT: Increment cache version again
+const CACHE_NAME = "my-rvs-cache-v4"; // IMPORTANT: Increment cache version again to force update
 const urlsToCache = [
-  "index.html",
-  "manifest.json",
+  "/", // Caches the root (which includes index.html)
   "icons/icon-192x192.png",
   "icons/icon-512x512.png",
-  // Temporarily removed app.css and app.js from cache to isolate issue
-  // We will re-add them once registration is successful
+  // Temporarily removed index.html, manifest.json, app.css, and app.js from explicit cache list
+  // The '/' path should cover index.html. We're being extremely minimal to get registration working.
 ];
 
 self.addEventListener("install", (event) => {
