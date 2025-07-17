@@ -7,7 +7,7 @@ const urlsToCache = [
   "manifest.json",
   "app.css?v=3", // Include version query parameter
   "app.js?v=3", // Include version query parameter
-  "apple-touch-icon.png",
+  "apple-touch-icon-v2.png",
   "icons/icon-180x180.png?v=1", // Include cache busting
   "icons/icon-192x192.png?v=1", // Include cache busting
   "icons/icon-512x512.png?v=1", // Include cache busting
