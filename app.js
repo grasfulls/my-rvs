@@ -2026,6 +2026,9 @@ function updateMap() {
       : L.latLngBounds();
   let pinsAdded = 0;
 
+ // --- ADD THIS LINE TO FIX THE ERROR ---
+    const usedCoords = {};
+  
   // Get filtered RVs for map display
   const rvsToDisplayOnMap = getFilteredAndSortedRVs();
 
